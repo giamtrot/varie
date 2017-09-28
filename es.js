@@ -44,12 +44,6 @@ var corriere = function corriere() {
 };
 
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log(new Date() + " - called");
-	sendResponse(getLinks());
-});
-console.log(new Date() + " - ES installed");
-
 function openInNewTab(uri) {
 	// document.writeln(link.href + " - " + link.text);
   	chrome.tabs.create({url: uri});
