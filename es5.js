@@ -59,4 +59,5 @@ function validateLinks(links) {
 	}
 }
 
-console.log( getLinks() );
+var links = getLinks();
+validateLinks( links );
