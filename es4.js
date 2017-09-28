@@ -1,6 +1,6 @@
 var getLinks = function getLinks() {
 	
-	if (document.location.href.indexOf("www.corriere.it") >= 0) {
+	if (document.location.href.indexOf("corriere.it") >= 0) {
 		return corriere();
 	}
 	
