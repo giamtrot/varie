@@ -46,7 +46,8 @@ var corriere = function corriere() {
 
 function openInNewTab(uri) {
 	// document.writeln(link.href + " - " + link.text);
-  	chrome.tabs.create({url: uri});
+  	// chrome.tabs.create({url: uri});
+	window.open( uri );
 }
 
 
