@@ -1,0 +1,147 @@
+<div id="timer">
+    <div class="minuti">
+        <div contenteditable>07</div>
+        <p>minuti</p>
+    </div>
+    <div class="secondi">
+        <div contenteditable>20</div>
+        <p>secondi</p>
+    </div>
+	<input type="button" value="parti" onclick="conta()" />
+</div>
+
+
+
+
+<script>
+
+let msg = new SpeechSynthesisUtterance();
+let voices = window.speechSynthesis.getVoices();
+msg.voice = voices[10]; // Note: some voices don't support altering params
+msg.voiceURI = 'native';
+msg.volume = 1; // 0 to 1
+msg.rate = 1; // 0.1 to 10
+msg.pitch = 2; //0 to 2
+msg.lang = 'it-IT';
+
+function parla(text) {
+	msg.text = text;
+	speechSynthesis.speak(msg);
+}
+
+let nextStop = 0;
+
+function conta() {
+	let minuti = parseInt(timer.querySelector( '.minuti div' ).innerHTML);
+	console.log(minuti);
+    let secondi = parseInt(timer.querySelector( '.secondi div' ).innerHTML);
+	console.log(secondi);
+	let durata = (minuti * 60 + secondi) * 1000;
+	console.log(durata);
+	if (durata > 60000) {
+		nextStop = durata - durata % 60000;
+	} else {
+		nextStop = durata - durata % 15000;
+	}
+	console.log(nextStop);
+
+	let scadenza = new Date(Date.parse(new Date()) + durata);
+	inizializzoTimer( 'timer', scadenza );
+}
+
+function tempoRimasto(tempo){
+  let t = Date.parse(tempo) - Date.parse(new Date());
+  let sec = Math.floor( (t/1000) % 60 );
+  let min = Math.floor( (t/1000/60) % 60 );
+  return {
+    'totale': t,
+    'minuti': min,
+    'secondi': sec
+  };
+}
+
+function inizializzoTimer(id, scadenza){
+    let timer = document.getElementById( id );
+    let minuti = timer.querySelector( '.minuti div' );
+    let secondi = timer.querySelector( '.secondi div' );
+
+    function aggiornaTimer(){
+        let t = tempoRimasto(scadenza);   
+      
+        minuti.innerHTML = ('0' + t.minuti).slice(-2);
+        secondi.innerHTML = ('0' + t.secondi).slice(-2);
+      
+		if(t.totale <= nextStop) {
+			var msg = "";
+			if (t.minuti > 1) {
+				msg = t.minuti + " minuti";
+			}
+			else if (t.minuti == 1) {
+				msg = t.minuti + " minuto";
+			}
+			else {
+				msg = t.secondi + " secondi";
+			}	
+			nextStop -= nextStop > 60000 ? 60000 : 15000;
+			console.log(nextStop);
+			
+			if (nextStop < 0) {
+				nextStop = 0;
+			}
+			parla(msg);
+		}
+
+        if(t.totale<=0){
+            clearInterval(intervalloTempo);
+			parla("tempo finito");
+        }
+	}
+
+    aggiornaTimer();
+
+    let intervalloTempo = setInterval(aggiornaTimer,1000);
+}
+
+</script>
+
+<style>
+body{
+  background-color: #C8E6C9;
+  font-family: "Calibri Light";
+}
+
+#timer{
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  font-size: 26px;
+}
+
+#timer div{
+  margin: 10px 15px;
+  text-align: center;
+}
+
+#timer div div{
+  background-color: #388E3C;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  padding: 10px 10px 2px;
+}
+
+#timer div p{
+  color: #388E3C;
+  font-weight: bold;
+}
+
+#timer input{
+  color: #388E3C;
+  font-size: 40px;
+  font-weight: bold;
+  font-family: "Calibri Light";
+  height: 60px;
+  margin: 20px;
+}
+</style>
