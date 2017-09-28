@@ -59,9 +59,4 @@ function validateLinks(links) {
 	}
 }
 
-console.log( window, document );
-
-document.addEventListener('DOMContentLoaded', function() {
-	document.writeln("DOMContentLoaded - Ok");
-	//console.log( getLinks() );
-}, false);
+console.log( getLinks() );
