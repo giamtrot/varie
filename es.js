@@ -34,8 +34,8 @@ var corriere = function corriere() {
 		// console.log(p);
 		var text = p != null ? p.textContent : "";
 		// console.log(text);
-		var html = '<img src="' + href + '"><p>' + text + '</p>';
-		var uri = "data:text/html," + encodeURIComponent(html);
+		var html = '<img src=http:"' + href + '"><p>' + text + '</p>';
+		var uri = "data:text/html," + html; //encodeURIComponent(html);
 		// console.log(link);
 		links.push(uri);
 	}
@@ -46,8 +46,11 @@ var corriere = function corriere() {
 
 function openInNewTab(uri) {
 	console.log(uri);
-  	// chrome.tabs.create({url: uri});
-	window.open( uri );
+	var iframe = document.createElement("iframe");
+	iframe.src = uri;
+	iframe.width = "1000px";
+	iframe.height = "1000px";
+	document.querySelector("body").appendChild(iframe);
 }
 
 
@@ -60,5 +63,6 @@ function validateLinks(links) {
 	}
 }
 
+console.clear();
 var links = getLinks();
 validateLinks( links );
