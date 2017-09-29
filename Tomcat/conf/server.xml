@@ -106,7 +106,7 @@
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"/>
       </Realm>
 
-      <Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">
+      <Host appBase="../.." autoDeploy="true" name="localhost" unpackWARs="true">
 
         <!-- SingleSignOn valve, share authentication between web applications
              Documentation at: /docs/config/valve.html -->
@@ -119,10 +119,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log." resolveHosts="false" suffix=".txt"/>
 
-
-
-
-      <Context docBase="S:\workspaces\RG\Tomcat\webapps\ROOT" path="" reloadable="false"/><Context docBase="V:\Dropbox\Vivere Pogliano\Albo Pretorio" path="/AlboPretorio" reloadable="true"/></Host>
+	  </Host>
     </Engine>
   </Service>
 </Server>
