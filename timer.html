@@ -53,7 +53,9 @@ function parla(text) {
 let nextStop = 0;
 let intervalloMaggiore = 30000;
 let intervalloMinore = 15000;
-let soglia = 60000;
+let intervalloFinale = 3000;
+let primaSoglia = 60000;
+let secondaSoglia = 15000;
 
 
 function getTimer() {
@@ -132,9 +134,8 @@ function avvio() {
 	primoAvvio = false;
 	getAvvio().value = "pausa";
 	let durata = (minuti * 60 + secondi) * 1000;
-	console.log(durata);
-	if (durata > soglia) {
-		nextStop = durata - durata % soglia;
+	if (durata > primaSoglia) {
+		nextStop = durata - durata % intervalloMaggiore;
 	} else {
 		nextStop = durata - durata % intervalloMinore;
 	}
@@ -176,7 +177,15 @@ function inizializzoTimer(scadenza){
 			if (t.secondi > 0) {
 				msg += t.secondi + " secondi";
 			}	
-			nextStop -= nextStop > soglia ? intervalloMaggiore : intervalloMinore;
+			
+			console.log( nextStop, primaSoglia, nextStop > primaSoglia, secondaSoglia, nextStop > secondaSoglia );
+			if (nextStop > primaSoglia) {
+				nextStop -= intervalloMaggiore;
+			} else if (nextStop > secondaSoglia) {
+				nextStop -= intervalloMinore;
+			} else {
+				nextStop -= intervalloFinale;
+			}
 			console.log(nextStop);
 			
 			if (nextStop < 0) {
