@@ -33,6 +33,9 @@ function parla(text) {
 }
 
 let nextStop = 0;
+let intervalloMaggiore = 30000;
+let intervalloMinore = 15000;
+let soglia = 60000;
 
 function conta() {
 	let minuti = parseInt(timer.querySelector( '.minuti div' ).innerHTML);
@@ -41,10 +44,10 @@ function conta() {
 	console.log(secondi);
 	let durata = (minuti * 60 + secondi) * 1000;
 	console.log(durata);
-	if (durata > 60000) {
-		nextStop = durata - durata % 60000;
+	if (durata > soglia) {
+		nextStop = durata - durata % soglia;
 	} else {
-		nextStop = durata - durata % 15000;
+		nextStop = durata - durata % intervalloMinore;
 	}
 	console.log(nextStop);
 
@@ -86,7 +89,7 @@ function inizializzoTimer(id, scadenza){
 			if (t.secondi > 0) {
 				msg += t.secondi + " secondi";
 			}	
-			nextStop -= nextStop > 60000 ? 30000 : 15000;
+			nextStop -= nextStop > soglia ? intervalloMaggiore : intervalloMinore;
 			console.log(nextStop);
 			
 			if (nextStop < 0) {
