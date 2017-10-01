@@ -66,7 +66,23 @@ function getAvvio() {
 	return timer.querySelector( '#avvio' );
 }
 
+let inCorso = false;
 function conta() {
+	inCorso = !inCorso;
+	if (inCorso) {
+		avvio();
+	}
+	else {
+		pausa();
+	}
+}
+function pausa() {
+	getAvvio().value = "avvio";
+	clearInterval(intervalloTempo);
+}
+
+function avvio() {
+	getAvvio().value = "pausa";
 	let minuti = parseInt(getDivMinuti().innerHTML);
 	console.log(minuti);
     let secondi = parseInt(getDivSecondi().innerHTML);
@@ -78,7 +94,6 @@ function conta() {
 	} else {
 		nextStop = durata - durata % intervalloMinore;
 	}
-	console.log(nextStop);
 
 	let scadenza = new Date(Date.parse(new Date()) + durata);
 	inizializzoTimer( 'timer', scadenza );
@@ -94,6 +109,8 @@ function tempoRimasto(tempo){
     'secondi': sec
   };
 }
+
+let intervalloTempo;
 
 function inizializzoTimer(id, scadenza){
     let timer = document.getElementById( id );
@@ -135,7 +152,7 @@ function inizializzoTimer(id, scadenza){
 
     aggiornaTimer();
 
-    let intervalloTempo = setInterval(aggiornaTimer,1000);
+    intervalloTempo = setInterval(aggiornaTimer,1000);
 }
 
 </script>
