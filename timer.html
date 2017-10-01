@@ -1,16 +1,19 @@
 <html>
+<head>
+<title>Timer</title>
+</head>
 <body>
 
 <div id="timer">
     <div class="minuti">
-        <div contenteditable>07</div>
+        <div contenteditable onchange="controllaNumero()"></div>
         <p>minuti</p>
     </div>
     <div class="secondi">
-        <div contenteditable>20</div>
+        <div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
         <p>secondi</p>
     </div>
-	<input type="button" value="parti" onclick="conta()" />
+	<input id="avvio" type="button" value="avvio" disabled="true" onclick="conta()" />
 </div>
 
 
@@ -27,6 +30,20 @@ msg.rate = 1; // 0.1 to 10
 msg.pitch = 2; //0 to 2
 msg.lang = 'it-IT';
 
+getDivMinuti().addEventListener('input', controllaNumero, false);
+getDivSecondi().addEventListener('input', controllaNumero, false);
+
+function controllaNumero() {
+	let minuti = getDivMinuti().innerHTML;
+	let secondi = getDivSecondi().innerHTML;
+	let sonoNumeri = isNumeric(minuti) && isNumeric(secondi);
+	getAvvio().disabled = !sonoNumeri;
+}
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 function parla(text) {
 	msg.text = text;
 	speechSynthesis.speak(msg);
@@ -37,10 +54,22 @@ let intervalloMaggiore = 30000;
 let intervalloMinore = 15000;
 let soglia = 60000;
 
+function getDivMinuti() {
+	return timer.querySelector( '.minuti div' );
+}
+
+function getDivSecondi() {
+	return timer.querySelector( '.secondi div' );
+}
+
+function getAvvio() {
+	return timer.querySelector( '#avvio' );
+}
+
 function conta() {
-	let minuti = parseInt(timer.querySelector( '.minuti div' ).innerHTML);
+	let minuti = parseInt(getDivMinuti().innerHTML);
 	console.log(minuti);
-    let secondi = parseInt(timer.querySelector( '.secondi div' ).innerHTML);
+    let secondi = parseInt(getDivSecondi().innerHTML);
 	console.log(secondi);
 	let durata = (minuti * 60 + secondi) * 1000;
 	console.log(durata);
@@ -125,7 +154,7 @@ body{
 }
 
 #timer div{
-  margin: 10px 15px;
+  margin: 5px 5px;
   text-align: center;
 }
 
@@ -136,6 +165,7 @@ body{
   font-size: 40px;
   font-weight: bold;
   padding: 10px 10px 2px;
+  width: 50px;
 }
 
 #timer div p{
@@ -149,7 +179,7 @@ body{
   font-weight: bold;
   font-family: "Calibri Light";
   height: 60px;
-  margin: 20px;
+  margin: 10px;
 }
 </style>
 </body>
