@@ -77,15 +77,16 @@ function inizializzoTimer(id, scadenza){
 		if(t.totale <= nextStop) {
 			var msg = "";
 			if (t.minuti > 1) {
-				msg = t.minuti + " minuti";
+				msg = t.minuti + " minuti ";
 			}
 			else if (t.minuti == 1) {
-				msg = t.minuti + " minuto";
+				msg = t.minuti + " minuto ";
 			}
-			else {
-				msg = t.secondi + " secondi";
+			
+			if (t.secondi > 0) {
+				msg += t.secondi + " secondi";
 			}	
-			nextStop -= nextStop > 60000 ? 60000 : 15000;
+			nextStop -= nextStop > 60000 ? 30000 : 15000;
 			console.log(nextStop);
 			
 			if (nextStop < 0) {
