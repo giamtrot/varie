@@ -29,29 +29,6 @@
 	<!--
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
-	<Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="30" maxIdle="25" maxWait="10000" minEvictableIdleTimeMillis="60000" name="jdbc/silc2As" password="silc2As" poolPreparedStatements="true" testOnBorrow="true" testWhileIdle="true" timeBetweenEvictionRunsMillis="10000" type="javax.sql.DataSource" url="jdbc:mysql://10.118.0.8:3306/silc2" username="silc2As" validationQuery="select version();"/>
 	
-	<Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="30" maxIdle="25" maxWait="10000" minEvictableIdleTimeMillis="60000" name="jdbc/sharedaudit" password="silc2As" poolPreparedStatements="true" testOnBorrow="true" testWhileIdle="true" timeBetweenEvictionRunsMillis="10000" type="javax.sql.DataSource" url="jdbc:mysql://10.118.0.8:3306/silc2" username="silc2As" validationQuery="select version();"/>
-		
-		<!--poolPreparedStatements="true" username="silc2as" password="silc2as"
-		driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://perseo.dev5.tp:3306/silc2" 
-		/-->
-		
-		<!-- poolPreparedStatements="true" username="silc2As" password="silc2As"
-		driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://10.118.0.8:3306/silc2"  -->
-
-	<ResourceLink global="jdbc/silc2As" name="jdbc/silc2As" type="javax.sql.DataSource"/>
-
-	<Resource auth="Container" factory="org.apache.naming.factory.BeanFactory" ip="fs2.dev5.tp" name="map_proxy/silc2" port="81" timeout="5" type="it.rcslab.silc2.dto.config.MapProxyConfig"/>    
-	<Resource auth="Container" cdeService="true" dinIj="true" documents="false" factory="org.apache.naming.factory.BeanFactory" gsm="true" idmService="true" manualAssoc="true" manualRes="true" micDtmfEnable="true" minimization="true" name="advancedCapabilities/silc2" personalizeDtmfEnable="true" pois="true" provisioningAm="true" pssEqualize="true" pwd="true" sferaService="true" type="it.rcslab.silc2.dto.config.AdvancedCapabilitiesConfig" vtam="true" zoomPlayer="true"/>
-	
-	<Resource auth="Container" factory="org.apache.naming.factory.BeanFactory" ldapRoot="dc=rcslab,dc=it" managerDn="TEST\Administrator" managerPassword="mito2xdrfv" name="ldapServer/silc2" type="it.rcslab.silc2.dto.config.LdapServerConfig" url="ldap://fs1.dev2.tp:389"/>
-                                               
-                               
-	<Resource auth="Container" factory="org.apache.naming.factory.BeanFactory" name="ldapUserSearch/silc2" searchBase="OU=SILC_USERS,OU=SILC,DC=test,DC=dars" searchFilter="(|(cn={0})(sAMAccountName={0}))" type="it.rcslab.silc2.dto.config.LdapUserSearchConfig"/>
-	
-	<!-- Allowed values [standalone|ldap] -->
-	<Environment name="spring.profiles.active" type="java.lang.String" value="standalone"/>
-
 			  
 </Context>
