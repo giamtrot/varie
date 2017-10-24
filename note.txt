@@ -1,2 +1,6 @@
 https://rawgit.com/giamtrot/varie/master/timer.html
-https://rawgit.com/giamtrot/varie/master/ES.pem
+
+javascript: var s=document.createElement('script'); s.setAttribute('src', 'http://localhost:9080/varie/lib/getLinks.js'); document.getElementsByTagName('body')[0].appendChild(s); void(s);
+
+javascript: var s=document.createElement('script'); s.setAttribute('src', 'https://rawgit.com/giamtrot/varie/master/lib/getLinks.js'); document.getElementsByTagName('body')[0].appendChild(s); void(s);
+
