@@ -2,7 +2,7 @@
 <head>
 <title>Timer</title>
 </head>
-<body>
+<body style="zoom: 2;">
 
 <div id="timer">
     <div class="minuti">
@@ -195,8 +195,8 @@ function inizializzoTimer(scadenza){
 		}
 
         if(t.totale<=0){
-            clearInterval(intervalloTempo);
 			parla("tempo finito");
+            clearInterval(intervalloTempo);
         }
 	}
 
