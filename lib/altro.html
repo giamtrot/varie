@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<script>
+		
+$( document ).ready(function() {
+	var href = document.location.href;
+	var imgSrc = document.location.href.split("?")[1];
+	var viewer = document.querySelector("#viewer");
+	viewer.src = imgSrc;
+	
+	var opener = document.querySelector("#opener");
+	opener.href = imgSrc;
+});
+		
+		</script>
+	</head>
+	<body style="margin: 0px; zoom: 0.7">
+		<a id="opener" target="_blank">
+			<img id="viewer" style="height: 90%;">
+		</a>
+	</body>
+</html>
