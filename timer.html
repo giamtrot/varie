@@ -34,6 +34,21 @@ msg.lang = 'it-IT';
 getDivMinuti().addEventListener('input', controllaNumero, false);
 getDivSecondi().addEventListener('input', controllaNumero, false);
 
+var getParams = function getParams() {
+	let querystring = document.location.href;
+	// remove any preceding url and split
+	querystring = querystring.substring(querystring.indexOf('?')+1).split('&');
+	var params = {}, pair, d = decodeURIComponent;
+	// march and parse
+	for (var i = querystring.length - 1; i >= 0; i--) {
+		pair = querystring[i].split('=');
+		params[d(pair[0])] = d(pair[1] || '');
+	}
+
+	return params;
+};//--  fn  deparam
+
+
 function controllaNumero() {
 	let minuti = getDivMinuti().innerHTML;
 	let secondi = getDivSecondi().innerHTML;
@@ -146,13 +161,17 @@ function avvio() {
 
 function tempoRimasto(tempo){
   let t = Date.parse(tempo) - Date.parse(new Date());
-  let sec = Math.floor( (t/1000) % 60 );
-  let min = Math.floor( (t/1000/60) % 60 );
-  return {
-    'totale': t,
-    'minuti': min,
-    'secondi': sec
-  };
+  return millisToStruct(t);
+}
+
+function millisToStruct(t) {
+	let sec = Math.floor( (t/1000) % 60 );
+	let min = Math.floor( (t/1000/60) % 60 );
+	return {
+		'totale': t,
+		'minuti': min,
+		'secondi': sec
+	};
 }
 
 let intervalloTempo;
@@ -178,7 +197,19 @@ function inizializzoTimer(scadenza){
 				msg += t.secondi + " secondi";
 			}	
 			
-			console.log( nextStop, primaSoglia, nextStop > primaSoglia, secondaSoglia, nextStop > secondaSoglia );
+			if ( (daFare.min || 0) > 0 ) {
+				let minimi = Math.ceil( daFare.min * t.totale / 1000 );
+				// console.log( t.totale, minimi );
+				msg += " minimi " + minimi;
+			}
+			
+			if ( (daFare.max || 0) > 0 ) {
+				let massimi = Math.ceil( daFare.max * t.totale / 1000 );
+				// console.log( t.totale, massimi );
+				msg += " massimi " + massimi;
+			}
+			
+			//console.log( nextStop, primaSoglia, nextStop > primaSoglia, secondaSoglia, nextStop > secondaSoglia );
 			if (nextStop > primaSoglia) {
 				nextStop -= intervalloMaggiore;
 			} else if (nextStop > secondaSoglia) {
@@ -186,7 +217,7 @@ function inizializzoTimer(scadenza){
 			} else {
 				nextStop -= intervalloFinale;
 			}
-			console.log(nextStop);
+			//console.log(nextStop);
 			
 			if (nextStop < 0) {
 				nextStop = 0;
@@ -205,10 +236,32 @@ function inizializzoTimer(scadenza){
     intervalloTempo = setInterval(aggiornaTimer,1000);
 }
 
+let params = getParams();
+let secondi = parseInt(params.secondi || 0);
+let ritardo = parseInt(params.ritardo || 0);
+let min = parseInt(params.min || 0);
+let max = parseInt(params.max || 0);
+if (secondi + ritardo > 0 ) {
+	var initTime = millisToStruct( (secondi + ritardo) * 1000);
+	setMinuti( initTime.minuti );
+	setSecondi( initTime.secondi );
+	controllaNumero();
+}
+var daFare = {};
+if (secondi > 0 && min > 0) {
+	daFare.min = min / secondi;
+}
+
+	
+if (secondi > 0 && max > 0) {
+	daFare.max = max / secondi;
+}
+console.log( daFare );
 </script>
 
 <style>
 body{
+
   /*background-color: #C8E6C9;*/
   font-family: "Calibri Light";
 }
