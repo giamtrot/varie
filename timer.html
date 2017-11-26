@@ -197,15 +197,15 @@ function inizializzoTimer(scadenza){
 				msg += t.secondi + " secondi";
 			}	
 			
-			if ( (daFare.min || 0) > 0 ) {
-				let minimi = Math.ceil( daFare.min * t.totale / 1000 );
+			if ( (daFare.minRatio || 0) > 0 ) {
+				let minimi = Math.ceil( daFare.minRatio * t.totale / 1000 );
 				// console.log( t.totale, minimi );
 				msg += " minimi " + minimi;
 			}
 			
-			if ( (daFare.max || 0) > 0 ) {
-				let massimi = Math.ceil( daFare.max * t.totale / 1000 );
-				// console.log( t.totale, massimi );
+			if ( (daFare.minRatio || 0) > 0 && (daFare.maxRatio || 0) > 0 ) {
+				let massimi = Math.ceil( daFare.min - daFare.max + daFare.maxRatio * t.totale / 1000 );
+				//console.log( daFare.min - daFare.max, daFare.maxRatio * t.totale / 1000, t.totale, massimi );
 				msg += " massimi " + massimi;
 			}
 			
@@ -249,12 +249,14 @@ if (secondi + ritardo > 0 ) {
 }
 var daFare = {};
 if (secondi > 0 && min > 0) {
-	daFare.min = min / secondi;
+	daFare.min = min;
+	daFare.minRatio = ( min || 0 ) / secondi;
 }
 
 	
 if (secondi > 0 && max > 0) {
-	daFare.max = max / secondi;
+	daFare.max = max;
+	daFare.maxRatio = ( max || 0) / secondi;
 }
 console.log( daFare );
 </script>
