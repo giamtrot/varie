@@ -5,16 +5,40 @@
 <body style="zoom: 2;">
 
 <div id="timer">
-    <div class="minuti">
-        <div contenteditable onchange="controllaNumero()"></div>
-        <p>minuti</p>
-    </div>
-    <div class="secondi">
-        <div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
-        <p>secondi</p>
-    </div>
-	<input id="avvio" type="button" value="avvio" disabled="true" onclick="conta()" />
-	<input id="reset" type="button" value="reset" disabled="true" onclick="reset()" />
+	<table>
+		<tr>
+			<td>
+				<div class="minuti">
+					<div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
+				</div>
+			</td>
+			<td>
+				<div class="secondi">
+					<div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
+				</div>
+			</td>
+			<td>
+				<input id="avvio" type="button" value="avvia" disabled="true" onclick="conta()" />
+			</td>
+			<td>
+				<input id="reset" type="button" value="azzera" disabled="true" onclick="reset()" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p class="etichetta">minuti</p>
+			</td>
+			<td>
+				<p class="etichetta">secondi</p>
+			</td>
+			<td>
+				<div id="min" class="etichetta"/>
+			</td>
+			<td>
+				<div id="max" class="etichetta"/>
+			</td>
+		</tr>
+		</table>
 </div>
 
 
@@ -251,19 +275,20 @@ var daFare = {};
 if (secondi > 0 && min > 0) {
 	daFare.min = min;
 	daFare.minRatio = ( min || 0 ) / secondi;
+	document.querySelector("#min").innerText = min;
 }
 
 	
 if (secondi > 0 && max > 0) {
 	daFare.max = max;
 	daFare.maxRatio = ( max || 0) / secondi;
+	document.querySelector("#max").innerText = max;
 }
 console.log( daFare );
 </script>
 
 <style>
 body{
-
   /*background-color: #C8E6C9;*/
   font-family: "Calibri Light";
 }
@@ -290,8 +315,11 @@ body{
   width: 50px;
 }
 
-#timer div p{
+.etichetta {
   font-weight: bold;
+  margin: 5px 5px;
+  text-align: center;
+  font-size: 26px;
 }
 
 #timer input{
