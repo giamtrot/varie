@@ -92,7 +92,7 @@ function parla(text) {
 let nextStop = 0;
 let intervalloMaggiore = 30000;
 let intervalloMinore = 15000;
-let intervalloFinale = 3000;
+let intervalloFinale = 5000;
 let primaSoglia = 60000;
 let secondaSoglia = 15000;
 
@@ -118,6 +118,14 @@ function getSecondi() {
 
 function setMinuti(value) {
 	getDivMinuti().innerHTML = ('0' + value).slice(-2);
+}
+
+function setMimino(value) {
+	document.querySelector("#min").innerText = value;
+}
+
+function setMassimo(value) {
+	document.querySelector("#max").innerText = value;
 }
 
 function setSecondi(value) {
@@ -225,12 +233,14 @@ function inizializzoTimer(scadenza){
 				let minimi = Math.ceil( daFare.minRatio * t.totale / 1000 );
 				// console.log( t.totale, minimi );
 				msg += " minimi " + minimi;
+				setMimino( minimi );
 			}
 			
 			if ( (daFare.minRatio || 0) > 0 && (daFare.maxRatio || 0) > 0 ) {
 				let massimi = Math.ceil( daFare.min - daFare.max + daFare.maxRatio * t.totale / 1000 );
 				//console.log( daFare.min - daFare.max, daFare.maxRatio * t.totale / 1000, t.totale, massimi );
 				msg += " massimi " + massimi;
+				setMassimo( massimi );
 			}
 			
 			//console.log( nextStop, primaSoglia, nextStop > primaSoglia, secondaSoglia, nextStop > secondaSoglia );
@@ -275,15 +285,16 @@ var daFare = {};
 if (secondi > 0 && min > 0) {
 	daFare.min = min;
 	daFare.minRatio = ( min || 0 ) / secondi;
-	document.querySelector("#min").innerText = min;
+	setMimino( min );
 }
 
 	
 if (secondi > 0 && max > 0) {
 	daFare.max = max;
 	daFare.maxRatio = ( max || 0) / secondi;
-	document.querySelector("#max").innerText = max;
+	setMassimo( max );
 }
+
 console.log( daFare );
 </script>
 
