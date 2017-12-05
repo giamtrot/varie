@@ -1,11 +1,18 @@
 <html>
 	<head>
+		<base href="." target="_blank">
 		<script src="https://code.jquery.com/jquery.js"></script>
 		<script>
 		
 $( document ).ready(function() {
 	var href = document.location.href;
-	var imgSrc = document.location.href.split("?")[1];
+	var split = href.split("?");
+	var baseHRef = split[1];
+	var imgSrc = split[2];
+	
+	var base = document.querySelector("base");
+	base.href = baseHRef;
+	
 	var viewer = document.querySelector("#viewer");
 	viewer.src = imgSrc;
 	
