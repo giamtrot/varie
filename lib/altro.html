@@ -7,8 +7,8 @@
 $( document ).ready(function() {
 	var href = document.location.href;
 	var split = href.split("?");
-	var baseHRef = split[1];
-	var imgSrc = split[2];
+	var baseHRef = decodeURIComponent(split[1]);
+	var imgSrc = decodeURIComponent(split[2]);
 	
 	var base = document.querySelector("base");
 	base.href = baseHRef;
