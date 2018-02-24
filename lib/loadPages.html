@@ -1,0 +1,68 @@
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+
+	var createLogDiv = function createLogDiv() {
+
+		var divHtml = "<div id='" + getLogDivId() + "'>";
+		document.body.innerHTML += divHtml;
+		var style = getLogDiv().style;
+
+		style.position = "fixed";
+		style.top = "0";
+		style.width = "100%";
+		style.zIndex = 1000;
+		style.backgroundColor = "white";
+	}
+
+
+	var getLogDivId = function getLogDivId() {
+		return "logDivRg";
+	}
+
+	var getLogDiv = function getLogDiv() {
+		return document.querySelector("#" + getLogDivId());
+	}
+
+	var log = function log(msg) {
+		console.log(msg);
+		getLogDiv().innerHTML += "<span>" + msg + "</span><br />";
+	}
+
+	
+	function loadPages(pages, callback) {
+
+		$.when.apply($, pages.map(function (url) {
+			return $.get(url);
+		})).done(function () {
+			var results = [];
+			for (var i = 0; i < arguments.length; i++) {
+				results.push(arguments[i][0]);
+			}
+			callback(results);
+		});
+	}
+
+	var main = function main() {
+
+		createLogDiv();
+		var pages = ["http://localhost:9080/varie/lib/webflux1.html", "http://localhost:9080/varie/lib/webflux2.html"];
+		loadPages(pages, function (ris) {
+			console.log("done", ris);
+		});
+	}
+
+	var done = false;
+
+	// Attach handlers for all browsers
+	document.onload = document.onreadystatechange = function () {
+
+		if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+
+			done = true;
+
+			main();
+		};
+
+	};
+
+</script>

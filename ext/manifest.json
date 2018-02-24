@@ -5,17 +5,27 @@
   "version": "1.0",
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["contentScript.js"]
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "contentScript.js"
+      ]
     }
   ],
+  "externally_connectable": {
+    "matches": [
+      "*://www.egoallstars.com/*",
+      "http://localhost:9080/*"
+    ]
+  },
   "permissions": [
     "tabs",
-	"webNavigation",
+    "webNavigation",
     "<all_urls>"
   ],
   "browser_action": {
-	"default_popup": "popup.html"
+    "default_popup": "popup.html"
   }
-  
 }
