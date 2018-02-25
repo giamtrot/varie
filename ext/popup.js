@@ -15,13 +15,24 @@ document.addEventListener('DOMContentLoaded', function () {
 	chrome.tabs.query({ active: true, currentWindow: true }, function (tab) {
 		var tabId = tab[0].id;
 
-		chrome.tabs.executeScript(null, { file: "contentScript.js" }, function (result) {
-			// document.writeln("executeScript - Ok");
-			chrome.tabs.sendMessage(tabId, {}, {}, function (result) {
-				// document.writeln("sendMessage - Ok");
-				validateLinks(result);
+		try {
+			chrome.tabs.executeScript(null, { file: "contentScript.js" }, function (result) {
+
+				if (chrome.runtime.lastError) {
+					// Something went wrong
+					console.warn("Whoops.. " + chrome.runtime.lastError.message);
+					return;
+				}
+				// document.writeln("executeScript - Ok");
+				chrome.tabs.sendMessage(tabId, {}, {}, function (result) {
+					// document.writeln("sendMessage - Ok");
+					validateLinks(result);
+				});
 			});
-		});
+		} catch (error) {
+			console.log(error);
+		}
+
 
 	});
 }, false);
@@ -31,5 +42,5 @@ console.log("chrome.runtime.onMessageExternal.addListener");
 chrome.runtime.onMessageExternal.addListener(
 	function (request, sender, sendResponse) {
 		console.log("received", request, sender, sendResponse);
-		chrome.tabs.create({ url: request.url, windowId : sender.tab.windowId, active : false });
+		chrome.tabs.create({ url: request.url, windowId: sender.tab.windowId, active: false });
 	});
