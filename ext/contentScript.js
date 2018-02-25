@@ -1,6 +1,6 @@
-var version = "2018.02.24-1"
-//var scriptUrl = 'http://localhost:9080/varie/lib/background.js';
-var scriptUrl = 'https://rawgit.com/giamtrot/varie/master/lib/background.js';
+var version = "2018.02.25-1"
+var scriptUrl = 'http://localhost:9080/varie/lib/background.js';
+// var scriptUrl = 'https://rawgit.com/giamtrot/varie/master/lib/background.js';
 console.log("contentScript.js: loading " + scriptUrl + " " + version);
 
 var s=document.createElement('script'); 
