@@ -38,6 +38,16 @@
 				<div id="max" class="etichetta"/>
 			</td>
 		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>
+				<div id="med30" class="etichetta"/>
+			</td>
+			<td>
+				<div id="max30" class="etichetta"/>
+			</td>
+		</tr>
 	</table>
 		
 		
@@ -135,6 +145,13 @@ function setMimino(value) {
 
 function setMassimo(value) {
 	document.querySelector("#max").innerText = value;
+}
+
+function setMedio30(value) {
+	document.querySelector("#med30").innerText = value;
+}
+function setMassimo30(value) {
+	document.querySelector("#max30").innerText = value;
 }
 
 function setSecondi(value) {
@@ -280,10 +297,14 @@ function inizializzoTimer(scadenza){
 }
 
 let params = getParams();
-let secondi = parseInt(params.secondi || 0);
-let ritardo = parseInt(params.ritardo || 0);
+let secondi = parseInt(params.sec || 0);
+let ritardo = parseInt(params.rit || 0);
 let min = parseInt(params.min || 0);
 let max = parseInt(params.max || 0);
+let med30 = parseInt(params.med30 || 0);
+let max30 = parseInt(params.max30 || 0);
+setMedio30( med30 );
+setMassimo30( max30 );
 if (secondi + ritardo > 0 ) {
 	var initTime = millisToStruct( (secondi + ritardo) * 1000);
 	setMinuti( initTime.minuti );
