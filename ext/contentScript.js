@@ -6,7 +6,18 @@ console.log("contentScript.js: loading " + scriptUrl + " " + version);
 
 var s = document.createElement('script');
 s.setAttribute('src', scriptUrl);
-document.getElementsByTagName('body')[0].appendChild(s);
-void (s);
 
-console.log("contentScript.js: loaded " + version);
+// Attach handlers for all browsers
+document.onload = document.onreadystatechange = function() {
+
+	if ((!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+        document.getElementsByTagName('body')[0].appendChild(s);
+        void (s);
+
+        console.log("contentScript.js: loaded " + version);
+	};
+
+};
+
+
+
