@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 
 import groovy.xml.MarkupBuilder
 
-final RSS_DIR = /C:\Locale\prg\github\varie\rss/ + "\\"
+final RSS_DIR = /C:\Users\giamt\Desktop\Locale\github\varie\rss/ + "\\"
 
 if (args.size() < 2) {
 	println this.class.getSimpleName() + ".groovy <url del libro> <nome del libro>"
