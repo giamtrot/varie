@@ -35,16 +35,16 @@ def today = new GregorianCalendar(2022, 0, 15)
 xmlMarkup.rss {
 	channel {
 		title(bookTitle)
-		book.block.cards.each{  n->
+		book.block.cards.each{ n->
 			'item' {
-				title(n.downloadable_audio.title)
-				link(n.downloadable_audio.url)
-				description(n.downloadable_audio.title)
-				enclosure(type: "audio/mpeg", url:n.downloadable_audio.url)
+				title(n.audio.title)
+				link(n.audio.url)
+				description(n.audio.title)
+				enclosure(type: "audio/mpeg", url:n.audio.url)
 
 				today.add(Calendar.DATE, 1)
 				pubDate(formatter.format(today.time))
-				guid(n.downloadable_audio.url)
+				guid(n.audio.url)
 			}
 		}
 	}
