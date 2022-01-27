@@ -30,6 +30,7 @@ def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLIS
 def xmlWriter = new StringWriter()
 def xmlMarkup = new MarkupBuilder(xmlWriter)
 def today = new GregorianCalendar()
+today.add(Calendar.DATE, -20)
 // today.add(Calendar.DATE, -items.size() -1)
 xmlMarkup.rss {
 	channel {
