@@ -50,5 +50,5 @@ xmlMarkup.rss {
 	}
 }
 
-println  xmlWriter.toString()
+// println  xmlWriter.toString()
 new File(outFile).write( xmlWriter.toString() )
