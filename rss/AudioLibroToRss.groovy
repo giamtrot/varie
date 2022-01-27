@@ -29,7 +29,7 @@ def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLIS
 
 def xmlWriter = new StringWriter()
 def xmlMarkup = new MarkupBuilder(xmlWriter)
-def today = new GregorianCalendar(2021, 10, 20)
+def today = new GregorianCalendar(2022, 0, 15)
 
 // today.add(Calendar.DATE, -items.size() -1)
 xmlMarkup.rss {
