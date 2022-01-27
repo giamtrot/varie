@@ -37,7 +37,6 @@ xmlMarkup.rss {
 		title(bookTitle)
 		book.block.cards.each{  n->
 			'item' {
-
 				title(n.downloadable_audio.title)
 				link(n.downloadable_audio.url)
 				description(n.downloadable_audio.title)
