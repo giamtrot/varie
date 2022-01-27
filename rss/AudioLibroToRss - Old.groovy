@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat
 
 import groovy.xml.MarkupBuilder
 
-import groovy.json.JsonSlurper
-
 final RSS_DIR = /C:\Users\giamt\Desktop\Locale\github\varie\rss/ + "\\"
 
 if (args.size() < 2) {
@@ -13,18 +11,20 @@ if (args.size() < 2) {
     System.exit(-1)
 }
 
-// https://www.raiplaysound.it/audiolibri/leterredelsacramento.json
+
 def inUrl = args[0]
 def outFile = RSS_DIR + args[1] + ".xml"
 
 println "$inUrl -> $outFile"
 
-def book = new JsonSlurper().parse(new URL(inUrl))
+def parser = new XmlSlurper(new org.ccil.cowan.tagsoup.Parser())
+def doc = parser.parse(inUrl)
 
+def items = doc.'**'.findAll {
+	it['@role'] == 'playlist-item'
+}
 
-def bookTitle = book.title
-println bookTitle
-
+def bookTitle = doc.head.title.text()
 def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLISH)
 
 def xmlWriter = new StringWriter()
@@ -34,21 +34,20 @@ def today = new GregorianCalendar()
 xmlMarkup.rss {
 	channel {
 		title(bookTitle)
-		book.block.cards.each{  n->
+		items.each { n ->
 			'item' {
-
-				title(n.downloadable_audio.title)
-				link(n.downloadable_audio.url)
-				description(n.downloadable_audio.title)
-				enclosure(type: "audio/mpeg", url:n.downloadable_audio.url)
+				title(n.h2.text().trim())
+				link(n['@data-mediapolis'])
+				description(n.h2.text().trim())
+				enclosure(type: "audio/mpeg", url:n['@data-mediapolis'])
 
 				today.add(Calendar.DATE, 1)
 				pubDate(formatter.format(today.time))
-				guid(n.downloadable_audio.url)
+				guid(n['@data-mediapolis'])
 			}
 		}
 	}
 }
 
-println  xmlWriter.toString()
+//		println  xmlWriter.toString()
 new File(outFile).write( xmlWriter.toString() )
