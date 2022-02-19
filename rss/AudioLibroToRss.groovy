@@ -8,15 +8,17 @@ import groovy.json.JsonSlurper
 
 final RSS_DIR = /C:\Users\giamt\Desktop\Locale\github\varie\rss/ + "\\"
 
-if (args.size() < 2) {
-	println this.class.getSimpleName() + ".groovy <url del libro> <nome del libro>"
+if (args.size() < 3) {
+	println this.class.getSimpleName() + ".groovy <url del libro> <nome del libro> <primo giorno>"
     System.exit(-1)
 }
 
 // https://www.raiplaysound.it/audiolibri/leterredelsacramento.json
 def inUrl = args[0]
 def outFile = RSS_DIR + args[1] + ".xml"
-
+def firstDay = args[2]
+println "firstDay"
+System.exit(0)
 println "$inUrl -> $outFile"
 
 def book = new JsonSlurper().parse(new URL(inUrl))
