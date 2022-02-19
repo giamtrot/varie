@@ -44,9 +44,9 @@ xmlMarkup.rss {
 				description(n.audio.title)
 				enclosure(type: "audio/mpeg", url:n.audio.url)
 
-				today.add(Calendar.DATE, 1)
 				pubDate(formatter.format(today.time))
 				guid(n.audio.url)
+				today.add(Calendar.DATE, 1)
 			}
 		}
 	}
