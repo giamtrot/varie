@@ -17,8 +17,8 @@ if (args.size() < 3) {
 def inUrl = args[0]
 def outFile = RSS_DIR + args[1] + ".xml"
 def firstDay = args[2]
-println "firstDay"
-System.exit(0)
+def today = new GregorianCalendar()
+today.setTime(Date.parse("dd/MM/yyyy", firstDay))
 println "$inUrl -> $outFile"
 
 def book = new JsonSlurper().parse(new URL(inUrl))
@@ -31,7 +31,7 @@ def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLIS
 
 def xmlWriter = new StringWriter()
 def xmlMarkup = new MarkupBuilder(xmlWriter)
-def today = new GregorianCalendar(2022, 0, 15)
+
 
 // today.add(Calendar.DATE, -items.size() -1)
 xmlMarkup.rss {
