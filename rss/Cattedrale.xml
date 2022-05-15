@@ -1,13 +1,13 @@
 <rss>
   <channel>
-    <title>Cattedrale - Ad alta voce - Rai Radio 3 - RaiPlay Radio</title>
+    <title>Cattedrale</title>
     <item>
-      <title>"Cattedrale" di Raymond Carver letto da Fausto Paravidino</title>
-      <link>http://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual</link>
-      <description>"Cattedrale" di Raymond Carver letto da Fausto Paravidino</description>
-      <enclosure type='audio/mpeg' url='http://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual' />
-      <pubDate>Sat, 6 Jun 2020 11:02:12 +0200</pubDate>
-      <guid>http://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual</guid>
+      <title>Cattedrale | Ad Alta Voce del 05/09/2016 e del 06/09/2019</title>
+      <link>https://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual</link>
+      <description>Cattedrale | Ad Alta Voce del 05/09/2016 e del 06/09/2019</description>
+      <enclosure type='audio/mpeg' url='https://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual' />
+      <pubDate>Tue, 17 May 2022 12:00:00 +0200</pubDate>
+      <guid>https://mediapolisvod.rai.it/relinker/relinkerServlet.htm?cont=0sy6sKTq9rbTeiliLcbbVQeeqqEEqualeeqqEEqual</guid>
     </item>
   </channel>
 </rss>
