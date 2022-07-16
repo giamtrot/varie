@@ -41,11 +41,11 @@ xmlMarkup.rss {
 			'item' {
 				title(n.audio.title)
 				link(n.audio.url)
-				description(n.audio.title)
-				enclosure(type: "audio/mpeg", url:n.audio.url)
+				description(n.downloadable_audio.title)
+				enclosure(type: "audio/mpeg", url:n.downloadable_audio.url)
 
 				pubDate(formatter.format(today.time))
-				guid(n.audio.url)
+				guid(n.downloadable_audio.url)
 				today.add(Calendar.DATE, 1)
 			}
 		}
