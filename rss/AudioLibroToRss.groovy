@@ -39,11 +39,11 @@ xmlMarkup.rss {
 		title(bookTitle)
 		book.block.cards.each{ n->
 			'item' {
+				def urlAudio = n.downloadable_audio ?: n.audio
 				title(n.audio.title)
-				link(n.audio.url)
-				description(n.downloadable_audio.title)
-				enclosure(type: "audio/mpeg", url:n.downloadable_audio.url)
-
+				link(urlAudio.url)
+				description(n.audio.title)
+				enclosure(type: "audio/mpeg", url:urlAudio.url)
 				pubDate(formatter.format(today.time))
 				guid(n.downloadable_audio.url)
 				today.add(Calendar.DATE, 1)
