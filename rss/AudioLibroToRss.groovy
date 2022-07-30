@@ -40,6 +40,7 @@ xmlMarkup.rss {
 		book.block.cards.each{ n->
 			'item' {
 				def urlAudio = n.downloadable_audio ?: n.audio
+				println urlAudio
 				title(n.audio.title)
 				link(urlAudio.url)
 				description(n.audio.title)
