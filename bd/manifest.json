@@ -1,13 +1,20 @@
 {
-  "name": "BD Utility",
-  "version": "1.0",
-  "manifest_version": 2,
-  "content_scripts": [
-	{
-	  "matches": [
-		"https://www.bennetdrive.it/*"
-	  ],
-	  "js": ["content.js"]
+	"name": "BD Utility",
+	"version": "1.0",
+	"manifest_version": 2,
+	"content_scripts": [{
+		"matches": [
+			"https://www.bennetdrive.it/*",
+			"https://www.bennet.com/*",
+			"http://www.bennet.com/*",
+			"http://www.bennetdrive.it/*"
+		],
+		"js": ["content.js"]
+	}],
+	"permissions": [
+		"history"
+	],
+	"browser_action": {
+		"default_popup": "typedUrls.html"
 	}
-  ]
 }
