@@ -6,7 +6,7 @@ import groovy.xml.MarkupBuilder
 
 import groovy.json.JsonSlurper
 
-final RSS_DIR = /M:\Locale\github\varie\rss/ + "\\"
+final RSS_DIR = /C:\Users\giamt\Desktop\Locale\github\varie\rss/ + "\\"
 
 if (args.size() < 3) {
 	println this.class.getSimpleName() + ".groovy <url del libro> <nome del libro> <primo giorno>"
