@@ -1,0 +1,14 @@
+{
+	"name": "FL Utility",
+	"version": "1.0",
+	"manifest_version": 2,
+	"content_scripts": [{
+		"matches": [
+			"https://www.flickr.com/"
+		],
+		"js": ["content.js"]
+	}],
+	"permissions": [
+		"history"
+	]
+}
