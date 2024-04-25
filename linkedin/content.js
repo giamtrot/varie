@@ -3,15 +3,20 @@ document.onload = document.onreadystatechange = function() {
 	if ((!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
 		// const targetNode = document.getElementById("products-panel");
 		console.clear();
-		const targetNode = document.querySelector(".jobs-unified-top-card")
-		if (!targetNode) {
-			log("no job-panel")
-			return;
-		}
-		addUI(targetNode);
+		checkPanel()
 	};
 
 };
+
+function checkPanel() {
+	const targetNode = document.querySelector(".jobs-unified-top-card")
+	if (!targetNode) {
+		log("no job-panel")
+		setTimeout(checkPanel, 100)
+		return;
+	}
+	addUI(targetNode);
+}
 
 function log(msg){
 

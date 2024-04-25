@@ -1,7 +1,7 @@
 {
 	"name": "BD Utility",
 	"version": "1.0",
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"content_scripts": [{
 		"matches": [
 			"https://www.bennetdrive.it/*",
@@ -13,8 +13,5 @@
 	}],
 	"permissions": [
 		"history"
-	],
-	"browser_action": {
-		"default_popup": "typedUrls.html"
-	}
+	]
 }
