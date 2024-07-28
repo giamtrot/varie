@@ -1,16 +1,26 @@
-const extId = "CIV - 2024.07.19-1"
+// TODO: scelta dinamica del consiglio
+// TODO: migliore fruizione move allegati
+
+const extId = "CIV - 2024.07.28-1"
 const WAIT = 2000
 
-document.onload = document.onreadystatechange = function() {
+log("before start", document.readyState)
+if (document.readyState != 'loaded' && document.readyState != 'complete') {
+	document.onload = document.onreadystatechange = start
+}
+else {
+	start()
+}
+log("after start")
 
-	log()
-	if ((!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
-		// checkPhotostream();
-		// checkPhoto();
-	};
-	
+//=====================================================================
+
+function start() {
+
+	log("start")
 	loadUI()
 	document.addEventListener('keyup', doc_keyUp, false);
+
 };
 
 function loadUI() {
@@ -18,16 +28,154 @@ function loadUI() {
 	log("loadUI")
 	
 	const targetNode = document.querySelector("div.menu-extras > ul")
-	var loadButton = document.createElement("INPUT");
-	loadButton.type = "button"
-	loadButton.id ="rg-civ-load"
-	loadButton.value = "Download All"
-	loadButton.addEventListener("click", downloadAll)
-	targetNode.parentNode.insertBefore(loadButton, targetNode.nextSibling);
+	var downloadloadButton = document.createElement("INPUT");
+	downloadloadButton.type = "button"
+	downloadloadButton.id ="rg-civ-download"
+	downloadloadButton.value = "Download All"
+	downloadloadButton.addEventListener("click", downloadAll)
+	targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
+
+	var fetchButton = document.createElement("INPUT");
+	fetchButton.type = "button"
+	fetchButton.id ="rg-civ-fetch"
+	fetchButton.value = "Fetch All"
+	fetchButton.addEventListener("click", fetchAll)
+	targetNode.parentNode.insertBefore(fetchButton, targetNode.nextSibling);
+
 
 	// targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
 
 	log("loadUI done")
+}
+
+async function fetchAll() {
+
+	let response = await fetch('/CommissioniOnline/ODG/Ricerca', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		body: 'v=&IdOrgano=&NumeroDal=&NumeroAl=&DataConvocazione1Dal=&DataConvocazione1Al=&IdSedeConsiliare=&OggettoDelibera=&DataDelibera=&NumeroDelibera=&pageSize=50&FiltraPerAnnoEsercizio=true&page=1&SortNames=DescrizioneOrganoDeliberante&SortDirections=desc&SortNames=Numero&SortDirections=desc'
+	});
+
+	// {
+	// 	"Id": 88931,
+	// 	"IdSottoTipoAtto": 1544,
+	// 	"DescrizioneOrganoDeliberante": "Consiglio Comunale",
+	// 	"Numero": 1,
+	// 	"DataOraConvocazione1": "15/02/2024 18:30",
+	// 	"DataOraConvocazione2": "",
+	// 	"NumeroProtocollo": null,
+	// 	"DataProtocollo": null,
+	// 	"TipoSeduta": "Pubblica",
+	// 	"TipoSedutaId": 1,
+	// 	"TipoSessione": "Ordinaria",
+	// 	"TipoSessioneId": 1,
+	// 	"SedeConsiliareId": 196,
+	// 	"IsSecondaConvocazione": false,
+	// 	"Firmatario": null,
+	// 	"Sede": "Casa Comunale",
+	// 	"Note": null,
+	// 	"IdOrgano": 99
+	// },
+	let consigli = await response.json();
+	// for (const consiglio of consigli.Data.Items) {
+	// 	log(consiglio)
+	// }
+	const consiglio = consigli.Data.Items.filter((c) => c.Numero == 5)
+	await fetchConsiglio(consiglio[0])
+
+}
+
+async function fetchConsiglio(consiglio) {
+
+	log(consiglio)
+
+	let response = await fetch('/CommissioniOnline/ODG/CercaPuntiODG', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		body: `v=&pageSize=50&Id=${consiglio.Id}&page=1&SortNames=DescrizioneSottotipo&SortDirections=desc&SortNames=Posizione&SortDirections=desc&SortNames=NumeroProposta&SortDirections=desc&SortNames=DataProposta&SortDirections=desc&SortNames=NumeroDelibera&SortDirections=desc&SortNames=DataDelibera&SortDirections=desc`
+	});
+
+	// {
+	// 	"Cancellato": false,
+	// 	"DataProposta": "11/07/2024",
+	// 	"DescrizioneStatoProposta": "Proposta inserita in Ordine del Giorno",
+	// 	"Id": 454534,
+	// 	"IdOrdineGiorno": 104284,
+	// 	"IdPunto": 4239872,
+	// 	"Note": null,
+	// 	"NumeroProposta": 42,
+	// 	"Oggetto": "Comunicazioni del Sindaco  (Art. 62 – Regolamento Consiglio Comunale)\r\n\r\n",
+	// 	"Posizione": 1,
+	// 	"ProgressivoSottotipo": 39,
+	// 	"StatoProposta": 3,
+	// 	"TipoPunto": 0,
+	// 	"NumeroDelibera": null,
+	// 	"DataDelibera": "",
+	// 	"DescrizioneSottotipo": "Delibera di Consiglio"
+	// },
+	let json = await response.json();
+	let odgs= json.Data.Items.filter( (o) => o.Cancellato == false)
+	for (const odg of odgs) {
+		await fetchOdg(odg, 'Documenti')
+		await fetchOdg(odg, 'Allegati')
+	}
+
+}
+
+async function fetchOdg(odg, tipo) {
+
+	log(`ODG: ${tipo} - ${odg.Posizione} - ${odg.Id} - ${odg.Oggetto}`)
+
+	let response = await fetch(`/CommissioniOnline/ODG/Cerca${tipo}Proposta`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		body: `v=&IdPunto=${odg.IdPunto}&pageSize=50&page=1`
+	});
+
+	let json = await response.json();
+	// {
+	// 	"Id": 9172672,
+	// 	"NomeFile": "Proposta.pdf",
+	// 	"MimeType": "application/pdf",
+	// 	"IdAtto": 4239872,
+	// 	"Version": 0,
+	// 	"St": "v3Kgn0lvppq_4hACrmYpni2F1YPGWAIvarTxti-jxME"
+	// }
+	let docs= json.Data.Items
+	index = 0;
+	for (const doc of docs) {
+		index++
+		await fetchFile(odg, tipo, doc, index)
+	}
+
+}
+
+async function fetchFile(odg, tipo, doc, index) {
+
+	const sub = (tipo === 'Documenti' ? "" : "a.") + ("00" + index).slice(-2)
+	const nomefile = `${odg.Posizione}.${sub} - ${odg.Oggetto.substring(0, 100)} - ${doc.NomeFile}`
+	log(`DOC: ${doc.Id} - ${nomefile}`)
+
+	const  linkUrl = tipo === 'Documenti' ? 
+		"/AttiAmministrativi/Common/DownloadDocumentoProdotto" :	
+		"/AttiAmministrativi/Common/DownloadAllegato"
+	;
+
+	const idField = tipo === 'Documenti' ? "IdDocumento" : "IdAllegato"
+;
+	// IdAllegato=10180204&st=unr_NSyl9hzODWqfyOS57_KUGdinnvf2SPxKivqxBF0
+	const queryString = `${idField}=` + doc.Id + '&IdAtto=' + doc.IdAtto + '&NomeFile=' + nomefile + '&MimeType=' + doc.Mime + '&st=' + doc.St;
+	
+	window.open(linkUrl + '?' + queryString);
+	if (tipo == 'Allegati') {
+		console.log(`move "${doc.NomeFile}" "${nomefile}"`)
+	}
 }
 
 
@@ -39,9 +187,11 @@ function doc_keyUp(e) {
     }
 }
 
-function log(msg){
-	console.log(extId, " - ", new Date(), " - ", msg)
+function log(...msg){
+	const date = new Date();
+	console.log(extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - ", msg)
 }
+
 
 async function downloadAll() {
 	log("downloadAll()");

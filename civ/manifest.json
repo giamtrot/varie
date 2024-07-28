@@ -1,11 +1,23 @@
 {
 	"name": "CIV Utility",
-	"version": "1.0",
+	"version": "1.1",
 	"manifest_version": 3,
 	"content_scripts": [{
 		"matches": [
 			"https://segreteria.civilianext.it/*"
 		],
-		"js": ["content.js"]
-	}]
+		"js": ["loader.js"]
+	}],
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"host_permissions": [
+		"https://segreteria.civilianext.it/*"
+	],
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"scripting"
+	]
 }
