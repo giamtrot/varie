@@ -1,12 +1,23 @@
-const extId = "FL - 2024.04.11-1"
+const extId = "FL - 2024.07.24-1"
 
 const ALBUMS_PATH = ".view .sub-photo-title-desc-view"
 const ALBUMS_DIV = "div_rg_1"
 
-document.onload = document.onreadystatechange = function() {
+log("before start", document.readyState)
+if (document.readyState != 'loaded' && document.readyState != 'complete') {
+	document.onload = document.onreadystatechange = start
+}
+else {
+	start()
+}
+log("after start")
 
-	log()
-	if ((!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+//=====================================================================
+
+function start() {
+
+	log("in")
+	if ((!document.readyState || document.readyState == 'loaded' || document.readyState == 'complete')) {
 		checkPhotostream();
 		checkPhoto();
 	};
@@ -16,7 +27,7 @@ document.onload = document.onreadystatechange = function() {
 
 function doc_keyUp(e) {
 
-	console.log(e)
+	log(e)
 	if (e.ctrlKey && e.altKey && e.key === 'a') {
         openAlbums();
     }
@@ -92,8 +103,9 @@ function openPhotostream() {
 	}
 }
 
-function log(msg){
-	console.log(extId, " - ", msg)
+function log(...msg){
+	const date = new Date();
+	console.log(extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - ", msg)
 }
 
 
@@ -172,36 +184,98 @@ function addUI(targetNode) {
 
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
 
+	var scrollButton48 = document.createElement("INPUT");
+	scrollButton48.type = "button"
+	scrollButton48.id ="rg-fli-scroll"
+	scrollButton48.value = "Scroll Free"
+	scrollButton48.addEventListener("click", scrollStartFree)
+	targetNode.parentNode.insertBefore(scrollButton48, targetNode.nextSibling);
+	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+	
 	var scrollButton = document.createElement("INPUT");
 	scrollButton.type = "button"
 	scrollButton.id ="rg-fli-scroll"
-	scrollButton.value = "Scroll"
-	scrollButton.addEventListener("click", scroll)
+	scrollButton.value = "Scroll 24"
+	scrollButton.addEventListener("click", () => { scrollStart(24) } )
 	targetNode.parentNode.insertBefore(scrollButton, targetNode.nextSibling);
-	
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+	
+	var scroll12Button = document.createElement("INPUT");
+	scroll12Button.type = "button"
+	scroll12Button.id ="rg-fli-scroll12"
+	scroll12Button.value = "Scroll 12"
+	scroll12Button.addEventListener("click", () => { scrollStart(12) } )
+	targetNode.parentNode.insertBefore(scroll12Button, targetNode.nextSibling);
+	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+	
+	var loadPageButton = document.createElement("INPUT");
+	loadPageButton.type = "button"
+	loadPageButton.id ="rg-fli-loadPage"
+	loadPageButton.value = "Load Page"
+	loadPageButton.addEventListener("click", loadPage )
+	targetNode.parentNode.insertBefore(loadPageButton, targetNode.nextSibling);
+	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+
 	log("addUI done")
 }
 	
-function scroll() {
-
+function getHours() {
 	const times = document.querySelectorAll(".time");
-	const lastTime = times[times.length - 1].textContent.trim()
+	let lastTime = times[times.length - 1].textContent.trim()
 	console.log("scroll: ", lastTime)
-	if (lastTime === "1d ago") {
-		return;
+	let hours = 0;
+	if ( lastTime.endsWith("ago") ) {
+		lastTime = lastTime.substr(0, lastTime.length - 4);
+		let multi = 1
+		if ( lastTime.endsWith("d") ) {
+			multi = 24
+		}
+		hours = lastTime.substr(0, lastTime.length - 1) * multi;
 	}
-	if (lastTime === "2d ago") {
-		return;
+	else {
+		if (lastTime === "1 g. fa") {
+			hours = 24;
+		}
+		if (lastTime === "2 gg. fa") {
+			hours = 48;
+		}
 	}
-	if (lastTime === "1 g. fa") {
-		return;
-	}
-	if (lastTime === "2 gg. fa") {
+	console.log("scroll: ", hours)
+	return hours
+}
+
+class Scroller {
+  
+  constructor(tillHours) {
+    this.tillHours = tillHours;
+  }
+  
+  scroll() {
+	const hours = getHours();
+	
+	console.log("tillHours: ", this.tillHours)
+	if (hours >= this.tillHours) {
 		return;
 	}
 	window.scrollBy(0, 800); 
-	setTimeout(scroll, 100)	
+	setTimeout(() => { this.scroll() }, 100)	
+  }
+}
+
+
+
+function scrollStart(tillHours) {
+
+	const scroller = new Scroller(tillHours)
+	scroller.scroll()
+	
+}
+
+function scrollStartFree() {
+
+	const tillHours = prompt("Till Hours", 48)
+	const scroller = new Scroller(tillHours)
+	scroller.scroll()
 }
 
 function load(){
@@ -213,4 +287,3 @@ function load(){
 	Array.from(uniqueUrls).forEach(a => window.open(a)); 
 		
 }
-
