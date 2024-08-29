@@ -5,8 +5,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"https://www.flickr.com/*",
-				"https://www.freeones.com/*"
+				"https://www.flickr.com/*"
 			],
 			"js": [
 				"Mustache.js",
@@ -14,6 +13,16 @@
 			],
 			"css": [
 				"fl.css"
+			],
+			"web_accessible_resources": [
+				{
+					"resources": [
+						"template.mustache"
+					],
+					"matches": [
+						"<all_urls>"
+					]
+				}
 			]
 		}
 	],
@@ -22,22 +31,11 @@
 		"type": "module"
 	},
 	"host_permissions": [
-		"https://www.flickr.com/*",
-		"https://www.freeones.com/*"
+		"https://www.flickr.com/*"
 	],
 	"permissions": [
 		"tabs",
 		"activeTab",
 		"scripting"
-	],
-	"web_accessible_resources": [
-		{
-			"resources": [
-				"template.mustache"
-			],
-			"matches": [
-				"<all_urls>"
-			]
-		}
 	]
 }

@@ -1,4 +1,4 @@
-const extId = "FL - 2024.07.24-1"
+const extId = "FL - 2024.08.22-1"
 
 const ALBUMS_PATH = ".view .sub-photo-title-desc-view"
 const ALBUMS_DIV = "div_rg_1"
@@ -14,12 +14,22 @@ log("after start")
 
 //=====================================================================
 
+function prova2() {
+	log("prova riprovata")
+}
+
 function start() {
 
 	log("in")
 	if ((!document.readyState || document.readyState == 'loaded' || document.readyState == 'complete')) {
 		checkPhotostream();
 		checkPhoto();
+
+		log(document.location.hostname)
+		if (document.location.hostname.endsWith("ones.com")) {
+			document.querySelectorAll("#fxgp-gallery > figure:nth-child(1) > a")[0].click()
+		}
+
 	};
 	
 	document.addEventListener('keyup', doc_keyUp, false);
@@ -105,7 +115,8 @@ function openPhotostream() {
 
 function log(...msg){
 	const date = new Date();
-	console.log(extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - ", msg)
+	const logMsg = [extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - ", ...msg]
+	console.log(...logMsg)
 }
 
 
@@ -282,8 +293,50 @@ function load(){
 	
 	const urls = document.querySelectorAll(".title-container > a")
 	// log(urls);
-	const uniqueUrls = new Set(Array.from(urls).map(a => a.href));
-	log(uniqueUrls);
-	Array.from(uniqueUrls).forEach(a => window.open(a)); 
-		
+	const uniqueUrls = [...new Set(Array.from(urls).map(a => a.href))]
+	log("uniqueUrls", uniqueUrls);
+	//Array.from(uniqueUrls).forEach(a => window.open(a)); 
+
+	const STEP = 20
+	const blocks = []
+
+	let from = 0
+
+	while (true) {
+		let to = Math.min(from + STEP, uniqueUrls.length)
+		blocks.push(uniqueUrls.slice(from, to))
+
+		if (to == uniqueUrls.length) {
+			break
+		}
+
+		from += STEP
+	}
+
+	log("blocks", blocks)
+	blocks.forEach( (b, i) => createBlock(b, i))
+
+}
+
+function createBlock(urls, pos) {
+	log("createBlock", urls, pos)
+
+	const targetNode = document.querySelector("#rg-fli-load")
+
+	var blockButton = document.createElement("INPUT");
+	blockButton.type = "button"
+	blockButton.id ="rg-fli-block-" + pos
+	blockButton.value = "Block " + (pos+1)
+	blockButton.style.backgroundColor = 'red'
+	blockButton.addEventListener("click", () => { loadBlock(blockButton, urls) })
+	targetNode.parentNode.insertBefore(blockButton, targetNode);
+
+	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode);
+}
+
+function loadBlock(source, urls){
+	log("loadBlock", urls)
+	source.style.backgroundColor = 'green'
+	urls.forEach(a => window.open(a)); 
+
 }

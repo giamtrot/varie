@@ -1,0 +1,27 @@
+<!-- <table style="table-layout: fixed; width: 100%;">
+    <tr>
+    {{#images}}
+        <td class="container" style="">
+        <div class="photostream">Photostream</div>
+        <div class="description">Description</div>
+        <div class="album">Album</div>
+        <a target="_blank" href="{{url}}">
+            <img style="width:100%; height:auto;" src="{{img}}" />
+        </a>
+        </td>
+    {{/images}}
+    </tr>
+</table> -->
+
+<div class="parent-container">
+    {{#images}}
+    <div class="child-container">
+    <div class="photostream">Photostream</div>
+    <div class="description">Description</div>
+    <div class="album">Album</div>
+    <a target="_blank" href="{{url}}">
+        <img style="width:100%; height:auto;" src="{{img}}" />
+    </a>
+    </div>
+    {{/images}}
+</div>
