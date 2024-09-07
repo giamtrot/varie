@@ -11,9 +11,6 @@
 			"js": [
 				"Mustache.js",
 				"loader.js"
-			],
-			"css": [
-				"fl.css"
 			]
 		}
 	],
