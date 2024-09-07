@@ -14,61 +14,70 @@ log("after start")
 
 //=====================================================================
 
-function prova2() {
-	log("prova riprovata")
-}
-
 function start() {
 
-	log("in")
+	log("start")
 	if ((!document.readyState || document.readyState == 'loaded' || document.readyState == 'complete')) {
 		checkPhotostream();
 		checkPhoto();
 
-		log(document.location.hostname)
-		if (document.location.hostname.endsWith("ones.com")) {
-			document.querySelectorAll("#fxgp-gallery > figure:nth-child(1) > a")[0].click()
-		}
+		ones()
 
 	};
-	
+
 	document.addEventListener('keyup', doc_keyUp, false);
-};
+}
+
+function ones() {
+	log(document.location.hostname)
+	if (!document.location.hostname.endsWith("ones.com")) {
+		return
+	}
+
+	if (document.location.href.endsWith("/feed")) {
+		const aurl = document.location.href.replace("/feed", "/photos?q=&f[categories]=Anal&filter_mode[categories]=and&filter_mode[global]=and")
+		const furl = document.location.href.replace("/feed", "/photos?q=&f[categories]=Facial&filter_mode[categories]=and&filter_mode[global]=and")
+		const win = window.open(furl, "_blank")
+		document.location.href = aurl
+	} else {
+		document.querySelectorAll("#fxgp-gallery > figure:nth-child(1) > a")[0].click()
+	}
+}
 
 function doc_keyUp(e) {
 
 	log(e)
 	if (e.ctrlKey && e.altKey && e.key === 'a') {
-        openAlbums();
-    }
+		openAlbums();
+	}
 
 	if (e.ctrlKey && e.altKey && e.key === 'x') {
-        openPhotostream();
-    }
+		openPhotostream();
+	}
 
 	if (e.ctrlKey && e.altKey && e.key === 'ArrowRight') {
-        nextPage();
-    }
+		nextPage();
+	}
 
 	if (e.ctrlKey && e.altKey && e.key === 'ArrowLeft') {
-        previousPage();
-    }
+		previousPage();
+	}
 
 	if (e.ctrlKey && e.altKey && e.key === 'z') {
-        openAbout();
-    }
-	
+		openAbout();
+	}
+
 	if (e.ctrlKey && e.altKey && (e.keyCode >= 48 && e.keyCode <= 57)) {
-        openPhoto(e.keyCode - 48);
-    }
+		openPhoto(e.keyCode - 48);
+	}
 
 }
 
 function openPhoto(pos) {
 	console.log("openPhoto()", pos);
 	const photos = document.querySelectorAll(".photo-list-photo-interaction > a")
-	if (photos.length > pos ) {
-		photos[pos-1].click()
+	if (photos.length > pos) {
+		photos[pos - 1].click()
 	}
 }
 
@@ -93,16 +102,16 @@ function openAbout() {
 function openAlbums() {
 	// console.log("openAlbums()");
 	const albums = document.querySelector("#" + ALBUMS_DIV).querySelectorAll("a.thumbnail")
-	
+
 	if (albums.length == 0) {
 		return
 	}
-	
+
 	if (albums.length == 1) {
 		document.location.href = albums[0]
 	}
 	else {
-		Array.from(albums).forEach(a => window.open(a)); 
+		Array.from(albums).forEach(a => window.open(a));
 	}
 }
 
@@ -113,7 +122,7 @@ function openPhotostream() {
 	}
 }
 
-function log(...msg){
+function log(...msg) {
 	const date = new Date();
 	const logMsg = [extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - ", ...msg]
 	console.log(...logMsg)
@@ -126,7 +135,7 @@ function checkPhotostream() {
 		return;
 	}
 
-	
+
 	const targetNode = document.querySelector(".flickr-logo-container")
 	if (!targetNode) {
 		log("no logo")
@@ -142,14 +151,14 @@ function checkPhoto() {
 		return;
 	}
 
-	
+
 	const targetNode = document.querySelector(ALBUMS_PATH)
 	if (!targetNode) {
 		log("No Photo found")
 		setTimeout(checkPhoto, 100)
 		return;
 	}
-	
+
 	const d1 = document.createElement("DIV")
 	d1.id = ALBUMS_DIV
 	document.body.appendChild(d1)
@@ -167,7 +176,7 @@ function checkPhoto() {
 	d1.appendChild(targetNode)
 	targetNode.style.backgroundColor = "white"
 	targetNode.style.margin = "0"
-	
+
 	checkAlbum(d1)
 }
 
@@ -175,12 +184,12 @@ function checkAlbum(d1) {
 	const targetNode = document.querySelector(".view .sub-photo-albums-view")
 	if (!targetNode) {
 		log("No Photo found")
-		setTimeout(() => {checkAlbum(d1)}, 100)
+		setTimeout(() => { checkAlbum(d1) }, 100)
 		return;
-	 }
+	}
 	d1.appendChild(targetNode)
 	targetNode.style.backgroundColor = "white"
-//	targetNode.style.marginTop = "0px"
+	//	targetNode.style.marginTop = "0px"
 }
 
 
@@ -188,7 +197,7 @@ function addUI(targetNode) {
 
 	var loadButton = document.createElement("INPUT");
 	loadButton.type = "button"
-	loadButton.id ="rg-fli-load"
+	loadButton.id = "rg-fli-load"
 	loadButton.value = "Load"
 	loadButton.addEventListener("click", load)
 	targetNode.parentNode.insertBefore(loadButton, targetNode.nextSibling);
@@ -197,48 +206,48 @@ function addUI(targetNode) {
 
 	var scrollButton48 = document.createElement("INPUT");
 	scrollButton48.type = "button"
-	scrollButton48.id ="rg-fli-scroll"
+	scrollButton48.id = "rg-fli-scroll"
 	scrollButton48.value = "Scroll Free"
 	scrollButton48.addEventListener("click", scrollStartFree)
 	targetNode.parentNode.insertBefore(scrollButton48, targetNode.nextSibling);
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
-	
+
 	var scrollButton = document.createElement("INPUT");
 	scrollButton.type = "button"
-	scrollButton.id ="rg-fli-scroll"
+	scrollButton.id = "rg-fli-scroll"
 	scrollButton.value = "Scroll 24"
-	scrollButton.addEventListener("click", () => { scrollStart(24) } )
+	scrollButton.addEventListener("click", () => { scrollStart(24) })
 	targetNode.parentNode.insertBefore(scrollButton, targetNode.nextSibling);
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
-	
+
 	var scroll12Button = document.createElement("INPUT");
 	scroll12Button.type = "button"
-	scroll12Button.id ="rg-fli-scroll12"
+	scroll12Button.id = "rg-fli-scroll12"
 	scroll12Button.value = "Scroll 12"
-	scroll12Button.addEventListener("click", () => { scrollStart(12) } )
+	scroll12Button.addEventListener("click", () => { scrollStart(12) })
 	targetNode.parentNode.insertBefore(scroll12Button, targetNode.nextSibling);
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
-	
+
 	var loadPageButton = document.createElement("INPUT");
 	loadPageButton.type = "button"
-	loadPageButton.id ="rg-fli-loadPage"
+	loadPageButton.id = "rg-fli-loadPage"
 	loadPageButton.value = "Load Page"
-	loadPageButton.addEventListener("click", loadPage )
+	loadPageButton.addEventListener("click", loadPage)
 	targetNode.parentNode.insertBefore(loadPageButton, targetNode.nextSibling);
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
 
 	log("addUI done")
 }
-	
+
 function getHours() {
 	const times = document.querySelectorAll(".time");
 	let lastTime = times[times.length - 1].textContent.trim()
 	console.log("scroll: ", lastTime)
 	let hours = 0;
-	if ( lastTime.endsWith("ago") ) {
+	if (lastTime.endsWith("ago")) {
 		lastTime = lastTime.substr(0, lastTime.length - 4);
 		let multi = 1
-		if ( lastTime.endsWith("d") ) {
+		if (lastTime.endsWith("d")) {
 			multi = 24
 		}
 		hours = lastTime.substr(0, lastTime.length - 1) * multi;
@@ -256,21 +265,21 @@ function getHours() {
 }
 
 class Scroller {
-  
-  constructor(tillHours) {
-    this.tillHours = tillHours;
-  }
-  
-  scroll() {
-	const hours = getHours();
-	
-	console.log("tillHours: ", this.tillHours)
-	if (hours >= this.tillHours) {
-		return;
+
+	constructor(tillHours) {
+		this.tillHours = tillHours;
 	}
-	window.scrollBy(0, 800); 
-	setTimeout(() => { this.scroll() }, 100)	
-  }
+
+	scroll() {
+		const hours = getHours();
+
+		console.log("tillHours: ", this.tillHours)
+		if (hours >= this.tillHours) {
+			return;
+		}
+		window.scrollBy(0, 800);
+		setTimeout(() => { this.scroll() }, 100)
+	}
 }
 
 
@@ -279,7 +288,7 @@ function scrollStart(tillHours) {
 
 	const scroller = new Scroller(tillHours)
 	scroller.scroll()
-	
+
 }
 
 function scrollStartFree() {
@@ -289,8 +298,8 @@ function scrollStartFree() {
 	scroller.scroll()
 }
 
-function load(){
-	
+function load() {
+
 	const urls = document.querySelectorAll(".title-container > a")
 	// log(urls);
 	const uniqueUrls = [...new Set(Array.from(urls).map(a => a.href))]
@@ -314,7 +323,7 @@ function load(){
 	}
 
 	log("blocks", blocks)
-	blocks.forEach( (b, i) => createBlock(b, i))
+	blocks.forEach((b, i) => createBlock(b, i))
 
 }
 
@@ -325,8 +334,8 @@ function createBlock(urls, pos) {
 
 	var blockButton = document.createElement("INPUT");
 	blockButton.type = "button"
-	blockButton.id ="rg-fli-block-" + pos
-	blockButton.value = "Block " + (pos+1)
+	blockButton.id = "rg-fli-block-" + pos
+	blockButton.value = "Block " + (pos + 1)
 	blockButton.style.backgroundColor = 'red'
 	blockButton.addEventListener("click", () => { loadBlock(blockButton, urls) })
 	targetNode.parentNode.insertBefore(blockButton, targetNode);
@@ -334,9 +343,9 @@ function createBlock(urls, pos) {
 	targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode);
 }
 
-function loadBlock(source, urls){
+function loadBlock(source, urls) {
 	log("loadBlock", urls)
 	source.style.backgroundColor = 'green'
-	urls.forEach(a => window.open(a)); 
+	urls.forEach(a => window.open(a));
 
 }
