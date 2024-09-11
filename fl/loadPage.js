@@ -101,7 +101,7 @@ async function getImageInfo(url) {
 	image.photostream = { name: photostreamName, url: photostreamURL }
 
 	// const desc = doc.querySelectorAll("meta[name='description']")[0]?.content
-	const desc = doc.querySelectorAll("div.title-desc-block.showFull")[0]?.innerText
+	const desc = doc.querySelectorAll("div.title-desc-block.showFull")[0]?.innerText?.replace("Done\n\n\t", "")?.trim()
 	// log(desc)
 	if (desc?.length > 200) {
 		image.description = desc.substring(0, 196) + " ..."
@@ -118,11 +118,13 @@ async function getImageInfo(url) {
 	const api_key = window?.YUI_config?.flickr?.api?.site_key
 	const photo_id = url.split('/')[5]
 	const detailAPI = `https://api.flickr.com/services/rest?photo_id=${photo_id}&csrf=${csrf}&api_key=${api_key}&method=flickr.photos.getAllContexts&format=json&hermes=1&nojsoncallback=1`
-	// log("detailAPI", detailAPI)
+	log("detailAPI", photo_id, detailAPI)
 
-	const detailRis = await fetch(detailAPI)
+	const detailRis = await fetch(detailAPI, {
+		credentials: 'include'
+	})
 	const detailJson = await detailRis.json()
-	// log(JSON.stringify(detailJson))
+	log(photo_id, JSON.stringify(detailJson))
 
 	// // log(doc.documentElement.outerHTML)
 	// // root.auth = {"signedIn":true,"csrf":"1722138877:r29brohfedb:ddf6a30b05b02ddb3b5d3d6b16377ec2"
@@ -142,7 +144,7 @@ async function getImageInfo(url) {
 		albums.forEach(a => a.url = albumUrlTemplate.replace("$owner", a.owner).replace("$id", a.id))
 		// log(albums)
 		const album = albums.map( a => `<a href="${a.url}">${a.title}</a>`)
-		log(album)
+		log("album", album, album.join("<br />"))
 		image.album = album.join("<br />")
 	} 
 	return image
@@ -150,6 +152,7 @@ async function getImageInfo(url) {
 }
 
 function render(target, images) {
+	log("render", images)
 	const template = `
 <div class="parent-container-rg">
     {{#images}}

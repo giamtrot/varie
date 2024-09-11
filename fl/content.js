@@ -37,8 +37,10 @@ function ones() {
 	if (document.location.href.endsWith("/feed")) {
 		const aurl = document.location.href.replace("/feed", "/photos?q=&f[categories]=Anal&filter_mode[categories]=and&filter_mode[global]=and")
 		const furl = document.location.href.replace("/feed", "/photos?q=&f[categories]=Facial&filter_mode[categories]=and&filter_mode[global]=and")
-		const win = window.open(furl, "_blank")
-		document.location.href = aurl
+		const win2 = window.open(aurl, "_blank")
+		const win1 = window.open(furl, "_blank")
+		// window.close()
+		// document.location.href = aurl
 	} else {
 		document.querySelectorAll("#fxgp-gallery > figure:nth-child(1) > a")[0].click()
 	}
