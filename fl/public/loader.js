@@ -2,7 +2,7 @@
 document.onreadystatechange = document.onload = function () {
     console.log("loader.js");
     if ((!this.readyState || this.readyState == 'complete')) {
-        loadScripts(['utils.js', 'mustache.js', 'loadPage.js', 'content.js'], "MAIN");
+        loadScripts(['content.bundle.js'], "MAIN");
         window.addEventListener("message", forwardOpenTab);
     }
     ;

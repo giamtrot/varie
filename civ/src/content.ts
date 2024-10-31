@@ -38,7 +38,7 @@ function loadUI() {
 	downloadloadButton.id = "rg-civ-download"
 	downloadloadButton.value = "Download All"
 	downloadloadButton.addEventListener("click", downloadAll)
-	targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
+	// targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
 
 	var fetchButton = document.createElement("INPUT") as HTMLInputElement;
 	fetchButton.type = "button"
@@ -87,7 +87,13 @@ async function fetchAll() {
 	// for (const consiglio of consigli.Data.Items) {
 	// 	log(consiglio)
 	// }
-	const consiglio = consigli.Data.Items.filter((c: { Numero: number }) => c.Numero == 5)
+	let ultimo = consigli.Data.Items.sort( (a: { Numero: number }, b: { Numero: number }) => b.Numero - a.Numero )[0].Numero
+	let quale = prompt("Quale consiglio", ultimo);
+	if (quale == null) {
+		return
+	}
+	log(`Scelto ${quale}`)
+	const consiglio = consigli.Data.Items.filter((c: { Numero: string }) => c.Numero == quale)
 	await fetchConsiglio(consiglio[0])
 
 }
@@ -207,7 +213,7 @@ async function downloadAll() {
 
 	let odgTable = document.querySelectorAll("#GridOdg > div.awe-mcontent > div.awe-content.awe-tablc > div > table")[0] as HTMLTableElement
 	log(odgTable)
-	let odg = Array.from(odgTable.rows).find((r) => r.cells[1].textContent === '5')
+	let odg = Array.from(odgTable.rows).find( (r) => r.cells[1].textContent === '6' )
 	if (!odg) {
 		log("odg not found")
 		return

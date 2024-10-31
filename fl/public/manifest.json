@@ -9,7 +9,6 @@
 				"https://www.freeones.com/*"
 			],
 			"js": [
-				"Mustache.js",
 				"loader.js"
 			]
 		}

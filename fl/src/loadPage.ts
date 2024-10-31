@@ -1,7 +1,6 @@
 import { log } from "./utils"
 
-import * as Mustache from 'mustache'
-
+import Mustache from 'mustache';
 
 const FOR_PAGE = 12
 

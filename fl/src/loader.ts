@@ -3,10 +3,11 @@ document.onreadystatechange = (document as any).onload = function (this: Documen
     console.log("loader.js")
 
     if ((!this.readyState || this.readyState == 'complete')) {
-        loadScripts(['utils.js', 'mustache.js', 'loadPage.js', 'content.js'], "MAIN")
+        loadScripts(['content.bundle.js'], "MAIN")
         window.addEventListener("message", forwardOpenTab );
     };
 };
+
 
 function forwardOpenTab(event: MessageEvent<any>)  {
     if (event.source !== window || !event.data.action || event.data.action !== "openTab") return;
