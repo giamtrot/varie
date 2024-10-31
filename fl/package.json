@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/chrome": "^0.0.279",
+    "@types/mustache": "^4.2.5",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
+  }
+}

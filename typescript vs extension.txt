@@ -1,0 +1,65 @@
+Per configurare un ambiente di sviluppo per estensioni Chrome in TypeScript, segui questi passaggi:
+
+1. Installa le dipendenze: Esegui il comando seguente per installare le dipendenze necessarie per lo sviluppo di estensioni Chrome:
+    npm install --save-dev typescript @types/chrome
+
+2. Crea un file tsconfig.json: Crea un file tsconfig.json nella radice del progetto con il seguente contenuto:
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
+
+7. Crea un file manifest.json: Crea un file manifest.json nella radice del progetto con il seguente contenuto:
+{
+  "manifest_version": 2,
+  "name": "My Chrome Extension",
+  "version": "1.0",
+  "description": "Una breve descrizione della mia estensione",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}
+
+8. Crea un file background.js: Crea un file background.js nella radice del progetto con il seguente contenuto:
+import { chrome } from 'chrome';
+
+chrome.browserAction.onClicked.addListener(() => {
+  console.log('Cliccato!');
+});
+
+
+9. Crea un file contentScript.js: Crea un file contentScript.js nella radice del progetto con il seguente contenuto:
+import { chrome } from 'chrome';
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('Ricevuto messaggio:', request);
+});
+
+10. Compila il codice: Esegui il comando seguente per compilare il codice TypeScript:
+tsc
+
+11. Carica l'estensione: Carica l'estensione in Chrome eseguendo il comando seguente:
+chrome://extensions/
+e cliccando su "Carica estensione non pacchettizzata". Seleziona la cartella dist del tuo progetto.
+
+12. Attiva il watch con tsc -w
+
+Ora puoi iniziare a sviluppare la tua estensione Chrome in TypeScript!
