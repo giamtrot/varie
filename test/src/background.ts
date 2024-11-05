@@ -9,18 +9,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 async function handleMessage(message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) {
 	try {
 		if (message.action === "loadScripts") {
-			await loadScriptsHandler(message, sender, sendResponse);
+			await loadScriptsHandler(message, sender);
 			sendResponse({ success: true, message: "done " + message.action });
 		} else if (message.action === "createTabFromHtml") {
-			const window = await createTabFromHtmlHandler(message.data.title, message.data.html);
+			await createTabFromHtmlHandler(message.data.title, message.data.html);
 			sendResponse({ success: true, message: "done " + message.action })
 		} else if (message.action === "openTab") {
 			await openTabHandler(message);
+			sendResponse({ success: true, message: "done " + message.action })
 		} else {
 			sendResponse({ success: false, message: "error: handler not found for " + message.action })
 		}
 	} catch (error) {
-		sendResponse({ success: false, data: error });
+		sendResponse({ success: false, message: "error executing " + message.action, data: error });
 	}
 }
 
@@ -33,8 +34,7 @@ async function createTabFromHtmlHandler(title: string, html: string) {
 	})
 
 	if (!tab.id) {
-		console.error('Tab ID is undefined');
-		return;
+		throw new Error('Tab ID is undefined');
 	}
 
 	chrome.scripting.executeScript({
@@ -49,11 +49,9 @@ async function createTabFromHtmlHandler(title: string, html: string) {
 }
 
 
-function loadScriptsHandler(message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) {
+async function loadScriptsHandler(message: any, sender: chrome.runtime.MessageSender) {
 	if (!sender.tab || sender.tab.id == undefined) {
-		sendResponse("error: loadScripts failed because sender.tab is not found");
-		console.log(sender)
-		return
+		throw new Error("loadScripts failed because sender.tab is not found")
 	}
 
 	console.log("loadScripts", message.files, sender.tab.id);
@@ -62,7 +60,6 @@ function loadScriptsHandler(message: any, sender: chrome.runtime.MessageSender, 
 		files: message.files,
 		world: message.world
 	});
-	sendResponse("done: " + message.action);
 }
 
 async function openTabHandler(message: any) {

@@ -43,13 +43,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 function handleMessage(message, sender, sendResponse) {
     return __awaiter(this, void 0, void 0, function () {
-        var window_1, error_1;
+        var error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 8, , 9]);
                     if (!(message.action === "loadScripts")) return [3 /*break*/, 2];
-                    return [4 /*yield*/, loadScriptsHandler(message, sender, sendResponse)];
+                    return [4 /*yield*/, loadScriptsHandler(message, sender)];
                 case 1:
                     _a.sent();
                     sendResponse({ success: true, message: "done " + message.action });
@@ -58,7 +58,7 @@ function handleMessage(message, sender, sendResponse) {
                     if (!(message.action === "createTabFromHtml")) return [3 /*break*/, 4];
                     return [4 /*yield*/, createTabFromHtmlHandler(message.data.title, message.data.html)];
                 case 3:
-                    window_1 = _a.sent();
+                    _a.sent();
                     sendResponse({ success: true, message: "done " + message.action });
                     return [3 /*break*/, 7];
                 case 4:
@@ -66,6 +66,7 @@ function handleMessage(message, sender, sendResponse) {
                     return [4 /*yield*/, openTabHandler(message)];
                 case 5:
                     _a.sent();
+                    sendResponse({ success: true, message: "done " + message.action });
                     return [3 /*break*/, 7];
                 case 6:
                     sendResponse({ success: false, message: "error: handler not found for " + message.action });
@@ -73,7 +74,7 @@ function handleMessage(message, sender, sendResponse) {
                 case 7: return [3 /*break*/, 9];
                 case 8:
                     error_1 = _a.sent();
-                    sendResponse({ success: false, data: error_1 });
+                    sendResponse({ success: false, message: "error executing " + message.action, data: error_1 });
                     return [3 /*break*/, 9];
                 case 9: return [2 /*return*/];
             }
@@ -92,8 +93,7 @@ function createTabFromHtmlHandler(title, html) {
                 case 1:
                     tab = _a.sent();
                     if (!tab.id) {
-                        console.error('Tab ID is undefined');
-                        return [2 /*return*/];
+                        throw new Error('Tab ID is undefined');
                     }
                     chrome.scripting.executeScript({
                         target: { tabId: tab.id },
@@ -108,19 +108,21 @@ function createTabFromHtmlHandler(title, html) {
         });
     });
 }
-function loadScriptsHandler(message, sender, sendResponse) {
-    if (!sender.tab || sender.tab.id == undefined) {
-        sendResponse("error: loadScripts failed because sender.tab is not found");
-        console.log(sender);
-        return;
-    }
-    console.log("loadScripts", message.files, sender.tab.id);
-    chrome.scripting.executeScript({
-        target: { tabId: sender.tab.id },
-        files: message.files,
-        world: message.world
+function loadScriptsHandler(message, sender) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (!sender.tab || sender.tab.id == undefined) {
+                throw new Error("loadScripts failed because sender.tab is not found");
+            }
+            console.log("loadScripts", message.files, sender.tab.id);
+            chrome.scripting.executeScript({
+                target: { tabId: sender.tab.id },
+                files: message.files,
+                world: message.world
+            });
+            return [2 /*return*/];
+        });
     });
-    sendResponse("done: " + message.action);
 }
 function openTabHandler(message) {
     return __awaiter(this, void 0, void 0, function () {
