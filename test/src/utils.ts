@@ -7,3 +7,7 @@ function log(...msg: (any)[]) {
 async function openTab(url: string) {
 	window.postMessage({ action: "openTab", data: { url: url } }, "*");
 }
+
+async function createTabFromHtml(title: string, html: string) {
+	window.postMessage({ action: "createTabFromHtml", data: { title: title, html: html } }, "*");
+}

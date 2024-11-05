@@ -36,55 +36,106 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    console.log("onMessage", message, sender, sendResponse);
+    handleMessage(message, sender, sendResponse);
+    // Return true to indicate that sendResponse will be called asynchronously
+    return true;
+});
+function handleMessage(message, sender, sendResponse) {
     return __awaiter(this, void 0, void 0, function () {
-        var window;
+        var window_1, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("onMessage", message, sender);
-                    if (!(message.action === "openTab")) return [3 /*break*/, 2];
-                    console.log("openTab", message);
-                    return [4 /*yield*/, creaTab(message.data.url)];
+                    _a.trys.push([0, 8, , 9]);
+                    if (!(message.action === "loadScripts")) return [3 /*break*/, 2];
+                    return [4 /*yield*/, loadScriptsHandler(message, sender, sendResponse)];
                 case 1:
-                    window = _a.sent();
-                    sendResponse(window);
-                    return [3 /*break*/, 3];
+                    _a.sent();
+                    sendResponse({ success: true, message: "done " + message.action });
+                    return [3 /*break*/, 7];
                 case 2:
-                    if (message.action === "loadScripts" && sender.tab && sender.tab.id !== undefined) {
-                        console.log("loadScripts", message.files, sender.tab.id);
-                        chrome.scripting.executeScript({
-                            target: { tabId: sender.tab.id },
-                            files: message.files,
-                            world: message.world
-                        });
-                        sendResponse("done: " + message.action);
-                    }
-                    _a.label = 3;
+                    if (!(message.action === "createTabFromHtml")) return [3 /*break*/, 4];
+                    return [4 /*yield*/, createTabFromHtmlHandler(message.data.title, message.data.html)];
                 case 3:
-                    sendResponse("error: handler not found for " + message.action);
-                    return [2 /*return*/];
+                    window_1 = _a.sent();
+                    sendResponse({ success: true, message: "done " + message.action });
+                    return [3 /*break*/, 7];
+                case 4:
+                    if (!(message.action === "openTab")) return [3 /*break*/, 6];
+                    return [4 /*yield*/, openTabHandler(message)];
+                case 5:
+                    _a.sent();
+                    return [3 /*break*/, 7];
+                case 6:
+                    sendResponse({ success: false, message: "error: handler not found for " + message.action });
+                    _a.label = 7;
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    error_1 = _a.sent();
+                    sendResponse({ success: false, data: error_1 });
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
             }
         });
     });
-});
-function creaTab(url) {
+}
+function createTabFromHtmlHandler(title, html) {
     return __awaiter(this, void 0, void 0, function () {
-        var tab, windowId, window, tabWindow;
+        var tab;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, chrome.tabs.create({
-                        url: url,
+                        url: 'https://www.example.com/',
                         active: false
                     })];
                 case 1:
                     tab = _a.sent();
-                    windowId = tab.windowId;
-                    return [4 /*yield*/, chrome.windows.get(windowId)];
-                case 2:
-                    window = _a.sent();
-                    tabWindow = window;
-                    console.log("tabWindow", tabWindow);
+                    if (!tab.id) {
+                        console.error('Tab ID is undefined');
+                        return [2 /*return*/];
+                    }
+                    chrome.scripting.executeScript({
+                        target: { tabId: tab.id },
+                        func: function (title, html) {
+                            document.title = title;
+                            document.body.innerHTML = html;
+                        },
+                        args: [title, html]
+                    });
                     return [2 /*return*/];
+            }
+        });
+    });
+}
+function loadScriptsHandler(message, sender, sendResponse) {
+    if (!sender.tab || sender.tab.id == undefined) {
+        sendResponse("error: loadScripts failed because sender.tab is not found");
+        console.log(sender);
+        return;
+    }
+    console.log("loadScripts", message.files, sender.tab.id);
+    chrome.scripting.executeScript({
+        target: { tabId: sender.tab.id },
+        files: message.files,
+        world: message.world
+    });
+    sendResponse("done: " + message.action);
+}
+function openTabHandler(message) {
+    return __awaiter(this, void 0, void 0, function () {
+        var tab;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("openTab", message);
+                    return [4 /*yield*/, chrome.tabs.create({
+                            url: message.data.url,
+                            active: false
+                        })];
+                case 1:
+                    tab = _a.sent();
+                    return [2 /*return*/, tab];
             }
         });
     });

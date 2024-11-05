@@ -17,7 +17,7 @@
 		"type": "module"
 	},
 	"host_permissions": [
-		"https://www.corriere.it/*"
+		"<all_urls>"
 	],
 	"permissions": [
 		"tabs",

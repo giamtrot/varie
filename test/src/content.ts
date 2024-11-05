@@ -14,12 +14,6 @@ log("after start")
 function start() {
 	log("start")
 
-	openTab("about:blank")
-	// const win = window.open("about:blank", "_blank") as Window
-	// const doc = win.document
-
-	// const target = doc.createElement("div")
-	// doc.body.insertBefore(target, doc.body.childNodes[0]);
-	// target.innerHTML = "<h1>TEST</h1>";
+	createTabFromHtml("new title", "<h1>TEST</h1>")
 
 }

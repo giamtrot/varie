@@ -61,3 +61,11 @@ function openTab(url) {
         });
     });
 }
+function createTabFromHtml(title, html) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            window.postMessage({ action: "createTabFromHtml", data: { title: title, html: html } }, "*");
+            return [2 /*return*/];
+        });
+    });
+}
