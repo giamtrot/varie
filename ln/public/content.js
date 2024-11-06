@@ -1,6 +1,6 @@
 "use strict";
-var extId = "LN - 2024.10.14-1";
-var mapName = "rg-linkedin-map";
+var EXT_ID = "LN - 2024.10.14-1";
+var MAP_NAME = "rg-linkedin-map";
 log("before start", document.readyState);
 if (document.readyState != 'complete') {
     document.onload = document.onreadystatechange = start;
@@ -14,16 +14,6 @@ function start() {
     console.clear();
     log("start");
     enrichJobPost();
-}
-function list(li) {
-    var _a, _b, _c;
-    var id = li.dataset.occludableJobId;
-    if (!id) {
-        throw new Error("occludableJobId not found");
-    }
-    var title = (_a = li.querySelector(".job-card-list__title")) === null || _a === void 0 ? void 0 : _a.ariaLabel;
-    var company = (_c = (_b = li.querySelector(".job-card-container__primary-description")) === null || _b === void 0 ? void 0 : _b.textContent) === null || _c === void 0 ? void 0 : _c.trim();
-    log(id, title, company);
 }
 function enrichJobPost() {
     waitForList(function (li) { enrich(li); });
@@ -52,7 +42,7 @@ function waitForList(callback) {
     });
 }
 function enrich(li) {
-    var _a, _b, _c;
+    var _a;
     var button = li.querySelector("button");
     if (!button) {
         return;
@@ -61,12 +51,8 @@ function enrich(li) {
     if (!id) {
         throw new Error("occludableJobId not found");
     }
-    var link = li.querySelector("a.job-card-list__title");
-    var title = link === null || link === void 0 ? void 0 : link.ariaLabel;
-    var url = link === null || link === void 0 ? void 0 : link.href;
-    var company = (_b = (_a = li.querySelector(".job-card-container__primary-description")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+    var _b = getJobInfo(li), url = _b.url, title = _b.title, company = _b.company;
     li.setAttribute("data-rg-enriched", 'true');
-    log(id, title, company, url);
     hideBySelector(li, "div.job-card-list__insight");
     hideBySelector(li, "ul.job-card-list__footer-wrapper");
     var newButton = document.createElement("button");
@@ -76,7 +62,27 @@ function enrich(li) {
         log("opening", url);
         openTab(url);
     });
-    (_c = button.parentNode) === null || _c === void 0 ? void 0 : _c.insertBefore(newButton, button);
+    (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(newButton, button);
+    var oldJob = oldJOb(title, company);
+    if (oldJob) {
+        log("Found already seen job");
+        var _c = getJobButton(li), button_1 = _c.button, role = _c.role;
+        if (!button_1) {
+            return;
+        }
+        button_1.click();
+    }
+}
+function getJobInfo(li) {
+    var _a, _b;
+    var link = li.querySelector("a.job-card-list__title");
+    var url = link === null || link === void 0 ? void 0 : link.href;
+    var title = (link === null || link === void 0 ? void 0 : link.ariaLabel) || "";
+    var company = ((_b = (_a = li.querySelector(".job-card-container__primary-description")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) || "";
+    return { url: url, title: title, company: company };
+}
+function getRow(title, company) {
+    return "".concat(title, ";").concat(company);
 }
 function hideBySelector(li, selector) {
     var insight = li.querySelector(selector);
@@ -105,11 +111,41 @@ function rimuoviTutti() {
     var targetNodes = document.querySelectorAll(targetSelector);
     // log("rimuoviTutti", targetNodes)
     Array.from(targetNodes).forEach(function (li) {
-        var button = li.querySelector("button.job-card-container__action");
+        var _a = getJobButton(li), button = _a.button, role = _a.role;
         if (!button) {
             return;
         }
+        if (role === "undo-small") {
+            return;
+        }
+        audit(li);
         // log("rimuoviTutti", button)
         button.click();
     });
+}
+function getJobButton(li) {
+    var _a;
+    var button = li.querySelector("button.job-card-container__action");
+    var role = (_a = button === null || button === void 0 ? void 0 : button.querySelector("svg")) === null || _a === void 0 ? void 0 : _a.getAttribute('data-test-icon');
+    return { button: button, role: role };
+}
+function audit(li) {
+    var _a = getJobInfo(li), url = _a.url, title = _a.title, company = _a.company;
+    auditValue(getRow(title, company));
+}
+function auditValue(row) {
+    var map = getMap();
+    map[row] = Date.now();
+    setLocalStorage(MAP_NAME, map);
+}
+function getMap() {
+    initLocalStorage(MAP_NAME, {});
+    var map = getLocalStorage(MAP_NAME);
+    return map;
+}
+function oldJOb(title, company) {
+    var row = getRow(title, company);
+    var map = getMap();
+    var oldJob = row in map;
+    return oldJob;
 }

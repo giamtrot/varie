@@ -1,6 +1,6 @@
-const extId = "LN - 2024.10.14-1"
+const EXT_ID = "LN - 2024.10.14-1"
 
-const mapName = "rg-linkedin-map"
+const MAP_NAME = "rg-linkedin-map"
 
 log("before start", document.readyState)
 if (document.readyState != 'complete') {
@@ -19,17 +19,6 @@ function start() {
 	log("start")
 
 	enrichJobPost()
-}
-
-function list(li: HTMLLIElement) {
-
-	const id = li.dataset.occludableJobId
-	if (!id) {
-		throw new Error("occludableJobId not found")
-	}
-	const title = li.querySelector(".job-card-list__title")?.ariaLabel
-	const company = li.querySelector(".job-card-container__primary-description")?.textContent?.trim()
-	log(id, title, company)
 }
 
 function enrichJobPost() {
@@ -74,13 +63,8 @@ function enrich(li: HTMLElement) {
 	if (!id) {
 		throw new Error("occludableJobId not found")
 	}
-	const link = li.querySelector("a.job-card-list__title") as HTMLAnchorElement
-	const title = link?.ariaLabel
-	const url = link?.href
-	const company = li.querySelector(".job-card-container__primary-description")?.textContent?.trim()
+	const { url, title, company } = getJobInfo(li)
 	li.setAttribute("data-rg-enriched", 'true');
-	log(id, title, company, url)
-
 	hideBySelector(li, "div.job-card-list__insight")
 	hideBySelector(li, "ul.job-card-list__footer-wrapper")
 
@@ -92,6 +76,27 @@ function enrich(li: HTMLElement) {
 		openTab(url)
 	})
 	button.parentNode?.insertBefore(newButton, button);
+
+	const oldJob = oldJOb(title, company)
+	if (oldJob) {
+		log("Found already seen job")
+		const { button, role } = getJobButton(li);
+		if (!button) { return }
+		button.click();
+	}
+
+}
+
+function getJobInfo(li: HTMLElement) {
+	const link = li.querySelector("a.job-card-list__title") as HTMLAnchorElement
+	const url = link?.href
+	const title = link?.ariaLabel || ""
+	const company = li.querySelector(".job-card-container__primary-description")?.textContent?.trim() || ""
+	return { url, title, company }
+}
+
+function getRow(title: string, company: string) {
+	return `${title};${company}`
 }
 
 function hideBySelector(li: HTMLElement, selector: string) {
@@ -129,9 +134,40 @@ function rimuoviTutti() {
 	const targetNodes = document.querySelectorAll(targetSelector)
 	// log("rimuoviTutti", targetNodes)
 	Array.from(targetNodes).forEach((li) => {
-		const button = li.querySelector("button.job-card-container__action") as HTMLButtonElement;
+		const { button, role } = getJobButton(li);
 		if (!button) { return }
+		if (role === "undo-small") { return }
+		audit(li as HTMLElement)
 		// log("rimuoviTutti", button)
 		button.click();
 	})
+}
+
+
+function getJobButton(li: Element) {
+	const button = li.querySelector("button.job-card-container__action") as HTMLButtonElement
+	const role = button?.querySelector("svg")?.getAttribute('data-test-icon')
+	return { button, role }
+}
+
+function audit(li: HTMLElement) {
+	const { url, title, company } = getJobInfo(li)
+	auditValue(getRow(title, company))
+}
+function auditValue(row: string) {
+	const map = getMap()
+	map[row] = Date.now()
+	setLocalStorage(MAP_NAME, map)
+}
+function getMap() {
+	initLocalStorage(MAP_NAME, {})
+	const map = getLocalStorage(MAP_NAME)
+	return map
+}
+
+function oldJOb(title: string, company: string) {
+	const row = getRow(title, company)
+	const map = getMap()
+	const oldJob = row in map
+	return oldJob
 }

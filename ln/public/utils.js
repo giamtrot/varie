@@ -50,7 +50,7 @@ function log() {
         msg[_i] = arguments[_i];
     }
     var date = new Date();
-    var logMsg = __spreadArray([extId, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - "], msg, true);
+    var logMsg = __spreadArray([EXT_ID, " - ", date.toLocaleDateString(), date.toLocaleTimeString(), " - "], msg, true);
     console.log.apply(console, logMsg);
 }
 function openTab(url) {
@@ -60,4 +60,19 @@ function openTab(url) {
             return [2 /*return*/];
         });
     });
+}
+function setLocalStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+function getLocalStorage(key) {
+    var value = localStorage.getItem(key);
+    if (value) {
+        return JSON.parse(value);
+    }
+    return null;
+}
+function initLocalStorage(key, initValue) {
+    if (!getLocalStorage(key)) {
+        setLocalStorage(key, initValue);
+    }
 }
