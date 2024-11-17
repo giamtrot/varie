@@ -66,7 +66,7 @@ function loadUI() {
     downloadloadButton.id = "rg-civ-download";
     downloadloadButton.value = "Download All";
     downloadloadButton.addEventListener("click", downloadAll);
-    targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
+    // targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
     var fetchButton = document.createElement("INPUT");
     fetchButton.type = "button";
     fetchButton.id = "rg-civ-fetch";
@@ -78,7 +78,7 @@ function loadUI() {
 }
 function fetchAll() {
     return __awaiter(this, void 0, void 0, function () {
-        var response, consigli, consiglio;
+        var response, consigli, ultimo, quale, consiglio;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, fetch('/CommissioniOnline/ODG/Ricerca', {
@@ -93,7 +93,13 @@ function fetchAll() {
                     return [4 /*yield*/, response.json()];
                 case 2:
                     consigli = _a.sent();
-                    consiglio = consigli.Data.Items.filter(function (c) { return c.Numero == 5; });
+                    ultimo = consigli.Data.Items.sort(function (a, b) { return b.Numero - a.Numero; })[0].Numero;
+                    quale = prompt("Quale consiglio", ultimo);
+                    if (quale == null) {
+                        return [2 /*return*/];
+                    }
+                    log("Scelto ".concat(quale));
+                    consiglio = consigli.Data.Items.filter(function (c) { return c.Numero == quale; });
                     return [4 /*yield*/, fetchConsiglio(consiglio[0])];
                 case 3:
                     _a.sent();
@@ -226,7 +232,7 @@ function downloadAll() {
                     _a.sent();
                     odgTable = document.querySelectorAll("#GridOdg > div.awe-mcontent > div.awe-content.awe-tablc > div > table")[0];
                     log(odgTable);
-                    odg = Array.from(odgTable.rows).find(function (r) { return r.cells[1].textContent === '5'; });
+                    odg = Array.from(odgTable.rows).find(function (r) { return r.cells[1].textContent === '6'; });
                     if (!odg) {
                         log("odg not found");
                         return [2 /*return*/];
