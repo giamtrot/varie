@@ -91,11 +91,10 @@ function hideBySelector(li, selector) {
     }
 }
 function addUI() {
-    // openTab("https://www.example.com")
     var element = document.querySelector("div.jobs-search-results-list");
     if (element === null || element.parentNode === null) {
+        log("element.parentNode is null");
         return;
-        // throw new Error("element.parentNode is null")
     }
     var removeAllButton = document.createElement("INPUT");
     removeAllButton.type = "button";
@@ -122,6 +121,8 @@ function rimuoviTutti() {
         // log("rimuoviTutti", button)
         button.click();
     });
+    log("rimuoviTutti done");
+    window.location.reload();
 }
 function getJobButton(li) {
     var _a;
