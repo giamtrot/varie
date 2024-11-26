@@ -1,6 +1,4 @@
 "use strict";
-// TODO: scelta dinamica del consiglio
-// TODO: migliore fruizione move allegati
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var EXT_ID = "CIV - 2024.10.31-1";
 var WAIT = 2000;
+var MOVE_AREA = "rg-civ-move";
 log("before start", document.readyState);
 if (document.readyState != 'complete') {
     document.onload = document.onreadystatechange = start;
@@ -61,6 +60,9 @@ function loadUI() {
         log("targetNode or parentNode not found", targetNode);
         return;
     }
+    var moveArea = document.createElement("TEXTAREA");
+    moveArea.id = MOVE_AREA;
+    targetNode.parentNode.insertBefore(moveArea, targetNode.nextSibling);
     var downloadloadButton = document.createElement("INPUT");
     downloadloadButton.type = "button";
     downloadloadButton.id = "rg-civ-download";
@@ -189,7 +191,7 @@ function fetchOdg(odg, tipo) {
 }
 function fetchFile(odg, tipo, doc, index) {
     return __awaiter(this, void 0, void 0, function () {
-        var sub, nomefile, linkUrl, idField, queryString;
+        var sub, nomefile, linkUrl, idField, queryString, allNomeFile;
         return __generator(this, function (_a) {
             sub = (tipo === 'Documenti' ? "" : "a.") + ("00" + index).slice(-2);
             nomefile = "".concat(odg.Posizione, ".").concat(sub, " - ").concat(odg.Oggetto.substring(0, 100), " - ").concat(doc.NomeFile);
@@ -201,7 +203,8 @@ function fetchFile(odg, tipo, doc, index) {
             queryString = "".concat(idField, "=") + doc.Id + '&IdAtto=' + doc.IdAtto + '&NomeFile=' + nomefile + '&MimeType=' + doc.Mime + '&st=' + doc.St;
             window.open(linkUrl + '?' + queryString);
             if (tipo == 'Allegati') {
-                console.log("move \"".concat(doc.NomeFile, "\" \"").concat(nomefile, "\""));
+                allNomeFile = nomefile.replace("/", "_");
+                logMove("move \"".concat(doc.NomeFile, "\" \"").concat(allNomeFile, "\""));
             }
             return [2 /*return*/];
         });
@@ -370,4 +373,8 @@ function downloadPunto(tipo) {
             }
         });
     });
+}
+function logMove(msg) {
+    var moveArea = document.querySelector("#" + MOVE_AREA);
+    moveArea.value += msg + "\n";
 }
