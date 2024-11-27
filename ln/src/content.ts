@@ -1,6 +1,7 @@
 const EXT_ID = "LN - 2024.10.14-1"
 
 const MAP_NAME = "rg-linkedin-map"
+const CARDS = "li.ember-view.scaffold-layout__list-item"
 
 log("before start", document.readyState)
 if (document.readyState != 'complete') {
@@ -39,8 +40,8 @@ function waitForList(callback: (element: HTMLLIElement) => void) {
 		childList: true,
 		subtree: true
 	})
-
-	const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item:not([data-rg-enriched=true])"
+	
+	const targetSelector = CARDS + ":not([data-rg-enriched=true])"
 	const observer = new MutationObserver(() => {
 		const targetNodes = document.querySelectorAll(targetSelector)
 		Array.from(targetNodes).forEach((li) => { callback(li as HTMLLIElement) })
@@ -57,16 +58,20 @@ function enrich(li: HTMLElement) {
 
 	const button = li.querySelector("button");
 
-	if (!button) { return }
+	if (!button) { 
+		log("button not found", li)
+		return 
+	}
 
 	const id = li.dataset.occludableJobId
 	if (!id) {
 		throw new Error("occludableJobId not found")
 	}
 	const { url, title, company } = getJobInfo(li)
+	log(url, title, company)
 	li.setAttribute("data-rg-enriched", 'true');
-	hideBySelector(li, "div.job-card-list__insight")
-	hideBySelector(li, "ul.job-card-list__footer-wrapper")
+	// hideBySelector(li, "div.job-card-list__insight")
+	// hideBySelector(li, "ul.job-card-list__footer-wrapper")
 
 	var newButton = document.createElement("button");
 	newButton.id = "rg-button-X-" + id
@@ -75,6 +80,7 @@ function enrich(li: HTMLElement) {
 		log("opening", url)
 		openTab(url)
 	})
+	log(button.parentNode)
 	button.parentNode?.insertBefore(newButton, button);
 
 	const oldJob = oldJOb(title, company)
@@ -83,15 +89,16 @@ function enrich(li: HTMLElement) {
 		const { button, role } = getJobButton(li);
 		if (!button) { return }
 		button.click();
+		emptyLi(li)
 	}
 
 }
 
 function getJobInfo(li: HTMLElement) {
-	const link = li.querySelector("a.job-card-list__title") as HTMLAnchorElement
+	const link = li.querySelector("a.job-card-container__link") as HTMLAnchorElement
 	const url = link?.href
 	const title = link?.ariaLabel || ""
-	const company = li.querySelector(".job-card-container__primary-description")?.textContent?.trim() || ""
+	const company = li.querySelector(".artdeco-entity-lockup__subtitle")?.textContent?.trim() || ""
 	return { url, title, company }
 }
 
@@ -108,28 +115,34 @@ function hideBySelector(li: HTMLElement, selector: string) {
 
 function addUI() {
 
-	const element = document.querySelector("div.jobs-search-results-list")
-
-	if (element === null || element.parentNode === null) {
-		log("element.parentNode is null")
+	const parent = document.querySelector("div.scaffold-layout__list")
+	if (parent === null) {
+		log("parent node is null")
 		return
 	}
+	
+	const element = document.querySelector("header.scaffold-layout__list-header")
+	if (element === null) {
+		log("element node is null")
+		return
+	}
+	
 
 	var removeAllButton = document.createElement("INPUT") as HTMLInputElement;
 	removeAllButton.type = "button"
 	removeAllButton.id = "rg-ln-removeAll"
 	removeAllButton.value = "Rimuovi Tutti"
 	removeAllButton.addEventListener("click", rimuoviTutti)
-	element.parentNode.insertBefore(removeAllButton, element);
-	element.parentNode.insertBefore(document.createTextNode(" "), element);
+	parent.insertBefore(removeAllButton, element);
+	parent.insertBefore(document.createTextNode(" "), element);
 
 	log("addUI done")
 }
 
 
 function rimuoviTutti() {
-	const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
-	const targetNodes = document.querySelectorAll(targetSelector)
+	// const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
+	const targetNodes = document.querySelectorAll(CARDS)
 	// log("rimuoviTutti", targetNodes)
 	Array.from(targetNodes).forEach((li) => {
 		const { button, role } = getJobButton(li);
@@ -157,7 +170,10 @@ function audit(li: HTMLElement) {
 function auditValue(row: string) {
 	const map = getMap()
 	map[row] = Date.now()
-	setLocalStorage(MAP_NAME, map)
+	// const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+	// const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
+	const newMap = map
+	setLocalStorage(MAP_NAME, newMap)
 }
 function getMap() {
 	initLocalStorage(MAP_NAME, {})
@@ -171,3 +187,11 @@ function oldJOb(title: string, company: string) {
 	const oldJob = row in map
 	return oldJob
 }
+
+function emptyLi(li: HTMLElement) {
+	log("emptyLi", li)
+	li.querySelector("div.job-card-list__logo")?.remove()
+	li.querySelector("div.artdeco-entity-lockup__subtitle")?.remove()
+	li.querySelector("div.artdeco-entity-lockup__caption")?.remove()
+}
+

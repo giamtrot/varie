@@ -1,6 +1,7 @@
 "use strict";
 var EXT_ID = "LN - 2024.10.14-1";
 var MAP_NAME = "rg-linkedin-map";
+var CARDS = "li.ember-view.scaffold-layout__list-item";
 log("before start", document.readyState);
 if (document.readyState != 'complete') {
     document.onload = document.onreadystatechange = start;
@@ -31,7 +32,7 @@ function waitForList(callback) {
         childList: true,
         subtree: true
     });
-    var targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item:not([data-rg-enriched=true])";
+    var targetSelector = CARDS + ":not([data-rg-enriched=true])";
     var observer = new MutationObserver(function () {
         var targetNodes = document.querySelectorAll(targetSelector);
         Array.from(targetNodes).forEach(function (li) { callback(li); });
@@ -45,6 +46,7 @@ function enrich(li) {
     var _a;
     var button = li.querySelector("button");
     if (!button) {
+        log("button not found", li);
         return;
     }
     var id = li.dataset.occludableJobId;
@@ -52,9 +54,10 @@ function enrich(li) {
         throw new Error("occludableJobId not found");
     }
     var _b = getJobInfo(li), url = _b.url, title = _b.title, company = _b.company;
+    log(url, title, company);
     li.setAttribute("data-rg-enriched", 'true');
-    hideBySelector(li, "div.job-card-list__insight");
-    hideBySelector(li, "ul.job-card-list__footer-wrapper");
+    // hideBySelector(li, "div.job-card-list__insight")
+    // hideBySelector(li, "ul.job-card-list__footer-wrapper")
     var newButton = document.createElement("button");
     newButton.id = "rg-button-X-" + id;
     newButton.textContent = "->";
@@ -62,6 +65,7 @@ function enrich(li) {
         log("opening", url);
         openTab(url);
     });
+    log(button.parentNode);
     (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(newButton, button);
     var oldJob = oldJOb(title, company);
     if (oldJob) {
@@ -71,14 +75,15 @@ function enrich(li) {
             return;
         }
         button_1.click();
+        emptyLi(li);
     }
 }
 function getJobInfo(li) {
     var _a, _b;
-    var link = li.querySelector("a.job-card-list__title");
+    var link = li.querySelector("a.job-card-container__link");
     var url = link === null || link === void 0 ? void 0 : link.href;
     var title = (link === null || link === void 0 ? void 0 : link.ariaLabel) || "";
-    var company = ((_b = (_a = li.querySelector(".job-card-container__primary-description")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) || "";
+    var company = ((_b = (_a = li.querySelector(".artdeco-entity-lockup__subtitle")) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) || "";
     return { url: url, title: title, company: company };
 }
 function getRow(title, company) {
@@ -91,9 +96,14 @@ function hideBySelector(li, selector) {
     }
 }
 function addUI() {
-    var element = document.querySelector("div.jobs-search-results-list");
-    if (element === null || element.parentNode === null) {
-        log("element.parentNode is null");
+    var parent = document.querySelector("div.scaffold-layout__list");
+    if (parent === null) {
+        log("parent node is null");
+        return;
+    }
+    var element = document.querySelector("header.scaffold-layout__list-header");
+    if (element === null) {
+        log("element node is null");
         return;
     }
     var removeAllButton = document.createElement("INPUT");
@@ -101,13 +111,13 @@ function addUI() {
     removeAllButton.id = "rg-ln-removeAll";
     removeAllButton.value = "Rimuovi Tutti";
     removeAllButton.addEventListener("click", rimuoviTutti);
-    element.parentNode.insertBefore(removeAllButton, element);
-    element.parentNode.insertBefore(document.createTextNode(" "), element);
+    parent.insertBefore(removeAllButton, element);
+    parent.insertBefore(document.createTextNode(" "), element);
     log("addUI done");
 }
 function rimuoviTutti() {
-    var targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item";
-    var targetNodes = document.querySelectorAll(targetSelector);
+    // const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
+    var targetNodes = document.querySelectorAll(CARDS);
     // log("rimuoviTutti", targetNodes)
     Array.from(targetNodes).forEach(function (li) {
         var _a = getJobButton(li), button = _a.button, role = _a.role;
@@ -137,7 +147,10 @@ function audit(li) {
 function auditValue(row) {
     var map = getMap();
     map[row] = Date.now();
-    setLocalStorage(MAP_NAME, map);
+    // const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+    // const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
+    var newMap = map;
+    setLocalStorage(MAP_NAME, newMap);
 }
 function getMap() {
     initLocalStorage(MAP_NAME, {});
@@ -149,4 +162,11 @@ function oldJOb(title, company) {
     var map = getMap();
     var oldJob = row in map;
     return oldJob;
+}
+function emptyLi(li) {
+    var _a, _b, _c;
+    log("emptyLi", li);
+    (_a = li.querySelector("div.job-card-list__logo")) === null || _a === void 0 ? void 0 : _a.remove();
+    (_b = li.querySelector("div.artdeco-entity-lockup__subtitle")) === null || _b === void 0 ? void 0 : _b.remove();
+    (_c = li.querySelector("div.artdeco-entity-lockup__caption")) === null || _c === void 0 ? void 0 : _c.remove();
 }
