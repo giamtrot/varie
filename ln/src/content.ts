@@ -83,6 +83,7 @@ function enrich(li: HTMLElement) {
 		const { button, role } = getJobButton(li);
 		if (!button) { return }
 		button.click();
+		emptyLi(li)
 	}
 
 }
@@ -157,7 +158,10 @@ function audit(li: HTMLElement) {
 function auditValue(row: string) {
 	const map = getMap()
 	map[row] = Date.now()
-	setLocalStorage(MAP_NAME, map)
+	// const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+	// const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
+	const newMap = map
+	setLocalStorage(MAP_NAME, newMap)
 }
 function getMap() {
 	initLocalStorage(MAP_NAME, {})
@@ -171,3 +175,11 @@ function oldJOb(title: string, company: string) {
 	const oldJob = row in map
 	return oldJob
 }
+
+function emptyLi(li: HTMLElement) {
+	log("emptyLi", li)
+	li.querySelector("div.job-card-list__logo")?.remove()
+	li.querySelector("div.artdeco-entity-lockup__subtitle")?.remove()
+	li.querySelector("div.artdeco-entity-lockup__caption")?.remove()
+}
+

@@ -71,6 +71,7 @@ function enrich(li) {
             return;
         }
         button_1.click();
+        emptyLi(li);
     }
 }
 function getJobInfo(li) {
@@ -137,7 +138,10 @@ function audit(li) {
 function auditValue(row) {
     var map = getMap();
     map[row] = Date.now();
-    setLocalStorage(MAP_NAME, map);
+    // const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+    // const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
+    var newMap = map;
+    setLocalStorage(MAP_NAME, newMap);
 }
 function getMap() {
     initLocalStorage(MAP_NAME, {});
@@ -149,4 +153,11 @@ function oldJOb(title, company) {
     var map = getMap();
     var oldJob = row in map;
     return oldJob;
+}
+function emptyLi(li) {
+    var _a, _b, _c;
+    log("emptyLi", li);
+    (_a = li.querySelector("div.job-card-list__logo")) === null || _a === void 0 ? void 0 : _a.remove();
+    (_b = li.querySelector("div.artdeco-entity-lockup__subtitle")) === null || _b === void 0 ? void 0 : _b.remove();
+    (_c = li.querySelector("div.artdeco-entity-lockup__caption")) === null || _c === void 0 ? void 0 : _c.remove();
 }
