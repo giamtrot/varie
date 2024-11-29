@@ -14,7 +14,12 @@
 		},
 		{
 			"path": "test"
+		},
+		{
+			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "varie"
+	}
 }

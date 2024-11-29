@@ -1,0 +1,406 @@
+<html>
+
+<head>
+	<title>Timer</title>
+</head>
+
+<body style="zoom: 2;">
+
+	<div id="timer">
+		<table>
+			<tr>
+				<td>
+					<div class="minuti">
+						<div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
+					</div>
+				</td>
+				<td>
+					<div class="secondi">
+						<div contenteditable onDOMCharacterDataModified="controllaNumero()"></div>
+					</div>
+				</td>
+				<td>
+					<input id="avvio" type="button" value="avvia" disabled="true" onclick="conta()" />
+				</td>
+				<td>
+					<input id="reset" type="button" value="azzera" disabled="true" onclick="reset()" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<p class="desc">minuti</p>
+				</td>
+				<td>
+					<p class="desc">secondi</p>
+				</td>
+				<td>
+					<div id="min" class="etichetta" />
+				</td>
+				<td>
+					<div id="max" class="etichetta" />
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>
+					<div id="med30" class="etichetta" />
+				</td>
+				<td>
+					<div id="max30" class="etichetta" />
+				</td>
+			</tr>
+		</table>
+
+
+	</div>
+	<div id="noScreenOffDiv">
+		Hai attivato "No Screen Off"? <input type="checkbox" id="noScreenOff">
+	</div>
+
+
+	<script>
+
+		let msg = new SpeechSynthesisUtterance();
+		let voices = window.speechSynthesis.getVoices();
+		msg.voice = voices[10]; // Note: some voices don't support altering params
+		msg.voiceURI = 'native';
+		msg.volume = 1; // 0 to 1
+		msg.rate = 1; // 0.1 to 10
+		msg.pitch = 2; //0 to 2
+		msg.lang = 'it-IT';
+
+		getDivMinuti().addEventListener('input', controllaNumero, false);
+		getDivSecondi().addEventListener('input', controllaNumero, false);
+		getNoScreenOff().addEventListener('change', controllaNumero, false);
+
+		var getParams = function getParams() {
+
+			const queryString = document.location.href.split('?')[1];
+			console.log(queryString);
+			// Separazione dei valori
+			const values = queryString.split(';');
+			console.log(values);
+
+			// Creazione dell'oggetto params
+			const params = {
+				sec: Number(values[0]),
+				rit: Number(values[1]),
+				min: Number(values[2]),
+				max: Number(values[3]),
+				med30: Number(values[4]),
+				max30: Number(values[5]),
+			};
+
+			console.log(params);
+
+
+			return params;
+		};
+
+
+		function controllaNumero() {
+			let noScreenOff = getNoScreenOff().checked;
+			let minuti = getDivMinuti().innerHTML;
+			let secondi = getDivSecondi().innerHTML;
+			let sonoNumeri = isNumeric(minuti) && isNumeric(secondi);
+			getAvvio().disabled = !noScreenOff || !sonoNumeri;
+		}
+
+		function isNumeric(n) {
+			return !isNaN(parseFloat(n)) && isFinite(n);
+		}
+
+		function parla(text) {
+			msg.text = text;
+			speechSynthesis.speak(msg);
+		}
+
+		let nextStop = 0;
+		let intervalloMaggiore = 30000;
+		let intervalloMinore = 15000;
+		let intervalloFinale = 5000;
+		let primaSoglia = 60000;
+		let secondaSoglia = 15000;
+
+
+		function getTimer() {
+			return document.getElementById('timer');
+		}
+		function getDivMinuti() {
+			return getTimer().querySelector('.minuti div');
+		}
+
+		function getDivSecondi() {
+			return getTimer().querySelector('.secondi div');
+		}
+
+		function getNoScreenOff() {
+			return document.getElementById('noScreenOff');
+		}
+
+		function getMinuti() {
+			return getDivMinuti().innerHTML;
+		}
+
+		function getSecondi() {
+			return getDivSecondi().innerHTML;
+		}
+
+		function setMinuti(value) {
+			getDivMinuti().innerHTML = ('0' + value).slice(-2);
+		}
+
+		function setMimino(value) {
+			document.querySelector("#min").innerText = value;
+		}
+
+		function setMassimo(value) {
+			document.querySelector("#max").innerText = value;
+		}
+
+		function setMedio30(value) {
+			document.querySelector("#med30").innerText = value;
+		}
+		function setMassimo30(value) {
+			document.querySelector("#max30").innerText = value;
+		}
+
+		function setSecondi(value) {
+			getDivSecondi().innerHTML = ('0' + value).slice(-2);
+		}
+
+		function getAvvio() {
+			return getTimer().querySelector('#avvio');
+		}
+
+		function getReset() {
+			return getTimer().querySelector('#reset');
+		}
+
+		let inCorso = false;
+		function conta() {
+			inCorso = !inCorso;
+			if (inCorso) {
+				avvio();
+			}
+			else {
+				pausa();
+			}
+
+			getReset().disabled = false;
+		}
+
+		function reset() {
+			inCorso = false;
+			pausa();
+			getReset().disabled = true;
+			primoAvvio = true;
+			setMinuti(minutiIniziali);
+			setSecondi(secondiIniziali);
+		}
+
+		function pausa() {
+			getAvvio().value = "avvio";
+			clearInterval(intervalloTempo);
+		}
+
+		let primoAvvio = true;
+		let minutiIniziali;
+		let secondiIniziali;
+
+		function avvio() {
+			let minuti = parseInt(getDivMinuti().innerHTML);
+			let secondi = parseInt(getDivSecondi().innerHTML);
+			if (primoAvvio) {
+				minutiIniziali = minuti;
+				secondiIniziali = secondi;
+			}
+			primoAvvio = false;
+			getAvvio().value = "pausa";
+			let durata = (minuti * 60 + secondi) * 1000;
+			if (durata > primaSoglia) {
+				nextStop = durata - durata % intervalloMaggiore;
+			} else {
+				nextStop = durata - durata % intervalloMinore;
+			}
+
+			let scadenza = new Date(Date.parse(new Date()) + durata);
+			inizializzoTimer(scadenza);
+		}
+
+		function tempoRimasto(tempo) {
+			let t = Date.parse(tempo) - Date.parse(new Date());
+			return millisToStruct(t);
+		}
+
+		function millisToStruct(t) {
+			let sec = Math.floor((t / 1000) % 60);
+			let min = Math.floor((t / 1000 / 60) % 60);
+			return {
+				'totale': t,
+				'minuti': min,
+				'secondi': sec
+			};
+		}
+
+		let intervalloTempo;
+
+		function inizializzoTimer(scadenza) {
+
+			function aggiornaTimer() {
+				let t = tempoRimasto(scadenza);
+
+				setMinuti(t.minuti);
+				setSecondi(t.secondi);
+
+				if (t.totale <= nextStop) {
+					var msg = "";
+					if (t.minuti > 1) {
+						msg = t.minuti + " minuti ";
+					}
+					else if (t.minuti == 1) {
+						msg = t.minuti + " minuto ";
+					}
+
+					if (t.secondi > 0) {
+						msg += t.secondi + " secondi";
+					}
+
+					if ((daFare.minRatio || 0) > 0) {
+						let minimi = Math.ceil(daFare.minRatio * t.totale / 1000);
+						// console.log( t.totale, minimi );
+						msg += " minimi " + minimi;
+						setMimino(minimi);
+					}
+
+					if ((daFare.minRatio || 0) > 0 && (daFare.maxRatio || 0) > 0) {
+						let massimi = Math.ceil(daFare.min - daFare.max + daFare.maxRatio * t.totale / 1000);
+						//console.log( daFare.min - daFare.max, daFare.maxRatio * t.totale / 1000, t.totale, massimi );
+						msg += " massimi " + massimi;
+						setMassimo(massimi);
+					}
+
+					//console.log( nextStop, primaSoglia, nextStop > primaSoglia, secondaSoglia, nextStop > secondaSoglia );
+					if (nextStop > primaSoglia) {
+						nextStop -= intervalloMaggiore;
+					} else if (nextStop > secondaSoglia) {
+						nextStop -= intervalloMinore;
+					} else {
+						nextStop -= intervalloFinale;
+					}
+					//console.log(nextStop);
+
+					if (nextStop < 0) {
+						nextStop = 0;
+					}
+					parla(msg);
+				}
+
+				if (t.totale <= 0) {
+					parla("tempo finito");
+					clearInterval(intervalloTempo);
+				}
+			}
+
+			aggiornaTimer();
+
+			intervalloTempo = setInterval(aggiornaTimer, 1000);
+		}
+
+		// sec=60&rit=10&min=60&max=120&med30=22&max30=30
+		let params = getParams();
+		let secondi = parseInt(params.sec || 0);
+		let ritardo = parseInt(params.rit || 0);
+		let min = parseInt(params.min || 0);
+		let max = parseInt(params.max || 0);
+		let med30 = parseInt(params.med30 || 0);
+		let max30 = parseInt(params.max30 || 0);
+		setMedio30(med30);
+		setMassimo30(max30);
+		if (secondi + ritardo > 0) {
+			var initTime = millisToStruct((secondi + ritardo) * 1000);
+			setMinuti(initTime.minuti);
+			setSecondi(initTime.secondi);
+			controllaNumero();
+		}
+		var daFare = {};
+		if (secondi > 0 && min > 0) {
+			daFare.min = min;
+			daFare.minRatio = (min || 0) / secondi;
+			setMimino(min);
+		}
+
+
+		if (secondi > 0 && max > 0) {
+			daFare.max = max;
+			daFare.maxRatio = (max || 0) / secondi;
+			setMassimo(max);
+		}
+
+		console.log(daFare);
+	</script>
+
+	<style>
+		body {
+			/*background-color: #C8E6C9;*/
+			font-family: "Calibri Light";
+		}
+
+		#timer {
+			display: flex;
+			justify-content: center;
+			margin-top: 50px;
+			font-size: 26px;
+		}
+
+		#noScreenOff {
+			zoom: 2.0;
+		}
+
+		#noScreenOffDiv {
+			display: flex;
+			justify-content: center;
+			font-size: 26px;
+		}
+
+		#timer div {
+			margin: 5px 5px;
+			text-align: center;
+		}
+
+		#timer div div {
+			background-color: black;
+			border-radius: 6px;
+			color: #fff;
+			font-size: 40px;
+			font-weight: bold;
+			padding: 10px;
+			width: 50px;
+		}
+
+		.etichetta {
+			font-weight: bold;
+			margin: 5px 5px;
+			text-align: center;
+			font-size: 40px;
+		}
+
+		.desc {
+			font-weight: bold;
+			margin: 5px 5px;
+			text-align: center;
+			font-size: 26px;
+		}
+
+		#timer input {
+			font-size: 40px;
+			font-weight: bold;
+			font-family: "Calibri Light";
+			height: 60px;
+			margin: 15px;
+		}
+	</style>
+</body>
+
+</html>
