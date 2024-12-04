@@ -1,8 +1,6 @@
-// TODO: scelta dinamica del consiglio
-// TODO: migliore fruizione move allegati
-
 const EXT_ID = "CIV - 2024.10.31-1"
 const WAIT = 2000
+const MOVE_AREA = "rg-civ-move"
 
 log("before start", document.readyState)
 if (document.readyState != 'complete') {
@@ -33,6 +31,11 @@ function loadUI() {
 		return
 	}
 
+	var moveArea = document.createElement("TEXTAREA") as HTMLTextAreaElement;
+	moveArea.id = MOVE_AREA
+	targetNode.parentNode.insertBefore(moveArea, targetNode.nextSibling);
+
+
 	var downloadloadButton = document.createElement("INPUT") as HTMLInputElement;
 	downloadloadButton.type = "button"
 	downloadloadButton.id = "rg-civ-download"
@@ -46,7 +49,6 @@ function loadUI() {
 	fetchButton.value = "Fetch All"
 	fetchButton.addEventListener("click", fetchAll)
 	targetNode.parentNode.insertBefore(fetchButton, targetNode.nextSibling);
-
 
 	// targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
 
@@ -87,7 +89,7 @@ async function fetchAll() {
 	// for (const consiglio of consigli.Data.Items) {
 	// 	log(consiglio)
 	// }
-	let ultimo = consigli.Data.Items.sort( (a: { Numero: number }, b: { Numero: number }) => b.Numero - a.Numero )[0].Numero
+	let ultimo = consigli.Data.Items.sort((a: { Numero: number }, b: { Numero: number }) => b.Numero - a.Numero)[0].Numero
 	let quale = prompt("Quale consiglio", ultimo);
 	if (quale == null) {
 		return
@@ -185,7 +187,8 @@ async function fetchFile(odg: { Posizione: any; Id?: any; Oggetto: any; IdPunto?
 
 	window.open(linkUrl + '?' + queryString);
 	if (tipo == 'Allegati') {
-		console.log(`move "${doc.NomeFile}" "${nomefile}"`)
+		const allNomeFile = nomefile.replace("/", "_")
+		logMove(`move "${doc.NomeFile}" "${allNomeFile}"`)
 	}
 }
 
@@ -213,7 +216,7 @@ async function downloadAll() {
 
 	let odgTable = document.querySelectorAll("#GridOdg > div.awe-mcontent > div.awe-content.awe-tablc > div > table")[0] as HTMLTableElement
 	log(odgTable)
-	let odg = Array.from(odgTable.rows).find( (r) => r.cells[1].textContent === '6' )
+	let odg = Array.from(odgTable.rows).find((r) => r.cells[1].textContent === '6')
 	if (!odg) {
 		log("odg not found")
 		return
@@ -301,8 +304,13 @@ async function downloadPunto(tipo: string) {
 	if (!chiudi) {
 		log("chiudi not found")
 		return
-	}	
+	}
 	chiudi.click()
 	await sleep(WAIT);
+}
+
+function logMove(msg: string) {
+	const moveArea = document.querySelector("#" + MOVE_AREA) as HTMLTextAreaElement
+	moveArea.value += msg + "\n"
 }
 

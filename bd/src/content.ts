@@ -13,13 +13,13 @@ log("after start")
 
 function start() {
 
-	console.log("Starting Sort")
-	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(6)") as HTMLElement
+	log("Starting Sort")
+	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)") as HTMLElement
 	if (sorter)
 		sorter.click();
-	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(6)") as HTMLElement
+	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)") as HTMLElement
 	if (sorter)
 		sorter.click();
-	console.log("Sort done")
+	log("Sort done")
 
 }

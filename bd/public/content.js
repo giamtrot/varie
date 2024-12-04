@@ -10,12 +10,12 @@ else {
 log("after start");
 //=====================================================================
 function start() {
-    console.log("Starting Sort");
-    var sorter = document.querySelector("#customselect__list-0 > li:nth-child(6)");
+    log("Starting Sort");
+    var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)");
     if (sorter)
         sorter.click();
-    var sorter = document.querySelector("#customselect__list-0 > li:nth-child(6)");
+    var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)");
     if (sorter)
         sorter.click();
-    console.log("Sort done");
+    log("Sort done");
 }
