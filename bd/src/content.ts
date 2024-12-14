@@ -15,9 +15,11 @@ function start() {
 
 	log("Starting Sort")
 	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)") as HTMLElement
+	log(sorter)
 	if (sorter)
 		sorter.click();
-	var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)") as HTMLElement
+	sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)") as HTMLElement
+	document.querySelector("#customselect__list-0 > li:nth-child(7)")
 	if (sorter)
 		sorter.click();
 	log("Sort done")
