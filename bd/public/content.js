@@ -12,9 +12,11 @@ log("after start");
 function start() {
     log("Starting Sort");
     var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)");
+    log(sorter);
     if (sorter)
         sorter.click();
-    var sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)");
+    sorter = document.querySelector("#customselect__list-0 > li:nth-child(7)");
+    document.querySelector("#customselect__list-0 > li:nth-child(7)");
     if (sorter)
         sorter.click();
     log("Sort done");
