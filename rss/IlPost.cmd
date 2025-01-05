@@ -6,5 +6,6 @@ cd /d "%BASE_DIR%"
 call groovy -version
 
 call groovy IlPost.groovy
+call IlPostGit.cmd
+
 explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/IlPost.xml
-pause
