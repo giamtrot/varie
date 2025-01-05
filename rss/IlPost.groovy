@@ -10,7 +10,8 @@ def urls = ["https://www.ilpost.it/podcasts/altre-indagini/", "https://www.ilpos
 
 def outFile = RSS_DIR + "IlPost.xml"
 
-def dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
+def dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH)
+
 def jsonSlurper = new JsonSlurper()
 
 // Save the list to disk
@@ -21,6 +22,7 @@ def list = []
 if (mapFile.exists()) {
 	list = jsonSlurper.parseText(mapFile.text)
 }
+list.sort { a, b -> dateFormatter.parse(a.date) <=> dateFormatter.parse(b.date) }
 
 urls.each{ inUrl->
 
@@ -53,9 +55,8 @@ urls.each{ inUrl->
 		if (element.title.endsWith("Seconda parte")) {
 			// println element.title
 			def dateStr = element.date
-			def date = Date.parse("yyyy-MM-dd'T'HH:mm:ssXXX", dateStr)
+			def date = dateFormatter.parse(dateStr)
 			date.hours += 1
-			def dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
 			element.date = dateFormatter.format(date)
 		}
 		list << element
@@ -65,9 +66,10 @@ urls.each{ inUrl->
 
 }
 
+
+list.sort { a, b -> dateFormatter.parse(a.date) <=> dateFormatter.parse(b.date) }
 mapFile.write(groovy.json.JsonOutput.toJson(list))
 
-def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLISH)
 
 def xmlWriter = new StringWriter()
 def xmlMarkup = new MarkupBuilder(xmlWriter)
