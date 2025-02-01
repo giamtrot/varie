@@ -6,4 +6,7 @@ set NOME=CuoreDiCane
 set PRIMO_GIORNO=01/02/2025
 
 call groovy %BASE_DIR%AudioLibroToRss.groovy %URL% %NOME% %PRIMO_GIORNO%
+
+call AdAltaVoceGit.cmd
+
 explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/%NOME%.xml
