@@ -19,7 +19,9 @@ jobs:
           groovy-version: '4.0.15'
 
       - name: Il Post
-        run: groovy rss/IlPost.groovy
+        run: |
+          groovy rss/IlPost.groovy
+          find . -name "ilPost.xml"
 
       - name: Commit and Push Changes
         run: |
