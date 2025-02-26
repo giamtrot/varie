@@ -53,9 +53,9 @@ urls.each{ inUrl->
             return
     }
 
-        println "${episode.date[0]}"
-        println "${dateReader.parse(episode.date[0])}"
-        println "${dateFormatter.format(dateReader.parse(episode.date[0]))}"
+        // println "${episode.date[0]}"
+        // println "${dateReader.parse(episode.date[0])}"
+        // println "${dateFormatter.format(dateReader.parse(episode.date[0]))}"
         def element = [
             src: episode.episode_raw_url[0],
             title: episode.title[0],
@@ -101,5 +101,7 @@ xmlMarkup.rss {
     }
 }
 
-println  xmlWriter.toString()
-new File(outFile).write( xmlWriter.toString() )
+// println  xmlWriter.toString()
+def rss = new File(outFile)
+println rss.getAbsolutePath()
+rss.write( xmlWriter.toString() )
