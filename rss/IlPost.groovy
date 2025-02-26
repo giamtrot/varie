@@ -6,7 +6,7 @@ import groovy.json.JsonSlurper
 
 // final RSS_DIR = /C:\Users\giamt\Documents\GitHub\varie\rss/ + "\\"
 
-final RSS_DIR = "./"
+final RSS_DIR = "./rss/"
 
 def urls = [
     "https://www.ilpost.it/podcasts/altre-indagini/",
