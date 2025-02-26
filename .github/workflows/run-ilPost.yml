@@ -21,13 +21,14 @@ jobs:
       - name: Il Post
         run: |
           groovy rss/IlPost.groovy
+          realpath .
           find . -name "ilPost.xml"
 
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          find . -name "ilPost.xml" -print -exec git add {} \;
-          git commit -m "Add ilPost.xml from GitHub Actions"
-          git push
+      #- name: Commit and Push Changes
+      #  run: |
+       #   git config --global user.name "github-actions[bot]"
+       #   git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        #  find . -name "ilPost.xml" -print -exec git add {} \;
+         # git commit -m "Add ilPost.xml from GitHub Actions"
+          #git push
           
