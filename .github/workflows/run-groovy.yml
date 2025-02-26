@@ -1,0 +1,22 @@
+name: Run Groovy Script
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  run-groovy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Groovy
+        uses: wtfjoke/setup-groovy@v1
+        with:
+          groovy-version: '4.0.15'
+
+      - name: Run Groovy Script
+        run: groovy rss/IlPost.groovy
