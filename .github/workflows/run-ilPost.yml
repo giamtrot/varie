@@ -15,5 +15,5 @@ jobs:
         with:
           groovy-version: '4.0.15'
 
-      - name: Run Groovy Script
+      - name: Il Post
         run: groovy rss/IlPost.groovy
