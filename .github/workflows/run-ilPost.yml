@@ -1,10 +1,7 @@
-name: Run Groovy Script
+name: Run Il Post Groovy Script
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:  # Enables manual trigger
 
 jobs:
   run-groovy:
