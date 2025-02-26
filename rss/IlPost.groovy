@@ -56,13 +56,13 @@ urls.each{ inUrl->
         def element = [
             src: episode.episode_raw_url[0],
             title: episode.title[0],
-            date: dateReader.parse(episode.date[0]),
+            date: dateFormatter.format(dateReader.parse(episode.date[0])),
             podcast: episode.parent.title[0]
         ]
         if (element.title.endsWith("Seconda parte")) {
             // println element.title
             def dateStr = element.date
-            def date = dateReader.parse(dateStr)
+            def date = dateFormatter.parse(dateStr)
             date.hours += 1
             element.date = dateFormatter.format(date)
         }
