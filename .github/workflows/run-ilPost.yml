@@ -1,7 +1,10 @@
 name: Run Il Post Groovy Script
 
 on:
-  workflow_dispatch:  # Enables manual trigger
+  workflow_dispatch:  # Allows manual triggering
+  schedule:
+    - cron: "30 8 * * *"   # Runs at 08:30 UTC
+    - cron: "30 17 * * *"  # Runs at 17:30 UTC
 
 permissions:
   contents: write  # Allows pushing changes
