@@ -3,6 +3,9 @@ name: Run Il Post Groovy Script
 on:
   workflow_dispatch:  # Enables manual trigger
 
+permissions:
+  contents: write  # Allows pushing changes
+
 jobs:
   run-groovy:
     runs-on: ubuntu-latest
