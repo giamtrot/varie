@@ -28,3 +28,4 @@ jobs:
           git add rss/ilPost.xml
           git commit -m "Add ilPost.xml from GitHub Actions"
           git push
+          
