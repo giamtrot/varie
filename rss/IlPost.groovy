@@ -4,7 +4,9 @@ import java.text.SimpleDateFormat
 import groovy.xml.MarkupBuilder
 import groovy.json.JsonSlurper
 
-final RSS_DIR = /C:\Users\giamt\Documents\GitHub\varie\rss/ + "\\"
+// final RSS_DIR = /C:\Users\giamt\Documents\GitHub\varie\rss/ + "\\"
+
+final RSS_DIR = "./"
 
 def urls = [
     "https://www.ilpost.it/podcasts/altre-indagini/",
