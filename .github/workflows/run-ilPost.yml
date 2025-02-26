@@ -5,7 +5,7 @@ on:
 
 permissions:
   contents: write  # Allows pushing changes
-
+  
 jobs:
   run-groovy:
     runs-on: ubuntu-latest
