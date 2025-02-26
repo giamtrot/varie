@@ -7,7 +7,7 @@ permissions:
   contents: write  # Allows pushing changes
   
 jobs:
-  run-groovy:
+  Update-IlPost-rss:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
