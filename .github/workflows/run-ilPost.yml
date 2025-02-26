@@ -23,10 +23,9 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          find .
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./rss/ilPost.xml
+          find . -name "ilPost.xml" -print -exec git add {} \;
           git commit -m "Add ilPost.xml from GitHub Actions"
           git push
           
