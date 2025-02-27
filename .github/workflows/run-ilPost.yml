@@ -1,16 +1,16 @@
-name: Run Il Post Groovy Script
+name: Check "Il Post" Podcasts
 
 on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
-    - cron: "30 8 * * *"   # Runs at 08:30 UTC
-    - cron: "30 17 * * *"  # Runs at 17:30 UTC
+    - cron: "30 7 * * *"   # Runs at 08:30 UTC
+    - cron: "30 16 * * *"  # Runs at 17:30 UTC
 
 permissions:
   contents: write  # Allows pushing changes
   
 jobs:
-  Update-IlPost-rss:
+  Update-RSS:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -33,12 +33,4 @@ jobs:
           find . -name "IlPost.xml" -print -exec git add {} \;
           git commit -m "Add ilPost.xml from GitHub Actions"
           git push
-          
-      #- name: Commit and Push Changes
-      #  run: |
-       #   
-       #   
-        #  
-         # 
-          #
           
