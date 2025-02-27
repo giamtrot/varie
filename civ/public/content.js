@@ -68,7 +68,7 @@ function loadUI() {
     downloadloadButton.id = "rg-civ-download";
     downloadloadButton.value = "Download All";
     downloadloadButton.addEventListener("click", downloadAll);
-    // targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
+    //targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
     var fetchButton = document.createElement("INPUT");
     fetchButton.type = "button";
     fetchButton.id = "rg-civ-fetch";
@@ -76,6 +76,12 @@ function loadUI() {
     fetchButton.addEventListener("click", fetchAll);
     targetNode.parentNode.insertBefore(fetchButton, targetNode.nextSibling);
     // targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+    var fetchConsiglioButton = document.createElement("INPUT");
+    fetchConsiglioButton.type = "button";
+    fetchConsiglioButton.id = "rg-civ-fetch-single";
+    fetchConsiglioButton.value = "Fetch Consiglio";
+    fetchConsiglioButton.addEventListener("click", fetchConsiglioSingolo);
+    targetNode.parentNode.insertBefore(fetchConsiglioButton, targetNode.nextSibling);
     log("loadUI done");
 }
 function fetchAll() {
@@ -105,6 +111,48 @@ function fetchAll() {
                     return [4 /*yield*/, fetchConsiglio(consiglio[0])];
                 case 3:
                     _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function fetchConsiglioSingolo() {
+    return __awaiter(this, void 0, void 0, function () {
+        var selected, element, date, response1, json1, consiglio;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    selected = document.querySelectorAll("tr.awe-row.awe-selected");
+                    if (!selected || !(selected.length == 1)) {
+                        log("Selected not found");
+                        return [2 /*return*/];
+                    }
+                    element = selected[0];
+                    date = (_a = element.children[2].textContent) === null || _a === void 0 ? void 0 : _a.substring(0, 10);
+                    log("date", date);
+                    return [4 /*yield*/, fetch('/CommissioniOnline/ODG/Ricerca', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                            body: "v=&IdOrgano=&NumeroDal=&NumeroAl=&DataConvocazione1Dal=".concat(date, "&DataConvocazione1Al=").concat(date, "&IdSedeConsiliare=&OggettoDelibera=&DataDelibera=&NumeroDelibera=&pageSize=50&FiltraPerAnnoEsercizio=true&page=1&SortNames=DescrizioneOrganoDeliberante&SortDirections=desc&SortNames=Numero&SortDirections=desc")
+                        })];
+                case 1:
+                    response1 = _b.sent();
+                    return [4 /*yield*/, response1.json()];
+                case 2:
+                    json1 = _b.sent();
+                    log("json1", json1);
+                    if (json1.Data.Items.length != 1) {
+                        log("Not found 1");
+                        return [2 /*return*/];
+                    }
+                    consiglio = json1.Data.Items[0];
+                    log("consiglio", consiglio);
+                    return [4 /*yield*/, fetchConsiglio(consiglio)];
+                case 3:
+                    _b.sent();
                     return [2 /*return*/];
             }
         });
