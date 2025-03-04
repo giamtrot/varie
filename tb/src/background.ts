@@ -23,41 +23,66 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 // Function to perform the periodic operation
 function performTask() {
 	console.log("Executing periodic operation at", new Date().toLocaleTimeString());
-	const filename = "session.txt"
+	const filename = `tab/session_${formatDate(new Date())}.txt`;
 
 	chrome.tabs.query({}, (tabs) => {
-		console.log("tabs", tabs)
+		// console.log("tabs", tabs)
 		const urls = tabs.map((tab) => tab.url).join("\n");
-		console.log("urls", urls)
-		const blob = new Blob([urls], { type: "text/plain" });
+		// console.log("urls", urls)
+		const encoded = encodeBase64(urls);
+		console.log("Encoded:", encoded);
+
+		const blob = new Blob([encoded], { type: "text/plain" });
 
 		const reader = new FileReader();
-		chrome.downloads.search({ filename: filename }, (results) => {
-			if (results.length > 0) {
-				chrome.downloads.erase({ id: results[0].id });
-			}
+		reader.onloadend = function () {
 			const dataUrl = reader.result as string;
+			console.log("downloading", filename, dataUrl)
 
-			// Now download the new file
 			chrome.downloads.download({
 				url: dataUrl,
 				filename: filename,
-				saveAs: false
+				saveAs: false  // Set to true if you want the "Save As" prompt
 			});
 
-		});
+		};
 
 		reader.readAsDataURL(blob);
 	});
-
-
 }
 
+function formatDate(date: Date): string {
+	const pad = (num: number) => String(num).padStart(2, "0");
+
+	const year = date.getFullYear();
+	const month = pad(date.getMonth() + 1); // Months are 0-based
+	const day = pad(date.getDate());
+	const hours = pad(date.getHours());
+	const minutes = pad(date.getMinutes());
+	const seconds = pad(date.getSeconds());
+
+	return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+}
+
+function encodeBase64(text: string): string {
+	const bytes = new TextEncoder().encode(text);
+	return btoa(String.fromCharCode(...bytes));
+}
+
+function decodeBase64(encoded: string): string {
+	const binary = atob(encoded);
+	const bytes = new Uint8Array([...binary].map(char => char.charCodeAt(0)));
+	return new TextDecoder().decode(bytes);
+}
+
+performTask()
+
+const TASK_NAME = "periodicTask";
 // Set up an alarm to trigger periodically
-chrome.alarms.create("periodicTask", { periodInMinutes: 1 });
+chrome.alarms.create(TASK_NAME, { periodInMinutes: 5 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-	if (alarm.name === "periodicTask") {
+	if (alarm.name === TASK_NAME) {
 		performTask();
 	}
 });
