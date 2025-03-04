@@ -31,6 +31,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           find . -name "IlPost.xml" -print -exec git add {} \;
-          git commit -m "Add ilPost.xml from GitHub Actions"
+          git diff --cached --quiet || git commit -m "Add ilPost.xml from GitHub Actions"
           git push
           

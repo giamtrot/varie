@@ -41,7 +41,7 @@ function loadUI() {
 	downloadloadButton.id = "rg-civ-download"
 	downloadloadButton.value = "Download All"
 	downloadloadButton.addEventListener("click", downloadAll)
-	// targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
+	//targetNode.parentNode.insertBefore(downloadloadButton, targetNode.nextSibling);
 
 	var fetchButton = document.createElement("INPUT") as HTMLInputElement;
 	fetchButton.type = "button"
@@ -51,6 +51,13 @@ function loadUI() {
 	targetNode.parentNode.insertBefore(fetchButton, targetNode.nextSibling);
 
 	// targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
+
+	var fetchConsiglioButton = document.createElement("INPUT") as HTMLInputElement;
+	fetchConsiglioButton.type = "button"
+	fetchConsiglioButton.id = "rg-civ-fetch-single"
+	fetchConsiglioButton.value = "Fetch Consiglio"
+	fetchConsiglioButton.addEventListener("click", fetchConsiglioSingolo)
+	targetNode.parentNode.insertBefore(fetchConsiglioButton, targetNode.nextSibling);
 
 	log("loadUI done")
 }
@@ -98,6 +105,38 @@ async function fetchAll() {
 	const consiglio = consigli.Data.Items.filter((c: { Numero: string }) => c.Numero == quale)
 	await fetchConsiglio(consiglio[0])
 
+}
+
+async function fetchConsiglioSingolo() {
+
+	let selected = document.querySelectorAll("tr.awe-row.awe-selected") as NodeList
+	if (!selected || !(selected.length == 1)) {
+		log("Selected not found")
+		return
+	}
+
+	let element = selected[0] as Element 
+	let date = element.children[2].textContent?.substring(0, 10)
+	log ("date", date)
+	let response1 = await fetch('/CommissioniOnline/ODG/Ricerca', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		body: `v=&IdOrgano=&NumeroDal=&NumeroAl=&DataConvocazione1Dal=${date}&DataConvocazione1Al=${date}&IdSedeConsiliare=&OggettoDelibera=&DataDelibera=&NumeroDelibera=&pageSize=50&FiltraPerAnnoEsercizio=true&page=1&SortNames=DescrizioneOrganoDeliberante&SortDirections=desc&SortNames=Numero&SortDirections=desc`
+	});
+	let json1 = await response1.json();
+	log("json1", json1)
+
+	if (json1.Data.Items.length != 1) {
+		log("Not found 1")
+		return
+	}
+
+	let consiglio = json1.Data.Items[0]
+	log("consiglio", consiglio)
+
+	await fetchConsiglio(consiglio)
 }
 
 async function fetchConsiglio(consiglio: { Id: any }) {
