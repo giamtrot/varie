@@ -9,8 +9,5 @@ chromeExt.code-workspace
 wr/node_modules/*
 rss/IlPostGit.cmd
 rl/node_modules/*
-tb/public/background.js
-tb/public/content.js
-tb/public/loader.js
-tb/public/utils.js
+tb/dist/*
 tb/node_modules/*

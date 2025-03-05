@@ -1,9 +1,10 @@
 {
   "name": "tb",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "background.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite build --watch",
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +12,11 @@
   "description": "",
   "devDependencies": {
     "@types/chrome": "^0.0.307",
-    "typescript": "^5.8.2"
+    "@types/crypto-js": "^4.2.2",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.2.0"
   }
 }

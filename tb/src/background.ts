@@ -1,3 +1,6 @@
+import { encrypt } from "./crypt";
+
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	console.log("onMessage", message, sender)
 
@@ -29,7 +32,8 @@ function performTask() {
 		// console.log("tabs", tabs)
 		const urls = tabs.map((tab) => tab.url).join("\n");
 		// console.log("urls", urls)
-		const encoded = encodeBase64(urls);
+		// const encoded = encodeBase64(urls);
+		const encoded = encrypt(urls);
 		console.log("Encoded:", encoded);
 
 		const blob = new Blob([encoded], { type: "text/plain" });
@@ -64,16 +68,8 @@ function formatDate(date: Date): string {
 	return `${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
 
-function encodeBase64(text: string): string {
-	const bytes = new TextEncoder().encode(text);
-	return btoa(String.fromCharCode(...bytes));
-}
 
-function decodeBase64(encoded: string): string {
-	const binary = atob(encoded);
-	const bytes = new Uint8Array([...binary].map(char => char.charCodeAt(0)));
-	return new TextDecoder().decode(bytes);
-}
+
 
 performTask()
 
