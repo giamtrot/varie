@@ -3,7 +3,7 @@ import { Jimp } from "jimp";
 import fs from "fs";
 
 // Google Static Maps API Key (Replace with your key)
-const API_KEY = "AIzaSyA9Ft1vRsvUIuJEyA75nw63iBiapEYiTi0";
+const API_KEY = "";
 
 // Coordinates (bounding box)
 const coords = {

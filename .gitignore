@@ -12,3 +12,4 @@ rl/node_modules/*
 tb/dist/*
 tb/node_modules/*
 map/downloadMap/node_modules/*
+map/downloadMap/api-key.txt
