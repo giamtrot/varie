@@ -13,3 +13,4 @@ tb/dist/*
 tb/node_modules/*
 map/downloadMap/node_modules/*
 map/downloadMap/api-key.txt
+map/europe/api-key.txt
