@@ -1,1 +1,0 @@
-"C:\Users\giamt\Desktop\Locale\github\varie\rss\AdAltaVoce.cmd" https://www.raiplaysound.it/audiolibri/leterredelsacramento.json LeTerreDelSacramento
