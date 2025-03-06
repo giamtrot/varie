@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Membership Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+    <h1>EU Membership Status Map</h1>
+    <button onclick="exportAllMaps()">Save as Image</button>
+    <div id="maps"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
+
+    <script>
+
+        const types = ["jawg-dark", "jawg-light", "jawg-sunny"];
+        const sizes = [
+            { size: 400, pos: [57, 18], zoom: 3 },
+            { size: 800, pos: [57, 18], zoom: 4 },
+            { size: 1600, pos: [57, 18], zoom: 5 },
+            { size: 3200, pos: [57, 18], zoom: 6 },
+        ]
+
+        const mapsDiv = document.getElementById("maps");
+        const maps = []
+        types.forEach(type => {
+            sizes.forEach(size => {
+                const id = `map-${type}-${size.size}`;
+                const map = document.createElement("div");
+                map.id = id;
+                map.style.height = `${size.size}px`;
+                map.style.width = `${size.size}px`;
+                mapsDiv.appendChild(map);
+                maps.push({ id: id, type: type, pos: size.pos, zoom: size.zoom });
+            })
+        })
+
+        console.log(maps)
+
+        const accessToken = 'w4qhLD89MmigZuLFFYqqtg5gfuDBCzMTJvRZ37wdumwoaKh6NB38zl6898bxR7H1';
+
+        maps.forEach(desc => {
+            desc.map = L.map(desc.id, {
+                preferCanvas: true
+            }).setView(desc.pos, desc.zoom);
+            const layer = L.tileLayer(`https://tile.jawg.io/${desc.type}/{z}/{x}/{y}.png?lang=it&access-token=${accessToken}`).addTo(desc.map);
+        })
+
+        console.log(maps)
+
+        const euMembers = ["France", "Germany", "Italy", "Spain", "Poland", "Sweden", "Netherlands", "Belgium", "Austria", "Finland", "Greece", "Portugal", "Czechia", "Hungary", "Denmark", "Slovakia", "Ireland", "Croatia", "Lithuania", "Slovenia", "Latvia", "Estonia", "Cyprus", "Luxembourg", "Malta", "Romania", "Bulgaria"];
+        const negotiating = ["Republic of Serbia", "Montenegro", "Albania", "Macedonia"];
+        const candidates = ["Bosnia and Herzegovina", "Ukraine", "Moldova", "Georgia"];
+
+
+        // Load and render the GeoJSON map
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+            .then(response => response.json())
+            .then(data => maps.forEach(desc => {
+                geoJSON(data, desc);
+            }))
+
+
+        function geoJSON(data, desc) {
+            L.geoJSON(data, {
+                style: feature => {
+                    const country = feature.properties.name;
+                    let color = "black";
+                    let opacity = 0.;
+                    if (euMembers.includes(country)) {
+                        color = "blue";
+                        opacity = 0.2;
+                    }
+                    if (negotiating.includes(country)) {
+                        color = "green";
+                        opacity = 0.2;
+                    }
+                    if (candidates.includes(country)) {
+                        color = "green";
+                        opacity = 0.2;
+                    }
+                    return { fillColor: color, color: color, weight: 1, fillOpacity: opacity, opacity: 0. };
+                },
+                onEachFeature: (feature, layer) => {
+                    layer.bindPopup(`<b>${feature.properties.name}</b>`);
+                }
+            }).addTo(desc.map)
+        }
+
+        function exportMap(desc) {
+            return function (err, canvas) {
+                return exportInnerMap(err, canvas, desc);
+            };
+        }
+
+        function exportInnerMap(err, canvas, desc) {
+            if (err) {
+                console.error("Error exporting map:", err);
+                return;
+            }
+
+            // Convert canvas to image
+            var img = document.createElement('a');
+            img.href = canvas.toDataURL("image/jpeg");
+            img.download = `leaflet-map-${desc}.jpg`;
+            console.log(img.download);
+            document.body.appendChild(img);
+            img.click();
+            document.body.removeChild(img);
+        }
+
+        function exportAllMaps() {
+            maps.forEach(desc => {
+                leafletImage(desc.map, exportMap(desc.id));
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>

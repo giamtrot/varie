@@ -11,3 +11,4 @@ rss/IlPostGit.cmd
 rl/node_modules/*
 tb/dist/*
 tb/node_modules/*
+map/downloadMap/node_modules/*
