@@ -1,12 +1,5 @@
 
-def books = ['16 ottobre 1943',
-'Acido lattico',
-'Agostino',
-'Alice nel paese delle meraviglie',
-'Alpinisti ciabattoni',
-'Amatissima',
-'Amore e ginnastica',
-'Amuleto',
+def books = [
 'Andai, dentro la notte illuminata',
 'Arancia Meccanica',
 'Artemisia',
@@ -206,7 +199,7 @@ books.each { book ->
     if (file.exists()) {
         println "File $fileName already exists."
     } else {
-        // file.createNewFile()
+        file.createNewFile()
         println "File $fileName created."
     }
 }
