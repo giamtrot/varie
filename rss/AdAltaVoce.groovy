@@ -54,11 +54,10 @@ articles.forEach{ href -> {
 
 		def file = new File(fileName)
 		if (!file.exists() && !TO_EXCLUDE.contains(bookTitle)) {
-			// file.createNewFile()
-			// makeRSS(fileName, book, lastDate)
-			// println "$bookTitle -> $fileName (${lastDate.time.format('dd/MM/yyyy')})"
-			// done = true
-			println "$bookTitle"
+			makeRSS(fileName, book, lastDate)
+			println "$bookTitle -> $fileName (${lastDate.time.format('dd/MM/yyyy')})"
+			done = true
+			// println "$bookTitle"
 		}
 	}
 }}
