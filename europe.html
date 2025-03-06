@@ -1,71 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EU Membership Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
         #map {
-            height: 800px;
-            width: 800px;
+            height: 1600px;
+            width: 1600px;
         }
     </style>
 </head>
 
 <body>
     <h1>EU Membership Status Map</h1>
+    <button onclick="exportMap()">Save as Image</button>
+    <button onclick="exportMapAsSVG()">Save as SVG</button>
     <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-image/leaflet-image.js"></script>
+
     <script>
 
 
         // Initialize the map
-        const map = L.map('map').setView([50, 10], 3);
+        const map = L.map('map', {
+            preferCanvas: true
+        }).setView([50, 10], 5);
 
-        // Add a base layer
-        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     attribution: '&copy; OpenStreetMap contributors'
-        // }).addTo(map);
+        const accessToken = 'w4qhLD89MmigZuLFFYqqtg5gfuDBCzMTJvRZ37wdumwoaKh6NB38zl6898bxR7H1';
+        const layer = L.tileLayer(`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?lang=it&access-token=${accessToken}`).addTo(map);
 
-        // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(map);
-        // Define country categories
         const euMembers = ["France", "Germany", "Italy", "Spain", "Poland", "Sweden", "Netherlands", "Belgium", "Austria", "Finland", "Greece", "Portugal", "Czechia", "Hungary", "Denmark", "Slovakia", "Ireland", "Croatia", "Lithuania", "Slovenia", "Latvia", "Estonia", "Cyprus", "Luxembourg", "Malta", "Romania", "Bulgaria"];
-        const negotiating = ["Serbia", "Montenegro", "Albania", "North Macedonia"];
+        const negotiating = ["Republic of Serbia", "Montenegro", "Albania", "Macedonia"];
         const candidates = ["Bosnia and Herzegovina", "Ukraine", "Moldova", "Georgia"];
 
-        // Load and render the GeoJSON map
-        // let response = await fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-        // let data = await response.json()
-        console.log(data)
-            // L.geoJSON(data, {
-            //     style: feature => {
-            //         const country = feature.properties.name;
-            //         let color = "black";
-            //         let opacity = 0.;
-            //         if (euMembers.includes(country)) {
-            //             color = "blue";
-            //             opacity = 0.2;
-            //         }
-            //         if (negotiating.includes(country)) {
-            //             color = "orange";
-            //             opacity = 0.2;
-            //         }
-            //         if (candidates.includes(country)) {
-            //             color = "green";
-            //             opacity = 0.2;
-            //         }
-            //         return { fillColor: color, color: color, weight: 1, fillOpacity: opacity, opacity: 0. };
-            //     },
-            //     onEachFeature: (feature, layer) => {
-            //         layer.bindPopup(`<b>${feature.properties.name}</b>`);
-            //     }
-            // }).addTo(map);
 
-            <   </script>
+        // Load and render the GeoJSON map
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    style: feature => {
+                        const country = feature.properties.name;
+                        let color = "black";
+                        let opacity = 0.;
+                        if (euMembers.includes(country)) {
+                            color = "blue";
+                            opacity = 0.2;
+                        }
+                        if (negotiating.includes(country)) {
+                            color = "green";
+                            opacity = 0.2;
+                        }
+                        if (candidates.includes(country)) {
+                            color = "green";
+                            opacity = 0.2;
+                        }
+                        return { fillColor: color, color: color, weight: 1, fillOpacity: opacity, opacity: 0. };
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(`<b>${feature.properties.name}</b>`);
+                    }
+                }).addTo(map)
+            })
+
+
+        function exportMap() {
+            leafletImage(map, function (err, canvas) {
+                if (err) {
+                    console.error("Error exporting map:", err);
+                    return;
+                }
+
+                // Convert canvas to image
+                var img = document.createElement('a');
+                img.href = canvas.toDataURL("image/jpeg"); // Convert to PNG format
+                img.download = "leaflet-map.png"; // Set download filename
+                document.body.appendChild(img);
+                img.click();
+                document.body.removeChild(img);
+            });
+        }
+
+        function exportMapAsSVG() {
+            leafletImage(map, function (err, canvas) {
+                var img = document.createElement('img');
+                img.src = canvas.toDataURL("image/png");
+
+                var svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+        <image href="${img.src}" width="${canvas.width}" height="${canvas.height}" />
+      </svg>
+    `;
+
+                var blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+                var a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "leaflet-map.svg";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+
+    </script>
 </body>
 
 </html>
