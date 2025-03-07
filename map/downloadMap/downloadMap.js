@@ -1,6 +1,4 @@
-import axios from "axios";
 import { Jimp } from "jimp";
-import fs from "fs";
 
 // Google Static Maps API Key (Replace with your key)
 const API_KEY = "";  // @api-key.txt
