@@ -1,0 +1,6 @@
+<nppcrypt version="1016">
+<encryption cipher="rijndael" key-length="32" mode="gcm" aad="true" encoding="base64" />
+<key algorithm="scrypt" N="16384" r="8" p="1" salt="22xaYo6zv86kbjV+xezStg==" />
+<iv value="0G/LYXu+Fl30/PUzjnZKtw==" method="random" /><tag value="CRURPVPV8E2C8bEa2hxc2g==" />
+</nppcrypt>
+AhfKZNGeu1e+HRc832RRAY6XVdEz6O0h00Kf+Y74/JFvdSKlplSQ6TRDc5UqeE52a9wV/wnmsY4H
