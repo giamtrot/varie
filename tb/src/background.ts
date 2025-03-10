@@ -23,17 +23,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 	sendResponse("done: " + message.action);
 });
 
+let cont = 0;
+
 // Function to perform the periodic operation
-function performTask() {
-	console.log("Executing periodic operation at", new Date().toLocaleTimeString());
+function performTask(reason: string) {
+	cont++
+	console.log(reason, "Executing periodic operation at", new Date().toLocaleTimeString());
+	console.log("chrome.runtime.id", chrome.runtime.id)
 	const filename = `tab/session_${formatDate(new Date())}.txt`;
 
 	chrome.tabs.query({}, (tabs) => {
-		// console.log("tabs", tabs)
+		console.log("query tabs", tabs)
 		const urls = tabs.map((tab) => tab.url).join("\n");
 		// console.log("urls", urls)
 		// const encoded = encodeBase64(urls);
-		const encoded = encrypt(urls);
+		let encoded = encrypt(urls);
+
+		encoded += "\n\nCont: " + cont + "\nReason: " + reason + "\nId: " + chrome.runtime.id;
 		console.log("Encoded:", encoded);
 
 		const blob = new Blob([encoded], { type: "text/plain" });
@@ -68,18 +74,24 @@ function formatDate(date: Date): string {
 	return `${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
 
+const TASK_NAME = "TAB_periodicTask";
 
+chrome.alarms.getAll(alarms => {
+	console.log("Alarms:", alarms);
+	const alarmExists = alarms.some(alarm => alarm.name === TASK_NAME);
+	if (alarmExists) {
+		console.log("L'allarme esiste già.");
+	} else {
+		console.log("L'allarme non esiste.");
+		performTask("first time");
+		chrome.alarms.create(TASK_NAME, { periodInMinutes: 5 });
+	}
+});
 
-
-performTask()
-
-const TASK_NAME = "periodicTask";
-// Set up an alarm to trigger periodically
-chrome.alarms.create(TASK_NAME, { periodInMinutes: 5 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
 	if (alarm.name === TASK_NAME) {
-		performTask();
+		performTask("periodic");
 	}
 });
 
