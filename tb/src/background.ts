@@ -39,7 +39,7 @@ function performTask(reason: string) {
 		// const encoded = encodeBase64(urls);
 		let encoded = encrypt(urls);
 
-		encoded += "\n\nCont: " + cont + "\nReason: " + reason + "\nId: " + chrome.runtime.id;
+		// encoded += "\n\nCont: " + cont + "\nReason: " + reason + "\nId: " + chrome.runtime.id;
 		console.log("Encoded:", encoded);
 
 		const blob = new Blob([encoded], { type: "text/plain" });
