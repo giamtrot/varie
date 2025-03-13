@@ -1,26 +1,13 @@
 import { encrypt } from "./crypt";
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	console.log("Message received from popup:", request);
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-	console.log("onMessage", message, sender)
-
-	if (message.action === "openTab") {
-		console.log("openTab", message)
-		chrome.tabs.create({
-			url: message.data.url,
-			active: false  // Questo apre il tab in background
-		});
-	} else if (message.action === "loadScripts" && sender.tab && sender.tab.id !== undefined) {
-		console.log("loadScripts", message.files, sender.tab.id)
-		chrome.scripting.executeScript({
-			target: { tabId: sender.tab.id },
-			files: message.files,
-			world: message.world
-		});
-	} else {
-		console.error('Sender is not a tab');
+	if (request.action === "save") {
+		performTask("click");
 	}
-	sendResponse("done: " + message.action);
+
+	return true; // Keep the message channel open for async responses
 });
 
 let cont = 0;
@@ -30,7 +17,8 @@ function performTask(reason: string) {
 	cont++
 	console.log(reason, "Executing periodic operation at", new Date().toLocaleTimeString());
 	console.log("chrome.runtime.id", chrome.runtime.id)
-	const filename = `tab/session_${formatDate(new Date())}.txt`;
+	const filename = `tab/session_${formatDate(new Date())}.txt`
+
 
 	chrome.tabs.query({}, (tabs) => {
 		console.log("query tabs", tabs)
