@@ -27,7 +27,7 @@ catch (SocketTimeoutException e) {
 }
 
 def lastDate = new GregorianCalendar()
-lastDate.setTime(Date.parse("dd/MM/yyyy", "01/01/2025"))
+lastDate.setTime(Date.parse("dd/MM/yyyy", "15/02/2025"))
 
 def dateFile = new File(DATE_FILE)
 if (dateFile.exists()) {
@@ -56,6 +56,7 @@ articles.forEach{ href -> {
 		if (!file.exists() && !TO_EXCLUDE.contains(bookTitle)) {
 			makeRSS(fileName, book, lastDate)
 			println "$bookTitle -> $fileName (${lastDate.time.format('dd/MM/yyyy')})"
+			open(fileName)
 			done = true
 			// println "$bookTitle"
 		}
@@ -65,6 +66,18 @@ articles.forEach{ href -> {
 
 dateFile.withWriter { writer ->
 	writer.writeLine("Last Date: ${lastDate.time.format('dd/MM/yyyy')}")
+}
+
+//===============================
+
+
+def open(filename) {
+	def shellCommand = "explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/${filename}.xml"
+	def process = shellCommand.execute()
+	def output = new StringBuffer()
+	process.consumeProcessOutput(output, System.err)
+	process.waitFor()
+	println output.toString()
 }
 
 def nameToFile(String name) {
