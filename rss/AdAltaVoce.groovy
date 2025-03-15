@@ -72,7 +72,7 @@ dateFile.withWriter { writer ->
 
 
 def open(filename) {
-	def shellCommand = "explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/${filename}.xml"
+	def shellCommand = "explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/${filename}"
 	def process = shellCommand.execute()
 	def output = new StringBuffer()
 	process.consumeProcessOutput(output, System.err)
