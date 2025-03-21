@@ -15,6 +15,7 @@ def urls = [
     "https://www.ilpost.it/podcasts/morning/",
     "https://www.ilpost.it/podcasts/orazio/",
     "https://www.ilpost.it/podcasts/basaglia-e-i-suoi/",
+    "https://www.ilpost.it/podcasts/l-ombelico-di-un-mondo/",
 ]
 
 def outFile = RSS_DIR + "IlPost.xml"
