@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import groovy.json.JsonSlurper
 import java.text.SimpleDateFormat
 import groovy.xml.MarkupBuilder
+import groovy.xml.XmlSlurper
 import groovy.json.JsonSlurper
 
 final RSS_DIR = "./"
@@ -88,16 +89,19 @@ def newArticles = articles.findAll { article ->
 	!TO_INCLUDE.any { exclude -> article.toLowerCase().contains(exclude) }
 }
 
-println "New Articles: ${newArticles}"
+println "New Books: ${newArticles}"
 def newArticlesFile = new File(RSS_DIR + "AdAltaVoce.new")
 newArticlesFile.withWriter { writer ->
 	newArticles.each { article ->
 		writer.writeLine(article)
 	}
 }
-// System.exit(0)
+
+// println readXML("IRaccontiDiRyunosukeAkutagawa.xml")
 
 def done = false
+def allItems = []
+
 TO_INCLUDE.forEach{ href -> {
 	if (!done) {
 		def article = baseUrl.resolve("/audiolibri/" + href).toString() + ".json"
@@ -107,16 +111,20 @@ TO_INCLUDE.forEach{ href -> {
 		def fileName = nameToFile(bookTitle) + '.xml'
 
 		def file = new File(fileName)
+		if (file.exists()) {
+			def items = readXML(fileName)
+			allItems.addAll(items)
+		}
 		if (!file.exists()) {
-			makeRSS(fileName, book, lastDate)
-			println "$bookTitle -> $fileName (${lastDate.time.format('dd/MM/yyyy')})"
-			open(fileName)
+			def items = readBook(book, lastDate)
+			allItems.addAll(items)
+			makeRSSFromItems(fileName, bookTitle, items)
 			done = true
-			println "$bookTitle"
 		}
 	}
 }}
 
+makeRSSFromItems("AdAltaVoce.xml", "Ad Alta Voce", allItems)
 
 dateFile.withWriter { writer ->
 	writer.writeLine("Last Date: ${lastDate.time.format('dd/MM/yyyy')}")
@@ -124,6 +132,48 @@ dateFile.withWriter { writer ->
 
 //===============================
 
+def readBook(book, lastDate) {
+	def formatter = new SimpleDateFormat('EEE, d MMM yyyy hh:mm:ss Z', Locale.ENGLISH)
+
+	def items = []
+	book.block.cards.each{ n->
+		def urlAudio = n.downloadable_audio ?: n.audio
+		def title = n.audio.title
+		def link = urlAudio.url
+		def description =n.audio.title
+		def enclosure = [type: "audio/mpeg", url:urlAudio.url]
+		def pubDate = formatter.format(lastDate.time)
+		def guid = urlAudio.url
+		lastDate.add(Calendar.DATE, 1)
+		items << [title: title, link: link, description: description, enclosure: enclosure, pubDate: pubDate, guid: guid]
+	}
+
+	return items
+}
+
+def readXML(fileName) {
+	def xmlFile = new File(fileName)
+	if (!xmlFile.exists()) {
+		println "File not found: $fileName"
+		return
+	}
+
+	def xmlContent = new XmlSlurper().parse(xmlFile)
+	// println "Title: ${xmlContent.channel.title.text()}"
+	def items = []
+	xmlContent.channel.item.each { item ->
+		items << [
+			title: item.title.text(),
+			link: item.link.text(),
+			description: item.description.text(),
+			enclosure: [type: item.enclosure.@type.text(), url: item.enclosure.@url.text()],
+			pubDate: item.pubDate.text(),
+			guid: item.guid.text()
+		]
+	}
+	// println items[0].enclosure
+	return items
+}
 
 def open(filename) {
 	def shellCommand = "explorer https://raw.githubusercontent.com/giamtrot/varie/refs/heads/master/rss/${filename}"
@@ -138,6 +188,31 @@ def nameToFile(String name) {
     name = name.replaceAll(/['’,]/, '')
     name = name.split(/\s+/).collect { it.capitalize() }.join('')
     name
+}
+
+def makeRSSFromItems(fileName, titleValue, items) {
+	def xmlWriter = new StringWriter()
+	def xmlMarkup = new MarkupBuilder(xmlWriter)
+
+	println "$fileName, $titleValue"
+	xmlMarkup.rss {
+		channel {
+			title(titleValue)
+			items.each{ i ->
+				'item' {
+					title(i.title)
+					link(i.link)
+					description(i.description)
+					enclosure(type: i.enclosure.type, url:i.enclosure.url)
+					pubDate(i.pubDate)
+					guid(i.guid)
+				}
+			}
+		}
+	}
+
+	// // println  xmlWriter.toString()
+	new File(fileName).write(xmlWriter.toString())
 }
 
 def makeRSS(fileName, book, lastDate) {
