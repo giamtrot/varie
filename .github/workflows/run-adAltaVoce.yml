@@ -1,0 +1,36 @@
+name: Check "Ad Alta Voce" Podcasts
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  schedule:
+     - cron: "30 7 * * 1"   # Runs at 08:30 UTC on Mondays
+
+permissions:
+  contents: write  # Allows pushing changes
+  
+jobs:
+  Update-RSS:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Groovy
+        uses: wtfjoke/setup-groovy@v1
+        with:
+          groovy-version: '4.0.15'
+
+      - name: Ad Alta Voce
+        run: |
+          groovy rss/AdAltaVoce.groovy
+          echo "path"
+          realpath .
+          echo "find"
+          find . -name "AdAltaVoce.xml"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          find . -name "AdAltaVoce.xml" -print -exec git add {} \;
+          find . -name "AdAltaVoce.date" -print -exec git add {} \;
+          git diff --cached --quiet || git commit -m "Add AdAltaVoce.xml from GitHub Actions"
+          git push
+          
