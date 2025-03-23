@@ -8,8 +8,9 @@ import groovy.xml.MarkupBuilder
 import groovy.xml.XmlSlurper
 import groovy.json.JsonSlurper
 
-final RSS_DIR = "./"
-final DATE_FILE = RSS_DIR + "AdAltaVoce.date"
+final  BASE_DIR = new File(getClass().protectionDomain.codeSource.location.path).parent + "/"
+println "BASE_DIR: ${BASE_DIR}"
+final DATE_FILE = BASE_DIR + "AdAltaVoce.date"
 // final TO_EXCLUDE = ["Alice nel paese delle meraviglie", "Alpinisti ciabattoni", "Amuleto", "Cuore di tenebra", "Diario di Anna Frank", "Febbre", 
 // "Fiabe dei fratelli Grimm", "Flush. Una biografia", "Gioventù senza Dio", "I Malavoglia", "I dolori del giovane Werther", "I mille da Genova a Capua", "I promessi sposi", 
 // "I ragazzi della Via Pal", "I viaggi di Gulliver", "Il Milione", "Il cappello del prete", "Il fu Mattia Pascal", "Il giardino dei Finzi Contini", 
@@ -90,7 +91,7 @@ def newArticles = articles.findAll { article ->
 }
 
 println "New Books: ${newArticles}"
-def newArticlesFile = new File(RSS_DIR + "AdAltaVoce.new")
+def newArticlesFile = new File(BASE_DIR + "AdAltaVoce.new")
 newArticlesFile.withWriter { writer ->
 	newArticles.each { article ->
 		writer.writeLine(article)
@@ -110,21 +111,22 @@ TO_INCLUDE.forEach{ href -> {
 		def bookTitle = book.title.trim()
 		def fileName = nameToFile(bookTitle) + '.xml'
 
-		def file = new File(fileName)
+		def file = new File(BASE_DIR, fileName)
 		if (file.exists()) {
-			def items = readXML(fileName)
+			def items = readXML(file)
 			allItems.addAll(items)
 		}
 		if (!file.exists()) {
 			def items = readBook(book, lastDate)
 			allItems.addAll(items)
-			makeRSSFromItems(fileName, bookTitle, items)
+			makeRSSFromItems(file, bookTitle, items)
 			done = true
 		}
 	}
 }}
 
-makeRSSFromItems("AdAltaVoce.xml", "Ad Alta Voce", allItems)
+def adAltaVoceRSS = new File(BASE_DIR, "AdAltaVoce.xml")
+makeRSSFromItems(adAltaVoceRSS, "Ad Alta Voce", allItems)
 
 dateFile.withWriter { writer ->
 	writer.writeLine("Last Date: ${lastDate.time.format('dd/MM/yyyy')}")
@@ -151,8 +153,7 @@ def readBook(book, lastDate) {
 	return items
 }
 
-def readXML(fileName) {
-	def xmlFile = new File(fileName)
+def readXML(xmlFile) {
 	if (!xmlFile.exists()) {
 		println "File not found: $fileName"
 		return
@@ -190,11 +191,11 @@ def nameToFile(String name) {
     name
 }
 
-def makeRSSFromItems(fileName, titleValue, items) {
+def makeRSSFromItems(file, titleValue, items) {
 	def xmlWriter = new StringWriter()
 	def xmlMarkup = new MarkupBuilder(xmlWriter)
 
-	println "$fileName, $titleValue"
+	println "$file, $titleValue"
 	xmlMarkup.rss {
 		channel {
 			title(titleValue)
@@ -212,7 +213,7 @@ def makeRSSFromItems(fileName, titleValue, items) {
 	}
 
 	// // println  xmlWriter.toString()
-	new File(fileName).write(xmlWriter.toString())
+	file.write(xmlWriter.toString())
 }
 
 def makeRSS(fileName, book, lastDate) {
