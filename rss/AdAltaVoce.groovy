@@ -110,6 +110,7 @@ TO_INCLUDE.forEach{ href -> {
 		def book = new JsonSlurper().parse(new URL(article))
 		def bookTitle = book.title.trim()
 		def fileName = nameToFile(bookTitle) + '.xml'
+		println "Book: $bookTitle - $fileName"
 
 		def file = new File(BASE_DIR, fileName)
 		if (file.exists()) {
