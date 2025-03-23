@@ -29,7 +29,7 @@ jobs:
           find . -name "AdAltaVoce.xml"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          find . -name "AdAltaVoce.xml" -print -exec git add {} \;
+          find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           git diff --cached --quiet || git commit -m "Add AdAltaVoce.xml from GitHub Actions"
           git push
