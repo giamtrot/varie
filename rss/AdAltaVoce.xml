@@ -2,11 +2,12 @@
   <channel>
     <title>Ad Alta Voce</title>
     <image>
-      <url>https://www.ilpost.it/wp-content/uploads/2017/09/cropped-ilpost-site-icon-32x32.png</url>
-      <title>Il Post</title>
-      <link>https://www.ilpost.it</link>
-      <width>32</width>
-      <height>32</height>
+      <url>
+        https://www.raiplaysound.it/resizegd/252x252/dl/img/2021/11/29/1638210894856_2048x2048%20ad%20alta%20voce%202.jpg</url>
+      <title>Ad Alta Voce</title>
+      <link>https://www.raiplaysound.it/programmi/adaltavoce/audiolibri</link>
+      <!-- <width>32</width>
+      <height>32</height> -->
     </image>
     <item>
       <title>#1 - 16 ottobre 1943</title>
