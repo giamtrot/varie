@@ -89,6 +89,11 @@ def xmlMarkup = new MarkupBuilder(xmlWriter)
 xmlMarkup.rss {
     channel {
         title("I Podcast del Post")
+        image {
+            url("https://www.ilpost.it/wp-content/uploads/2021/05/evening-1.png")
+            title("I Podcast del Post")
+            link("https://www.ilpost.it")
+        }
         list.each{ element->
             'item' {
                 def fullTitle = element.podcast + " - " + element.title
