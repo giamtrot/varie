@@ -3,8 +3,10 @@ name: Check "Il Post" Podcasts
 on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
-    - cron: "30 7 * * *"   # Runs at 08:30 UTC
-    - cron: "30 16 * * *"  # Runs at 17:30 UTC
+    - cron: "30 6 * * *"   # Runs at 08:30 UTC (Daylight saving time)
+    - cron: "30 7 * * *"   # Runs at 08:30 UTC (Standard time)
+    - cron: "30 15 * * *"  # Runs at 17:30 UTC (Daylight saving time)
+    - cron: "30 16 * * *"  # Runs at 17:30 UTC (Standard time)
 
 permissions:
   contents: write  # Allows pushing changes
