@@ -1,7 +1,7 @@
 import { loadPage } from './loadPage'
 import { log, openTab } from './utils'
 
-export const EXT_ID = "FL - 2024.08.22-1"
+export const EXT_ID = "FL - 2025.03.23-1"
 
 const ALBUMS_PATH = ".view .sub-photo-title-desc-view"
 const ALBUMS_DIV = "div_rg_1"

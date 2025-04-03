@@ -43,6 +43,12 @@ function loadFinalPage(urls) {
         const style = doc.createElement('style');
         style.innerHTML = getNewStyle();
         doc.head.appendChild(style);
+        log("adding visibilityState");
+        doc.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                console.log('Page activated');
+            }
+        });
         const target = doc.createElement("div");
         doc.body.insertBefore(target, doc.body.childNodes[0]);
         render(target, images);
