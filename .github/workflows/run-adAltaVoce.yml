@@ -3,7 +3,7 @@ name: Check "Ad Alta Voce" Podcasts
 on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
-     - cron: "30 7 * * 1"   # Runs at 08:30 UTC on Mondays
+     - cron: "30 7 * * 0"   # Runs at 08:30 UTC on Mondays
 
 permissions:
   contents: write  # Allows pushing changes
