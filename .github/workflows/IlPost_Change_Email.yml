@@ -1,4 +1,4 @@
-name: Changed Il Post via Email
+name: Changed "Il Post" via Email
 
 on:
   push:
