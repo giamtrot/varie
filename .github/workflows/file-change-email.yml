@@ -1,0 +1,26 @@
+name: Notify via Email on File Change
+
+on:
+  push:
+    paths:
+      - 'rss/test.txt'  
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_APP_PASSWORD }}
+          subject: "🚨 Changed: Il Post"
+          to: rgiammario@gmail.com
+          from: GitHub Action <rgiammario@gmail.com>
+          body: |
+            The file `rss/test.txt` was modified in a push to ${{ github.repository }}.
+
+            Commit info:
+            ${{ github.event.head_commit.message }}
