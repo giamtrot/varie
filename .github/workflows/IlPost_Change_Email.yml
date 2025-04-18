@@ -6,6 +6,27 @@ on:
       - 'rss/IlPost.xml'  
 
 jobs:
+  debug-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Dump GitHub context
+        run: echo "${{ toJson(github) }}"
+
+      - name: Dump job context
+        run: echo "${{ toJson(job) }}"
+
+      - name: Dump runner context
+        run: echo "${{ toJson(runner) }}"
+
+      - name: Dump matrix context
+        run: echo "${{ toJson(matrix) }}"
+
+      - name: Dump all environment variables
+        run: env
+
   send-email:
     runs-on: ubuntu-latest
     steps:
