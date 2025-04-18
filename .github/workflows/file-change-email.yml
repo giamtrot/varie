@@ -18,8 +18,8 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_APP_PASSWORD }}
           subject: "🚨 Changed: Il Post"
-          to: rgiammario@gmail.com
-          from: GitHub Action <rgiammario@gmail.com>
+          to: raffaele.giammario@gmail.com
+          from: GitHub Action <raffaele.giammario@gmail.com>
           body: |
             The file `rss/test.txt` was modified in a push to ${{ github.repository }}.
 
