@@ -1,9 +1,12 @@
-name: Check "Ad Alta Voce" Podcasts
+name: Check "Il Post" Podcasts
 
 on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
-     - cron: "30 7 * * 0"   # Runs at 08:30 UTC on Mondays
+    - cron: "30 6 * * 1-6"   # Runs at 08:30 UTC (Daylight saving time)
+    - cron: "30 7 * * 1-6"   # Runs at 08:30 UTC (Standard time)
+    - cron: "30 15 * * 1-5"  # Runs at 17:30 UTC (Daylight saving time)
+    - cron: "30 16 * * 1-5"  # Runs at 17:30 UTC (Standard time)
 
 permissions:
   contents: write  # Allows pushing changes
@@ -20,17 +23,16 @@ jobs:
         with:
           groovy-version: '4.0.15'
 
-      - name: Ad Alta Voce
+      - name: Il Post
         run: |
-          groovy rss/AdAltaVoce.groovy
+          groovy rss/IlPost.groovy
           echo "path"
           realpath .
           echo "find"
-          find . -name "AdAltaVoce.xml"
+          find . -name "IlPost.xml"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          find rss -name "*.xml" -print -exec git add {} \;
-          find . -name "AdAltaVoce.date" -print -exec git add {} \;
-          git diff --cached --quiet || git commit -m "Add AdAltaVoce.xml from GitHub Actions"
+          find . -name "IlPost.xml" -print -exec git add {} \;
+          git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
           git push
           

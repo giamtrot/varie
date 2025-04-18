@@ -1,9 +1,9 @@
-name: Notify via Email on File Change
+name: Changed Il Post via Email
 
 on:
   push:
     paths:
-      - 'rss/test.txt'  
+      - 'rss/IlPost.xml'  
 
 jobs:
   send-email:
@@ -14,14 +14,9 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_APP_PASSWORD }}
           subject: "🚨 Changed: Il Post"
           to: raffaele.giammario@gmail.com
           from: GitHub Action <raffaele.giammario@gmail.com>
-          body: |
-            The file `rss/test.txt` was modified in a push to ${{ github.repository }}.
-
-            Commit info:
-            ${{ github.event.head_commit.message }}
+          body: ${{ github.event.head_commit.message }}
