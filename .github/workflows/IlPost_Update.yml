@@ -52,31 +52,35 @@ jobs:
 
           # count=$(git status --short | wc -l)
           # echo "Count: $count"
-          # echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
+          
           # if [ "$count" -gt 0 ]; then
             echo "Changes detected, sending email..."
-            echo "send_email=true" >> "$GITHUB_OUTPUT"
+            echo "run_send_email=true" >> "$GITHUB_OUTPUT"
           # else
           #   echo "No changes detected, not sending email."
-          #   echo "send_email=false" >> "$GITHUB_OUTPUT"
+          #   echo "run_send_email=false" >> "$GITHUB_OUTPUT"
           # fi
 
+          echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
           cat "$GITHUB_OUTPUT"
 
           # git push
       
-      - name: Debug send_email
+      - name: Debug run_send_email
         run: |
-          echo "send_email is ${{ steps.check.outputs.send_email }}"
+          echo "run_send_email is ${{ steps.check.outputs.run_send_email }}"
+          echo "run_send_email=${{ steps.check.outputs.run_send_email }}" >> "$GITHUB_OUTPUT"
+          echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
+          cat "$GITHUB_OUTPUT"
           
       - name: Conditional step 2
-        if: ${{ steps.check.outputs.send_email == 'true' }}
+        if: ${{ steps.check.outputs.run_send_email == 'true' }}
         run: |
-          echo "send_email is ${{ steps.check.outputs.send_email }}"
-          echo "This step ran because send_email is true"
+          echo "run_send_email is ${{ steps.check.outputs.run_send_email }}"
+          echo "This step ran because run_send_email is true"
 
       # - name: Send Email Notification
-      #   if: ${{ steps.check.outputs.send_email == 'true' }}
+      #   if: ${{ steps.check.outputs.run_send_email == 'true' }}
       #   uses: dawidd6/action-send-mail@v3
       #   with:
       #     server_address: smtp.gmail.com
