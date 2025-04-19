@@ -31,18 +31,7 @@ jobs:
 
           groovy rss/AdAltaVoce.groovy
           
-          date > rss/AdAltaVoce.update
-          
-          find rss -name "AdAltaVoce.update" -print -exec git add {} \;
-          find rss -name "*.xml" -print -exec git add {} \;
-          find rss -name "AdAltaVoce.date" -print -exec git add {} \;
-          
-          git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
-
-          status=$(git status --short)
-          echo "commit_status='$status'" >> "$GITHUB_OUTPUT"
-
-          git push
+          bash rss/AdAltaVoce_Action.sh
       
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
@@ -54,5 +43,6 @@ jobs:
           subject: "🚨 Changed: Ad Alta Voce"
           to: raffaele.giammario@gmail.com
           from: GitHub Action <raffaele.giammario@gmail.com>
-          body: "Changed: ${{ steps.AdAltaVoce.outputs.commit_status }}"
+          # body: "Changed: ${{ steps.AdAltaVoce.outputs.commit_status }}"
+          html_body: file://rss/AdAltaVoce_Action.html
           

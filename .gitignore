@@ -8,3 +8,4 @@ rss/IlPostGit.cmd
 *.bak
 tb/dist/*
 **/node_modules/*
+rss/AdAltaVoce.CommitStatus.txt
