@@ -33,7 +33,9 @@ jobs:
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           find . -name "AdAltaVoce.update" -print -exec git add {} \;
+          git status
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
           # git push
+          git status
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/giamtrot/varie.git
           
