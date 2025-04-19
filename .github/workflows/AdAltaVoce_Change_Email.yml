@@ -2,9 +2,11 @@ name: Changed "Ad Alta Voce" via Email
 
 on:
   push:
-    paths:
-      - 'rss/AdAltaVoce.xml'  
-      - 'rss/AdAltaVoce.update'
+    branches:
+      - main
+    # paths:
+      # - 'rss/AdAltaVoce.xml'  
+      # - 'rss/AdAltaVoce.update'
 
 jobs:
   send-email:
