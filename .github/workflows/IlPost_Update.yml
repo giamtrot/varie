@@ -23,62 +23,67 @@ jobs:
         with:
           groovy-version: '4.0.15'
 
-      # - name: Decide if the next step should run
-      #   id: check
-      #   run: |
-      #       echo "run_cond_step=true" >> "$GITHUB_OUTPUT"
+      - name: Decide if the next step should run
+        id: check
+        run: |
+            echo "run_cond_step=true" >> "$GITHUB_OUTPUT"
   
-      # - name: Conditional step
-      #   if: ${{ steps.check.outputs.run_cond_step == 'true' }}
-      #   run: |
-      #     echo "run_cond_step is ${{ steps.check.outputs.send_email }}"
-      #     echo "This step ran because run_cond_step is true"
+      - name: Conditional step
+        if: ${{ steps.check.outputs.run_cond_step == 'true' }}
+        run: |
+          echo "run_cond_step is ${{ steps.check.outputs.run_cond_step }}"
+          echo "This step ran because run_cond_step is true"
 
       - name: Il Post
         id: IlPost
         run: |
-          groovy rss/IlPost.groovy
-          echo "path"
-          realpath .
-          echo "find"
-          find . -name "IlPost.xml"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          find . -name "IlPost.xml" -print -exec git add {} \;
-          git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
+          # groovy rss/IlPost.groovy
+          # echo "path"
+          # realpath .
+          # echo "find"
+          # find . -name "IlPost.xml"
+          # git config --global user.name "github-actions[bot]"
+          # git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # find . -name "IlPost.xml" -print -exec git add {} \;
+          # git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
 
-          date > rss/IlPost.update
-          find . -name "IlPost.update" -print -exec git add {} \;
+          # date > rss/IlPost.update
+          # find . -name "IlPost.update" -print -exec git add {} \;
 
-          count=$(git status --short | wc -l)
-          echo "Count: $count"
-          echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
-          if [ "$count" -gt 0 ]; then
+          # count=$(git status --short | wc -l)
+          # echo "Count: $count"
+          # echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
+          # if [ "$count" -gt 0 ]; then
             echo "Changes detected, sending email..."
             echo "send_email=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No changes detected, not sending email."
-            echo "send_email=false" >> "$GITHUB_OUTPUT"
-          fi
+          # else
+          #   echo "No changes detected, not sending email."
+          #   echo "send_email=false" >> "$GITHUB_OUTPUT"
+          # fi
 
           cat "$GITHUB_OUTPUT"
 
-          git push
+          # git push
       
       # - name: Debug send_email
       #   run: |
       #     echo "send_email is ${{ steps.check.outputs.send_email }}"
           
-          
-      - name: Send Email Notification
+      - name: Conditional step 2
         if: ${{ steps.check.outputs.send_email == 'true' }}
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_APP_PASSWORD }}
-          subject: "🚨 Changed: Il Post"
-          to: raffaele.giammario@gmail.com
-          from: GitHub Action <raffaele.giammario@gmail.com>
-          body: ${{ github.event.head_commit.message }}
+        run: |
+          echo "send_email is ${{ steps.check.outputs.send_email }}"
+          echo "This step ran because send_email is true"
+
+      # - name: Send Email Notification
+      #   if: ${{ steps.check.outputs.send_email == 'true' }}
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     username: ${{ secrets.EMAIL_USERNAME }}
+      #     password: ${{ secrets.EMAIL_APP_PASSWORD }}
+      #     subject: "🚨 Changed: Il Post"
+      #     to: raffaele.giammario@gmail.com
+      #     from: GitHub Action <raffaele.giammario@gmail.com>
+      #     body: ${{ github.event.head_commit.message }}
