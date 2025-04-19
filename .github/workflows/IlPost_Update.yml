@@ -23,16 +23,16 @@ jobs:
         with:
           groovy-version: '4.0.15'
 
-      - name: Decide if the next step should run
-        id: check
-        run: |
-            echo "run_cond_step=true" >> "$GITHUB_OUTPUT"
+      # - name: Decide if the next step should run
+      #   id: check
+      #   run: |
+      #       echo "run_cond_step=true" >> "$GITHUB_OUTPUT"
   
-      - name: Conditional step
-        if: ${{ steps.check.outputs.run_cond_step == 'true' }}
-        run: |
-          echo "run_cond_step is ${{ steps.check.outputs.run_cond_step }}"
-          echo "This step ran because run_cond_step is true"
+      # - name: Conditional step
+      #   if: ${{ steps.check.outputs.run_cond_step == 'true' }}
+      #   run: |
+      #     echo "run_cond_step is ${{ steps.check.outputs.run_cond_step }}"
+      #     echo "This step ran because run_cond_step is true"
 
       - name: Il Post
         id: IlPost
@@ -65,9 +65,9 @@ jobs:
 
           # git push
       
-      # - name: Debug send_email
-      #   run: |
-      #     echo "send_email is ${{ steps.check.outputs.send_email }}"
+      - name: Debug send_email
+        run: |
+          echo "send_email is ${{ steps.check.outputs.send_email }}"
           
       - name: Conditional step 2
         if: ${{ steps.check.outputs.send_email == 'true' }}
