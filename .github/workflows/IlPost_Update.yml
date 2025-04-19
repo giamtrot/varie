@@ -34,5 +34,26 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           find . -name "IlPost.xml" -print -exec git add {} \;
           git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
+
+          count=$(git status --short | wc -l)
+          echo "Count: $count"
+          if [ "$count" -gt 0 ]; then
+            echo "run_step=true" >> $GITHUB_OUTPUT
+          else
+            echo "run_step=false" >> $GITHUB_OUTPUT
+          fi
+
           git push
           
+      - name: Conditional step
+        uses: dawidd6/action-send-mail@v3
+        if: steps.check.outputs.run_step == 'true'
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_APP_PASSWORD }}
+          subject: "🚨 Changed: Il Post"
+          to: raffaele.giammario@gmail.com
+          from: GitHub Action <raffaele.giammario@gmail.com>
+          body: ${{ github.event.head_commit.message }}
