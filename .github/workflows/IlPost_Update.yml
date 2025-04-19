@@ -50,20 +50,23 @@ jobs:
 
           count=$(git status --short | wc -l)
           echo "Count: $count"
+          echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
           if [ "$count" -gt 0 ]; then
-            echo "run_step=true" >> $GITHUB_OUTPUT
+            echo "Changes detected, sending email..."
+            echo "send_email=true" >> "$GITHUB_OUTPUT"
           else
-            echo "run_step=false" >> $GITHUB_OUTPUT
+            echo "No changes detected, not sending email."
+            echo "send_email=false" >> "$GITHUB_OUTPUT"
           fi
 
           git push
       
-      - name: Debug run_step
-        run: echo "run_step is ${{ steps.check.outputs.run_step }}"
+      - name: Debug send_email
+        run: echo "rsend_email is ${{ steps.check.outputs.send_email }}"
           
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
-        if: ${{ steps.check.outputs.run_step == 'true' }}
+        if: ${{ steps.check.outputs.send_email == 'true' }}
         with:
           server_address: smtp.gmail.com
           server_port: 465
