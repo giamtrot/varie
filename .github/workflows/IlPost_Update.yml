@@ -61,8 +61,6 @@ jobs:
           #   echo "send_email=false" >> "$GITHUB_OUTPUT"
           # fi
 
-          steps:
-
           echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
           cat "$GITHUB_OUTPUT"
 
