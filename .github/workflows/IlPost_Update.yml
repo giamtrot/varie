@@ -55,11 +55,14 @@ jobs:
           
           # if [ "$count" -gt 0 ]; then
             echo "Changes detected, sending email..."
-            echo "run_send_email=true" >> "$GITHUB_OUTPUT"
+            echo "run_send_email=true" >> "$GITHUB_ENV"
           # else
           #   echo "No changes detected, not sending email."
           #   echo "run_send_email=false" >> "$GITHUB_OUTPUT"
           # fi
+
+          steps:
+      
 
           echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
           cat "$GITHUB_OUTPUT"
@@ -68,13 +71,14 @@ jobs:
       
       - name: Debug run_send_email
         run: |
-          echo "run_send_email is ${{ steps.check.outputs.run_send_email }}"
-          echo "run_send_email=${{ steps.check.outputs.run_send_email }}" >> "$GITHUB_OUTPUT"
-          echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
-          cat "$GITHUB_OUTPUT"
+          printf 'run_send_email; %s\n' "$run_send_email" 
+          echo "run_send_email is $run_send_email"
+          # echo "run_send_email=${{ steps.check.outputs.run_send_email }}" >> "$GITHUB_OUTPUT"
+          # echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
+          # cat "$GITHUB_OUTPUT"
           
       - name: Conditional step 2
-        if: ${{ steps.check.outputs.run_send_email == 'true' }}
+        if: ${{ run_send_email == 'true' }}
         run: |
           echo "run_send_email is ${{ steps.check.outputs.run_send_email }}"
           echo "This step ran because run_send_email is true"
