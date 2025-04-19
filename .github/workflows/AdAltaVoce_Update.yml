@@ -44,5 +44,5 @@ jobs:
           to: raffaele.giammario@gmail.com
           from: GitHub Action <raffaele.giammario@gmail.com>
           # body: "Changed: ${{ steps.AdAltaVoce.outputs.commit_status }}"
-          html_body: file://rss/AdAltaVoce_Action.html
+          html_body: file://./rss/AdAltaVoce.CommitStatus.txt
           
