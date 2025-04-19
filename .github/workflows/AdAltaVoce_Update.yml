@@ -23,15 +23,20 @@ jobs:
       - name: Ad Alta Voce
         id: AdAltaVoce
         run: |
-          groovy rss/AdAltaVoce.groovy
           echo "path"
           realpath .
-          echo "find"
-          find . -name "AdAltaVoce.xml"
+
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          groovy rss/AdAltaVoce.groovy
+          
+          date > rss/AdAltaVoce.update
+          
+          find rss -name "AdAltaVoce.update" -print -exec git add {} \;
           find rss -name "*.xml" -print -exec git add {} \;
-          find . -name "AdAltaVoce.date" -print -exec git add {} \;
+          find rss -name "AdAltaVoce.date" -print -exec git add {} \;
+          
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
 
           status=$(git status --short)
@@ -49,5 +54,5 @@ jobs:
           subject: "🚨 Changed: Ad Alta Voce"
           to: raffaele.giammario@gmail.com
           from: GitHub Action <raffaele.giammario@gmail.com>
-          body: ${{ steps.AdAltaVoce.outputs.commit_status }}          
+          body: "Changed: ${{ steps.AdAltaVoce.outputs.commit_status }}"
           
