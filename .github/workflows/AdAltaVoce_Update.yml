@@ -33,6 +33,7 @@ jobs:
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           find . -name "AdAltaVoce.update" -print -exec git add {} \;
+          git remote -v
           git status
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
           # git push
