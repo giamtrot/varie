@@ -23,7 +23,17 @@ jobs:
         with:
           groovy-version: '4.0.15'
 
+      - name: Decide if the next step should run
+        id: check
+        run: |
+            echo "run_cond_step=true" >> "$GITHUB_OUTPUT"
+  
+      - name: Conditional step
+        if: ${{ steps.check.outputs.run_cond_step == 'true' }}
+        run: echo "This step ran because run_step is true"
+
       - name: Il Post
+        id: IlPost
         run: |
           groovy rss/IlPost.groovy
           echo "path"
@@ -47,8 +57,11 @@ jobs:
           fi
 
           git push
+      
+      - name: Debug run_step
+        run: echo "run_step is ${{ steps.check.outputs.run_step }}"
           
-      - name: Conditional step
+      - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
         if: ${{ steps.check.outputs.run_step == 'true' }}
         with:
