@@ -21,6 +21,7 @@ jobs:
           groovy-version: '4.0.15'
 
       - name: Ad Alta Voce
+        id: AdAltaVoce
         run: |
           groovy rss/AdAltaVoce.groovy
           echo "path"
@@ -29,11 +30,14 @@ jobs:
           find . -name "AdAltaVoce.xml"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # git config --global user.name "giamtrot"
-          # git config --global user.email "giamtrot@hotmail.com"
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
+
+          status=$(git status --short)
+          echo "commit_status='$status'" >> "$GITHUB_OUTPUT"
+
+          git push
       
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
@@ -45,5 +49,5 @@ jobs:
           subject: "🚨 Changed: Ad Alta Voce"
           to: raffaele.giammario@gmail.com
           from: GitHub Action <raffaele.giammario@gmail.com>
-          body: ${{ github.event.head_commit.message }}          
+          body: ${{ steps.AdAltaVoce.outputs.commit_status }}          
           
