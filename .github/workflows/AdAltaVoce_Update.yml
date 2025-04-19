@@ -28,11 +28,12 @@ jobs:
           echo "find"
           find . -name "AdAltaVoce.xml"
           date > rss/AdAltaVoce.update
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "giamtrot"
+          git config user.email "giamtrot@hotmail.com"
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           find . -name "AdAltaVoce.update" -print -exec git add {} \;
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
-          git push
+          # git push
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/giamtrot/varie.git
           
