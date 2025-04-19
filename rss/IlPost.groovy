@@ -27,7 +27,7 @@ def dateReader = new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
 def jsonSlurper = new JsonSlurper()
 
 // Save the list to disk
-def mapFile = new File(RSS_DIR + "IlPost.map.json")
+def mapFile = new File(RSS_DIR + "send_email")
 
 // Load the list from disk if it exists
 def list = []
@@ -56,7 +56,7 @@ urls.each{ inUrl->
         if (list.find { it.src == episode.episode_raw_url[0] }) {
             println "Already in list"
             return
-    }
+        }   
 
         // println "${episode.date[0]}"
         // println "${dateReader.parse(episode.date[0])}"
@@ -76,8 +76,8 @@ urls.each{ inUrl->
         }
         list << element
         println "$element"
-// System.exit(0)
-}
+        // System.exit(0)
+    }
 
 }
 
