@@ -50,7 +50,7 @@ jobs:
           
       - name: Conditional step
         uses: dawidd6/action-send-mail@v3
-        if: steps.check.outputs.run_step == 'true'
+        if: ${{ steps.check.outputs.run_step == 'true' }}
         with:
           server_address: smtp.gmail.com
           server_port: 465
