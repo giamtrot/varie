@@ -27,15 +27,23 @@ jobs:
           realpath .
           echo "find"
           find . -name "AdAltaVoce.xml"
-          date > rss/AdAltaVoce.update
-          git config --global user.name "giamtrot"
-          git config --global user.email "giamtrot@hotmail.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # git config --global user.name "giamtrot"
+          # git config --global user.email "giamtrot@hotmail.com"
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
-          find . -name "AdAltaVoce.update" -print -exec git add {} \;
-          git status
           git diff --cached --quiet || git commit -m "Updated AdAltaVoce.xml from GitHub Actions"
-          git remote -v
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/giamtrot/varie.git
-          git remote -v
+      
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_APP_PASSWORD }}
+          subject: "🚨 Changed: Ad Alta Voce"
+          to: raffaele.giammario@gmail.com
+          from: GitHub Action <raffaele.giammario@gmail.com>
+          body: ${{ github.event.head_commit.message }}          
           
