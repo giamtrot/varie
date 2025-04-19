@@ -1,4 +1,4 @@
-find rss -maxdepth 1 -name "*.xml" -exec dos2unix {} \;
+# find rss -maxdepth 1 -name "*.xml" -exec dos2unix {} \;
 find rss -maxdepth 1 -name "*.xml" -print -exec git add {} \;
 find rss -maxdepth 1 -name "AdAltaVoce.date" -print -exec git add {} \;
 
