@@ -28,8 +28,8 @@ jobs:
           echo "find"
           find . -name "AdAltaVoce.xml"
           date > rss/AdAltaVoce.update
-          git config user.name "giamtrot"
-          git config user.email "giamtrot@hotmail.com"
+          git config --global user.name "giamtrot"
+          git config --global user.email "giamtrot@hotmail.com"
           find rss -name "*.xml" -print -exec git add {} \;
           find . -name "AdAltaVoce.date" -print -exec git add {} \;
           find . -name "AdAltaVoce.update" -print -exec git add {} \;
