@@ -35,6 +35,9 @@ jobs:
           find . -name "IlPost.xml" -print -exec git add {} \;
           git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
 
+          date > rss/IlPost.update
+          find . -name "IlPost.update" -print -exec git add {} \;
+
           count=$(git status --short | wc -l)
           echo "Count: $count"
           if [ "$count" -gt 0 ]; then
