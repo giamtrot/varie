@@ -40,6 +40,7 @@ jobs:
           count=$(git status --short | wc -l)
           echo "Count: $count"
 
+          git status --short | wc -l
           git status 
 
           if [ "$count" -gt 0 ]; then

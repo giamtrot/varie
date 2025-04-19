@@ -27,7 +27,7 @@ def dateReader = new SimpleDateFormat("dd MMM yyyy", Locale.ITALIAN)
 def jsonSlurper = new JsonSlurper()
 
 // Save the list to disk
-def mapFile = new File(RSS_DIR + "send_email")
+def mapFile = new File(RSS_DIR + "IlPost.map.json")
 
 // Load the list from disk if it exists
 def list = []
