@@ -30,7 +30,9 @@ jobs:
   
       - name: Conditional step
         if: ${{ steps.check.outputs.run_cond_step == 'true' }}
-        run: echo "This step ran because run_step is true"
+        run: |
+          echo "run_cond_step is ${{ steps.check.outputs.send_email }}"
+          echo "This step ran because run_cond_step is true"
 
       - name: Il Post
         id: IlPost
@@ -59,14 +61,18 @@ jobs:
             echo "send_email=false" >> "$GITHUB_OUTPUT"
           fi
 
+          cat "$GITHUB_OUTPUT"
+
           git push
       
       - name: Debug send_email
-        run: echo "rsend_email is ${{ steps.check.outputs.send_email }}"
+        run: |
+          echo "send_email is ${{ steps.check.outputs.send_email }}"
+          
           
       - name: Send Email Notification
-        uses: dawidd6/action-send-mail@v3
         if: ${{ steps.check.outputs.send_email == 'true' }}
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
