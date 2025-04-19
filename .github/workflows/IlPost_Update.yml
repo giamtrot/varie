@@ -55,36 +55,34 @@ jobs:
           
           # if [ "$count" -gt 0 ]; then
             echo "Changes detected, sending email..."
-            echo "run_send_email=true" >> "$GITHUB_ENV"
+            echo "send_email=true" >> "$GITHUB_OUTPUT"
           # else
           #   echo "No changes detected, not sending email."
-          #   echo "run_send_email=false" >> "$GITHUB_OUTPUT"
+          #   echo "send_email=false" >> "$GITHUB_OUTPUT"
           # fi
 
           steps:
-      
 
           echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
           cat "$GITHUB_OUTPUT"
 
           # git push
       
-      - name: Debug run_send_email
+      - name: Debug send_email
+        id: IlPostDebug
         run: |
-          printf 'run_send_email; %s\n' "$run_send_email" 
-          echo "run_send_email is $run_send_email"
-          # echo "run_send_email=${{ steps.check.outputs.run_send_email }}" >> "$GITHUB_OUTPUT"
-          # echo "GITHUB_OUTPUT '$GITHUB_OUTPUT'"
-          # cat "$GITHUB_OUTPUT"
+            echo "send_email=${{ steps.IlPost.outputs.send_email }}" 
+            echo "send_email=${{ steps.IlPost.outputs.send_email }}" >> "$GITHUB_OUTPUT"
           
       - name: Conditional step 2
-        if: ${{ run_send_email == 'true' }}
+        if: ${{ steps.IlPostDebug.outputs.send_email == 'true' }}
         run: |
-          echo "run_send_email is ${{ steps.check.outputs.run_send_email }}"
-          echo "This step ran because run_send_email is true"
+          echo "send_email is ${{ steps.IlPost.outputs.send_email }}"
+          echo "send_email is ${{ steps.IlPostDebug.outputs.send_email }}"
+          echo "This step ran because send_email is true"
 
       # - name: Send Email Notification
-      #   if: ${{ steps.check.outputs.run_send_email == 'true' }}
+      #   if: ${{ steps.check.outputs.send_email == 'true' }}
       #   uses: dawidd6/action-send-mail@v3
       #   with:
       #     server_address: smtp.gmail.com
