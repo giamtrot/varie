@@ -32,6 +32,9 @@
 		},
 		{
 			"path": "map"
+		},
+		{
+			"path": "macchia"
 		}
 	],
 	"settings": {

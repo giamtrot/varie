@@ -2,13 +2,9 @@ Tomcat/logs
 Tomcat/work
 chromeExt.code-workspace
 /uSuperDrag-master
-/bd/node_modules/.bin
 /rss/tools
+rss/IlPostGit.cmd
 /rss/AdAltaVoceGit.cmd
 *.bak
-wr/node_modules/*
-rss/IlPostGit.cmd
-rl/node_modules/*
 tb/dist/*
-tb/node_modules/*
-map/downloadMap/node_modules/*
+**/node_modules/*
