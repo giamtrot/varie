@@ -53,7 +53,7 @@ export class Card {
 
         return false;
     }
-    
+
     linkHorizontal(card: Card) {
         this.horizontals.push(card);
         card.horizontals.push(this);
@@ -81,6 +81,22 @@ export class Card {
     toString(): string {
         const char = String.fromCodePoint(this.code());
         return SuitInfo[this.suit].color(char)
+    }
+
+    toStringExtra(): string {
+        const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals.map(c => c.toString()).join("")})`;
+        const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals.map(c => c.toString()).join("")})`;
+        return `${this.toString()}${horizs}${verts}`;
+    }
+
+    relate(card: Card) {
+        if (this.isHorizontalMatch(card)) {
+            this.linkHorizontal(card);
+        }
+
+        if (this.isVerticalMatch(card)) {
+            this.linkVertical(card);
+        }
     }
 
     equals(other: Card): boolean {
@@ -158,15 +174,8 @@ export class Player {
 
     add(card: Card) {
         this.hand.forEach(c => {
-            if (card.isHorizontalMatch(c)) {
-                c.linkHorizontal(card);
-            }
-
-            if (card.isVerticalMatch(c)) {
-                c.linkVertical(card);
-            }
+            c.relate(card);
         });
-
 
         this.hand.push(card);
     }

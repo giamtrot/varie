@@ -17,3 +17,7 @@ decks.distribute(players, 13);
 players.forEach(player => player.handSort());
 
 console.log("Players:\n" + players.map(player => player.toString()).join("\n"));
+
+player1.hand.forEach(card => {
+    console.log(card.toStringExtra());
+})

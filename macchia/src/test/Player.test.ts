@@ -14,6 +14,9 @@ describe('Player Class', () => {
         expect(player.toString()).toBe("Alice: " + "🃑".black.bold);
     });
 
+});
+
+describe('Player.add', () => {
     it('should add a card to the player\'s hand', () => {
         const player = new Player("Alice");
         const card = new Card(1, Suit.Spades);
@@ -22,15 +25,54 @@ describe('Player Class', () => {
         expect(player.hand[0]).toBe(card);
     });
 
-    it('should add multiple cards to the player\'s hand', () => {
+    it('should relate the new card with existing cards in the hand (horizontal match)', () => {
         const player = new Player("Alice");
         const card1 = new Card(1, Suit.Spades);
-        const card2 = new Card(13, Suit.Hearts);
+        const card2 = new Card(1, Suit.Hearts); // Same value, different suit
         player.add(card1);
         player.add(card2);
-        expect(player.hand.length).toBe(2);
-        expect(player.hand).toContain(card1);
-        expect(player.hand).toContain(card2);
+
+        expect(card1.horizontals).toContain(card2);
+        expect(card2.horizontals).toContain(card1);
+    });
+
+    it('should relate the new card with existing cards in the hand (vertical match)', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(1, Suit.Spades);
+        const card2 = new Card(2, Suit.Spades); // Same suit, consecutive value
+        player.add(card1);
+        player.add(card2);
+
+        expect(card1.verticals).toContain(card2);
+        expect(card2.verticals).toContain(card1);
+    });
+
+    it('should not relate the new card if there is no match', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(1, Suit.Spades);
+        const card2 = new Card(3, Suit.Hearts); // Different value and suit
+        player.add(card1);
+        player.add(card2);
+
+        expect(card1.horizontals).not.toContain(card2);
+        expect(card1.verticals).not.toContain(card2);
+        expect(card2.horizontals).not.toContain(card1);
+        expect(card2.verticals).not.toContain(card1);
+    });
+
+    it('should handle adding multiple cards and maintain relationships', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(1, Suit.Spades);
+        const card2 = new Card(1, Suit.Hearts); // Horizontal match with card1
+        const card3 = new Card(2, Suit.Spades); // Vertical match with card1
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+
+        expect(card1.horizontals).toContain(card2);
+        expect(card1.verticals).toContain(card3);
+        expect(card2.horizontals).toContain(card1);
+        expect(card3.verticals).toContain(card1);
     });
 });
 

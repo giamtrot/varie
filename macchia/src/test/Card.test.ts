@@ -141,3 +141,119 @@ describe('Card Class', () => {
     });
 });
 
+describe('Card.relate', () => {
+    it('should link cards horizontally if they have the same value but different suits', () => {
+        const card1 = new Card(5, Suit.Hearts);
+        const card2 = new Card(5, Suit.Spades);
+
+        card1.relate(card2);
+
+        expect(card1.horizontals).toContain(card2);
+        expect(card2.horizontals).toContain(card1);
+    });
+
+    it('should link cards vertically if they have the same suit and consecutive values', () => {
+        const card1 = new Card(5, Suit.Hearts);
+        const card2 = new Card(6, Suit.Hearts);
+
+        card1.relate(card2);
+
+        expect(card1.verticals).toContain(card2);
+        expect(card2.verticals).toContain(card1);
+    });
+
+    it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
+        const card1 = new Card(1, Suit.Spades); // Ace of Spades
+        const card2 = new Card(13, Suit.Spades); // King of Spades
+
+        card1.relate(card2);
+
+        expect(card1.verticals).toContain(card2);
+        expect(card2.verticals).toContain(card1);
+    });
+
+    it('should not link cards horizontally if they have the same suit', () => {
+        const card1 = new Card(5, Suit.Hearts);
+        const card2 = new Card(5, Suit.Hearts);
+
+        card1.relate(card2);
+
+        expect(card1.horizontals).not.toContain(card2);
+        expect(card2.horizontals).not.toContain(card1);
+    });
+
+    it('should not link cards vertically if they have different suits', () => {
+        const card1 = new Card(5, Suit.Hearts);
+        const card2 = new Card(6, Suit.Spades);
+
+        card1.relate(card2);
+
+        expect(card1.verticals).not.toContain(card2);
+        expect(card2.verticals).not.toContain(card1);
+    });
+
+    it('should not link cards horizontally or vertically if they do not match any criteria', () => {
+        const card1 = new Card(5, Suit.Hearts);
+        const card2 = new Card(7, Suit.Spades);
+
+        card1.relate(card2);
+
+        expect(card1.horizontals).not.toContain(card2);
+        expect(card2.horizontals).not.toContain(card1);
+        expect(card1.verticals).not.toContain(card2);
+        expect(card2.verticals).not.toContain(card1);
+    });
+});
+
+describe('Card.toStringExtra', () => {
+    it('should return the correct string representation with no relationships', () => {
+        const card = new Card(1, Suit.Spades); // Ace of Spades
+        const expectedString = card.toString();
+        expect(card.toStringExtra()).toBe(expectedString);
+    });
+
+    it('should return the correct string representation with horizontal relationships', () => {
+        const card1 = new Card(1, Suit.Spades); // Ace of Spades
+        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts
+        card1.linkHorizontal(card2);
+
+        const expectedString = `${card1}(H->${card2})`;
+        expect(card1.toStringExtra()).toBe(expectedString);
+    });
+
+    it('should return the correct string representation with vertical relationships', () => {
+        const card1 = new Card(1, Suit.Spades); // Ace of Spades
+        const card2 = new Card(2, Suit.Spades); // 2 of Spades
+        card1.linkVertical(card2);
+
+        const expectedString = `${card1}(V->${card2})`;
+        expect(card1.toStringExtra()).toBe(expectedString);
+    });
+
+    it('should return the correct string representation with both horizontal and vertical relationships', () => {
+        const card1 = new Card(1, Suit.Spades); // Ace of Spades
+        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
+        const card3 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
+        card1.linkHorizontal(card2);
+        card1.linkVertical(card3);
+
+        const expectedString = `${card1}(H->${card2})(V->${card3})`;
+        expect(card1.toStringExtra()).toBe(expectedString);
+    });
+
+    it('should handle multiple horizontal and vertical relationships', () => {
+        const card1 = new Card(1, Suit.Spades); // Ace of Spades
+        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
+        const card3 = new Card(1, Suit.Diamonds); // Ace of Diamonds (horizontal)
+        const card4 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
+        const card5 = new Card(13, Suit.Spades); // King of Spades (vertical)
+
+        card1.linkHorizontal(card2);
+        card1.linkHorizontal(card3);
+        card1.linkVertical(card4);
+        card1.linkVertical(card5);
+
+        const expectedString = `${card1}(H->${card2}${card3})(V->${card4}${card5})`;
+        expect(card1.toStringExtra()).toBe(expectedString);
+    });
+});
