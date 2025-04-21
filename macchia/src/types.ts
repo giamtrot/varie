@@ -25,10 +25,44 @@ export const SuitInfo: Record<Suit, { color: any, index: number }> = {
 }
 
 export class Card {
+    
+
     id: number;
     value: number;
     suit: Suit;
+    horizontals: Card[] = [];
+    verticals: Card[] = [];
 
+    linkVertical(card: Card) {
+       this.verticals.push(card);
+       card.verticals.push(this);
+    }
+    isVerticalMatch(card: Card) {
+
+        if (this.suit !== card.suit) {
+            return false;
+        }
+
+        if (Math.abs(this.value - card.value) == 1) {
+            return true;
+        }
+
+        if (Math.abs(this.value - card.value) == 12) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    linkHorizontal(card: Card) {
+        this.horizontals.push(card);
+        card.horizontals.push(this);
+    }
+
+    isHorizontalMatch(card: Card) {
+        return this.value === card.value && this.suit !== card.suit;
+    }
+    
     static readonly BASE_CODE = 0x1F0A1; // Base code for playing cards
 
     static count = 0;
@@ -54,24 +88,6 @@ export class Card {
     }
 }
 
-export enum CardLinkType {
-    Horizontal = 0,
-    Vertical = 1,
-}
-
-export class CardLink {
-    type: CardLinkType;
-    other: Card;
-
-    constructor(type: CardLinkType, other: Card) {
-        this.type = type;
-        this.other = other;
-    }
-
-    toString(): string {
-        return this.type === CardLinkType.Horizontal ? "H" : "V" + " -> " + this.other.toString();
-    }
-}
 
 export class Decks {
 
@@ -141,6 +157,17 @@ export class Player {
     }
 
     add(card: Card) {
+        this.hand.forEach(c => {
+            if (card.isHorizontalMatch(c)) {
+                c.linkHorizontal(card);
+            }
+
+            if (card.isVerticalMatch(c)) {
+                c.linkVertical(card);
+            }
+        });
+
+
         this.hand.push(card);
     }
 

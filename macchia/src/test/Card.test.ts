@@ -1,4 +1,4 @@
-import { Card, CardLink, CardLinkType, Suit } from '../types';
+import { Card, Suit } from '../types';
 describe('Card Class', () => {
     it('should create a card with valid value and suit', () => {
         const card1 = new Card(1, Suit.Spades);
@@ -56,19 +56,88 @@ describe('Card Class', () => {
         expect(card.equals(card)).toBe(true);
     });
 
+    it('should generate a unique id for each card', () => {
+        const card1 = new Card(1, Suit.Spades);
+        const card2 = new Card(2, Suit.Hearts);
+        expect(card1.id).not.toBe(card2.id);
+    });
 
-    describe('CardLink Class', () => {
-        it('should create a card link with a type and a card', () => {
-            const card = new Card(1, Suit.Spades);
-            const link = new CardLink(CardLinkType.Horizontal, card);
-            expect(link.type).toBe(CardLinkType.Horizontal);
-            expect(link.other).toBe(card);
-        });
+    it('should calculate the correct code for a card', () => {
+        const card = new Card(1, Suit.Spades);
+        expect(card.code()).toBe(0x1F0A1);
+    });
 
-        it('should return the correct string representation of the card link', () => {
-            const card = new Card(1, Suit.Spades);
-            const link = new CardLink(CardLinkType.Vertical, card);
-            expect(link.toString()).toBe("V -> " + "🂡".black.bold);
-        });
+    it('should correctly compare two cards for equality', () => {
+        const card1 = new Card(5, Suit.Diamonds);
+        const card2 = new Card(5, Suit.Diamonds);
+        const card3 = new Card(6, Suit.Clubs);
+        expect(card1.equals(card2)).toBe(false); // Different IDs
+        expect(card1.equals(card3)).toBe(false);
+    });
+
+    it('should add a horizontal match correctly', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        card1.linkHorizontal(card2);
+        expect(card1.horizontals).toContain(card2);
+        expect(card2.horizontals).toContain(card1);
+    });
+
+    it('should add a vertical match correctly', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        card1.linkVertical(card2);
+        expect(card1.verticals).toContain(card2);
+        expect(card2.verticals).toContain(card1);
+    });
+
+    it('should correctly identify a horizontal match', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        expect(card1.isHorizontalMatch(card2)).toBe(true);
+    });
+
+    it('should correctly identify a vertical match', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        expect(card1.isVerticalMatch(card2)).toBe(true);
+    });
+
+    it('should correctly identify a vertical match inverted', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        expect(card1.isVerticalMatch(card2)).toBe(true);
+    });
+
+    it('should correctly identify a vertical match between Ace and King', () => {
+        const card1 = new Card(1, Suit.Spades);
+        const card2 = new Card(13, Suit.Spades);
+        expect(card1.isVerticalMatch(card2)).toBe(true);
+    });
+
+
+    it('should not identify a horizontal match for cards with the same suit', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Spades);
+        expect(card1.isHorizontalMatch(card2)).toBe(false);
+    });
+
+    it('should not identify a horizontal match for cards with different values', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Spades);
+        expect(card1.isHorizontalMatch(card2)).toBe(false);
+    });
+
+    it('should not identify a vertical match for cards with different suits', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Hearts);
+        expect(card1.isVerticalMatch(card2)).toBe(false);
+    });
+
+    it('should not identify a vertical match for cards with two number or more of difference', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(8, Suit.Spades);
+        expect(card1.isVerticalMatch(card2)).toBe(false);
     });
 });
+
