@@ -46,22 +46,24 @@ export class Card {
     }
 }
 
-export class Deck {
+export class Decks {
 
     cards: Card[] = [];
 
-    constructor() {
-        Object.values(Suit).forEach(
-            (suit) => {
-                for (let i = 1; i <= 13; i++) {
-                    const card: Card = new Card(i, suit)
-                    this.cards.push(card);
+    constructor(numDecks: number) {
+        for (let i = 0; i < numDecks; i++) {
+            Object.values(Suit).forEach(
+                (suit) => {
+                    for (let i = 1; i <= 13; i++) {
+                        const card: Card = new Card(i, suit)
+                        this.cards.push(card);
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
-    shuffle(): Deck {
+    shuffle(): Decks {
         for (let i = this.cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
@@ -77,37 +79,31 @@ export class Deck {
         return this.cards.map(card => card.toString()).join("");
     }
 
-}
-
-export class Decks {
-    decks: Deck[] = [];
-    constructor(numDecks: number) {
-        for (let i = 0; i < numDecks; i++) {
-            this.decks.push(new Deck());
-        }
-    }
-    shuffle(): Decks {
-        this.decks.forEach(deck => deck.shuffle());
-        return this;
-    }
-
-    length(): number {
-        return this.decks.reduce((acc, deck) => acc + deck.length(), 0);
-    }
-
-    distribute(players: Player[], howMany: number) {
+    distribute(players: Player[], cardNumber: number) {
         this.shuffle();
-        assert(players.length * howMany < this.length(), "Not enough cards");
-    }
-
-    toString(): string {
-        return this.decks.map(deck => deck.toString()).join("\n");
+        assert(players.length * cardNumber < this.length(), "Not enough cards");
+        for (let i = 0; i < cardNumber; i++) {
+            players.forEach(player => {
+                player.add(this.cards.pop()!);
+            })
+        }
     }
 }
 
 export class Player {
     name: string;
     hand: Card[] = [];
+
+
+    handSort(): void {
+        this.hand.sort((a, b) => {
+            if (a.value === b.value) {
+                return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
+            } else {
+                return a.value - b.value;
+            }
+        });
+    }
 
     constructor(name: string) {
         this.name = name;
@@ -116,4 +112,9 @@ export class Player {
     toString(): string {
         return this.name + ": " + this.hand.map(card => card.toString()).join("");
     }
+
+    add(card: Card) {
+        this.hand.push(card);
+    }
+    
 }
