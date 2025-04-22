@@ -172,8 +172,8 @@ export class Combo {
 }
 
 export class Combos {
-    add(arg0: Combo) {
-        throw new Error('Method not implemented.');
+    add(combo: Combo) {
+        this.combos.push(combo);
     }
     combos: Combo[] = [];
 }
