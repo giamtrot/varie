@@ -149,7 +149,6 @@ export class Combo {
         for (let cont = 0; cont < cards.length - 1; cont++) {
             let nextPos = pos + 1 == cards.length ? 0 : pos + 1;
             if (!cards[nextPos].follows(cards[pos])) {
-
                 return Combo.checkStraight(cards, start + 1);
             }
             pos = nextPos
