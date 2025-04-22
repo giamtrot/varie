@@ -143,3 +143,111 @@ describe('Player.handSort', () => {
         expect(player.hand).toEqual(sortedHand);
     });
 });
+
+describe('Player.findCombos', () => {
+    it('should find horizontal combos (same value, different suits)', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        const card3 = new Card(5, Suit.Diamonds);
+
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(1);
+        expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+    });
+
+    it('should find vertical combos (same suit, consecutive values)', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(3, Suit.Clubs);
+        const card2 = new Card(4, Suit.Clubs);
+        const card3 = new Card(5, Suit.Clubs);
+
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(1);
+        expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+    });
+
+    it('should not find combos if there are less than 3 cards', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(7, Suit.Spades);
+        const card2 = new Card(7, Suit.Hearts);
+
+        player.add(card1);
+        player.add(card2);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(0);
+    });
+
+    it('should not find combos if cards do not match horizontally or vertically', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(2, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        const card3 = new Card(8, Suit.Diamonds);
+
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(0);
+    });
+
+    it('should find multiple combos in the hand', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(6, Suit.Spades);
+        const card2 = new Card(6, Suit.Hearts);
+        const card3 = new Card(6, Suit.Diamonds);
+        const card4 = new Card(10, Suit.Clubs);
+        const card5 = new Card(11, Suit.Clubs);
+        const card6 = new Card(12, Suit.Clubs);
+
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+        player.add(card4);
+        player.add(card5);
+        player.add(card6);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(2);
+        expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+        expect(player.combos.combos[1].cards).toEqual(expect.arrayContaining([card4, card5, card6]));
+    });
+
+    it('should handle an empty hand without errors', () => {
+        const player = new Player("Alice");
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(0);
+    });
+
+    it('should handle a hand with no valid combos', () => {
+        const player = new Player("Alice");
+        const card1 = new Card(9, Suit.Spades);
+        const card2 = new Card(3, Suit.Hearts);
+        const card3 = new Card(7, Suit.Diamonds);
+
+        player.add(card1);
+        player.add(card2);
+        player.add(card3);
+
+        player.findCombos();
+
+        expect(player.combos.combos.length).toBe(0);
+    });
+});

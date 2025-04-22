@@ -248,11 +248,17 @@ export class Player {
 
     findCombos() {
         this.hand.filter(card => card.horizontals.length >= 2).forEach(card => {
-            this.combos.add(new Combo([card, ...card.horizontals]));
+            const cards = [card, ...card.horizontals];
+            if (Combo.checkValid(cards)) {
+                this.combos.add(new Combo(cards));
+            }
         });
 
         this.hand.filter(card => card.verticals.length >= 2).forEach(card => {
-            this.combos.add(new Combo([card, ...card.verticals]));
+            const cards = [card, ...card.verticals];
+            if (Combo.checkValid(cards)) {
+                this.combos.add(new Combo(cards));
+            }
         });
     }
 }
