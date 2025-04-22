@@ -35,6 +35,7 @@ export class Card {
         this.verticals.push(card);
         card.verticals.push(this);
     }
+
     isVerticalMatch(card: Card) {
 
         if (this.suit !== card.suit) {
@@ -105,22 +106,16 @@ export class Card {
 export class Combo {
     cards: Card[] = [];
     constructor(cards: Card[]) {
-        assert(cards.length >= 3, "Combo must have at least 3 cards");
-        cards.sort(cardSorter)
-        const verticalOk = this.checkSameSuit(cards) && this.checkStraight(cards)
-        const horizontalOk = this.checkDifferentSuit(cards) && this.checkSameValue(cards)
-        console.log(verticalOk, horizontalOk)
-        assert(verticalOk || horizontalOk, `Incorrect Horizontal or Vertical Combo ${cards}`);
-
+        assert(Combo.checkValid(cards), `Incorrect Horizontal or Vertical Combo ${cards}`);
         this.cards = cards;
     }
 
-    checkSameValue(cards: Card[]): boolean {
+    static checkSameValue(cards: Card[]): boolean {
         const value = cards[0].value;
         return cards.filter(card => card.value !== value).length == 0;
     }
 
-    checkDifferentSuit(cards: Card[]) {
+    static checkDifferentSuit(cards: Card[]) {
         for (let i = 0; i < cards.length - 2; i++) {
             if (cards[i].suit == cards[i + 1].suit) {
                 return false;
@@ -129,7 +124,7 @@ export class Combo {
         return true;
     }
 
-    checkStraight(cards: Card[]): boolean {
+    static checkStraight(cards: Card[]): boolean {
         for (let i = 0; i < cards.length - 2; i++) {
             if (cards[i].value + 1 !== cards[i + 1].value) {
                 return false;
@@ -138,9 +133,17 @@ export class Combo {
         return true;
     }
 
-    checkSameSuit(cards: Card[]): boolean {
+    static checkSameSuit(cards: Card[]): boolean {
         const suit = cards[0].suit;
         return cards.filter(card => card.suit !== suit).length == 0;
+    }
+
+    static checkValid(cards: Card[]): boolean {
+        assert(cards.length >= 3, "Combo must have at least 3 cards");
+        cards.sort(cardSorter)
+        const verticalOk = this.checkSameSuit(cards) && this.checkStraight(cards)
+        const horizontalOk = this.checkDifferentSuit(cards) && this.checkSameValue(cards)
+        return verticalOk || horizontalOk
     }
 }
 
