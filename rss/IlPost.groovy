@@ -56,7 +56,7 @@ urls.each{ inUrl->
         if (list.find { it.src == episode.episode_raw_url[0] }) {
             println "Already in list"
             return
-        }   
+        }
 
         // println "${episode.date[0]}"
         // println "${dateReader.parse(episode.date[0])}"
