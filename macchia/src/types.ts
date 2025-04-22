@@ -42,29 +42,18 @@ export class Card {
             return false;
         }
 
-        if (this.isNext(card) || this.isPrevious(card)) {
+        if (card.follows(this) || this.follows(card)) {
             return true;
         }
 
         return false;
     }
 
-    isPrevious(card: Card): boolean {
+    follows(card: Card): boolean {
         if (this.value - card.value === 1) {
             return true;
         }
-        if (card.value === 13 && this.value === 1) {
-            return true;
-        }
-
-        return false
-    }
-
-    isNext(card: Card) {
-        if (card.value - this.value === 1) {
-            return true;
-        }
-        if (card.value === 1 && this.value === 13) {
+        if (this.value === 1 && card.value === 13) {
             return true;
         }
 
@@ -159,7 +148,8 @@ export class Combo {
         let pos = start
         for (let cont = 0; cont < cards.length - 1; cont++) {
             let nextPos = pos + 1 == cards.length ? 0 : pos + 1;
-            if (!cards[pos].isNext(cards[nextPos])) {
+            if (!cards[nextPos].follows(cards[pos])) {
+
                 return Combo.checkStraight(cards, start + 1);
             }
             pos = nextPos
