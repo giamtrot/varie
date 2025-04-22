@@ -66,7 +66,7 @@ describe('Combo.checkValid', () => {
     });
 
     it('should return false for cards with the straight but replicated values', () => {
-        const cards = [new Card(4, Suit.Spades), new Card(5, Suit.Spades), new Card(5, Suit.Hearts)];
+        const cards = [new Card(4, Suit.Spades), new Card(5, Suit.Spades), new Card(5, Suit.Spades)];
         expect(Combo.checkValid(cards)).toBe(false);
     });
 

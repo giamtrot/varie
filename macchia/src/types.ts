@@ -38,19 +38,37 @@ export class Card {
 
     isVerticalMatch(card: Card) {
 
-        if (this.suit !== card.suit) {
+        if (!this.sameSuit(card)) {
             return false;
         }
 
-        if (Math.abs(this.value - card.value) == 1) {
-            return true;
-        }
-
-        if (Math.abs(this.value - card.value) == 12) {
+        if (this.isNext(card) || this.isPrevious(card)) {
             return true;
         }
 
         return false;
+    }
+
+    isPrevious(card: Card): boolean {
+        if (this.value - card.value === 1) {
+            return true;
+        }
+        if (card.value === 13 && this.value === 1) {
+            return true;
+        }
+
+        return false
+    }
+
+    isNext(card: Card) {
+        if (card.value - this.value === 1) {
+            return true;
+        }
+        if (card.value === 1 && this.value === 13) {
+            return true;
+        }
+
+        return false
     }
 
     linkHorizontal(card: Card) {
@@ -59,12 +77,20 @@ export class Card {
     }
 
     isHorizontalMatch(card: Card) {
-        return this.value === card.value && this.suit !== card.suit;
+        return this.sameValue(card) && !this.sameSuit(card);
     }
 
     static readonly BASE_CODE = 0x1F0A1; // Base code for playing cards
 
     static count = 0;
+
+    sameSuit(card: Card): boolean {
+        return this.suit === card.suit;
+    }
+
+    sameValue(card: Card) {
+        return this.value === card.value;
+    }
 
     code(): number {
         return Card.BASE_CODE + this.value + (this.value <= 11 ? -1 : 0) + SuitInfo[this.suit].index * 0x10;
@@ -111,31 +137,40 @@ export class Combo {
     }
 
     static checkSameValue(cards: Card[]): boolean {
-        const value = cards[0].value;
-        return cards.filter(card => card.value !== value).length == 0;
+        const first = cards[0];
+        return cards.filter(card => !card.sameValue(first)).length == 0;
     }
 
     static checkDifferentSuit(cards: Card[]) {
-        for (let i = 0; i < cards.length - 2; i++) {
-            if (cards[i].suit == cards[i + 1].suit) {
+        for (let i = 0; i <= cards.length - 2; i++) {
+            if (cards[i].sameSuit(cards[i + 1])) {
                 return false;
             }
         }
         return true;
     }
 
-    static checkStraight(cards: Card[]): boolean {
-        for (let i = 0; i < cards.length - 2; i++) {
-            if (cards[i].value + 1 !== cards[i + 1].value) {
-                return false;
-            }
+    static checkStraight(cards: Card[], start: number = 0): boolean {
+
+        if (start >= cards.length) {
+            return false
         }
+
+        let pos = start
+        for (let cont = 0; cont < cards.length - 1; cont++) {
+            let nextPos = pos + 1 == cards.length ? 0 : pos + 1;
+            if (!cards[pos].isNext(cards[nextPos])) {
+                return Combo.checkStraight(cards, start + 1);
+            }
+            pos = nextPos
+        }
+
         return true;
     }
 
     static checkSameSuit(cards: Card[]): boolean {
-        const suit = cards[0].suit;
-        return cards.filter(card => card.suit !== suit).length == 0;
+        const first = cards[0];
+        return cards.filter(card => !card.sameSuit(first)).length == 0;
     }
 
     static checkValid(cards: Card[]): boolean {
