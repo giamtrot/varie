@@ -216,10 +216,6 @@ export class Player {
         this.hand.forEach(c => {
             c.relate(card);
         });
-<<<<<<< HEAD
-
-=======
->>>>>>> ef1c3dc2379d878c523a330fab20bf04b1b57a2b
         this.hand.push(card);
     }
 
