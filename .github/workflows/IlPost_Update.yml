@@ -32,9 +32,8 @@ jobs:
           # find . -name "IlPost.xml"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          find rss -maxdepth 1 -name "IlPost.xml" -print -exec git add {} \;
-          find rss -maxdepth 1 -name "IlPost.map.json" -print -exec git add {} \;
-          git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
+          find rss -maxdepth 1 -name "IlPost.xml" -exec git add -v {} \;
+          find rss -maxdepth 1 -name "IlPost.map.json" -exec git add -v {} \;
 
           count=$(git status --short | wc -l)
           echo "Count: $count"
@@ -44,6 +43,8 @@ jobs:
 
           echo "git status"
           git status 
+
+          git diff --cached --quiet || git commit -m "Updated ilPost.xml from GitHub Actions"
 
           if [ "$count" -gt 0 ]; then
             echo "Changes detected, sending email..."
