@@ -25,8 +25,6 @@ export const SuitInfo: Record<Suit, { color: any, index: number }> = {
 }
 
 export class Card {
-    
-
     id: number;
     value: number;
     suit: Suit;
@@ -34,8 +32,8 @@ export class Card {
     verticals: Card[] = [];
 
     linkVertical(card: Card) {
-       this.verticals.push(card);
-       card.verticals.push(this);
+        this.verticals.push(card);
+        card.verticals.push(this);
     }
     isVerticalMatch(card: Card) {
 
@@ -53,7 +51,7 @@ export class Card {
 
         return false;
     }
-    
+
     linkHorizontal(card: Card) {
         this.horizontals.push(card);
         card.horizontals.push(this);
@@ -62,7 +60,7 @@ export class Card {
     isHorizontalMatch(card: Card) {
         return this.value === card.value && this.suit !== card.suit;
     }
-    
+
     static readonly BASE_CODE = 0x1F0A1; // Base code for playing cards
 
     static count = 0;
@@ -88,6 +86,54 @@ export class Card {
     }
 }
 
+export class Combo {
+    cards: Card[] = [];
+    constructor(cards: Card[]) {
+        assert(cards.length >= 3, "Combo must have at least 3 cards");
+        cards.sort(cardSorter)
+        const verticalOk = this.checkSameSuit(cards) && this.checkStraight(cards)
+        const horizontalOk = this.checkDifferentSuit(cards) && this.checkSameValue(cards)
+        console.log(verticalOk, horizontalOk)
+        assert(verticalOk || horizontalOk, `Incorrect Horizontal or Vertical Combo ${cards}`);
+
+        this.cards = cards;
+    }
+
+    checkSameValue(cards: Card[]): boolean {
+        const value = cards[0].value;
+        return cards.filter(card => card.value !== value).length == 0;
+    }
+
+    checkDifferentSuit(cards: Card[]) {
+        for (let i = 0; i < cards.length - 2; i++) {
+            if (cards[i].suit == cards[i + 1].suit) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    checkStraight(cards: Card[]): boolean {
+        for (let i = 0; i < cards.length - 2; i++) {
+            if (cards[i].value + 1 !== cards[i + 1].value) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    checkSameSuit(cards: Card[]): boolean {
+        const suit = cards[0].suit;
+        return cards.filter(card => card.suit !== suit).length == 0;
+    }
+}
+
+export class Combos {
+    add(arg0: Combo) {
+        throw new Error('Method not implemented.');
+    }
+    combos: Combo[] = [];
+}
 
 export class Decks {
 
@@ -136,16 +182,10 @@ export class Decks {
 export class Player {
     name: string;
     hand: Card[] = [];
-
+    combos: Combos = new Combos();
 
     handSort(): void {
-        this.hand.sort((a, b) => {
-            if (a.value === b.value) {
-                return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
-            } else {
-                return a.value - b.value;
-            }
-        });
+        this.hand.sort(cardSorter);
     }
 
     constructor(name: string) {
@@ -166,10 +206,27 @@ export class Player {
                 c.linkVertical(card);
             }
         });
-
-
         this.hand.push(card);
     }
 
+    findCombos() {
+        this.hand.filter(card => card.horizontals.length >= 2).forEach(card => {
+            this.combos.add(new Combo([card, ...card.horizontals]));
+        });
+
+        this.hand.filter(card => card.verticals.length >= 2).forEach(card => {
+            this.combos.add(new Combo([card, ...card.verticals]));
+        });
+    }
 }
+
+export const cardSorter = (a: Card, b: Card): number => {
+    if (a.value === b.value) {
+        return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
+    } else {
+        return a.value - b.value;
+    }
+};
+
+
 
