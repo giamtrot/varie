@@ -1,4 +1,5 @@
-import { Decks, Player } from '../types';
+import { Player } from '../Player';
+import { Decks } from '../Decks';
 
 describe('Decks Class', () => {
     it('should create multiple decks', () => {
@@ -64,5 +65,5 @@ describe('Decks Class', () => {
         expect(newOrder).not.toBe(originalOrder);
     });
 
-    
+
 });

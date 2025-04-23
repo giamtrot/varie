@@ -1,4 +1,6 @@
-import { Card, Suit } from '../types';
+import { Suit, Card } from '../Card';
+import 'colors';
+
 describe('Card Class', () => {
     it('should create a card with valid value and suit', () => {
         const card1 = new Card(1, Suit.Spades);

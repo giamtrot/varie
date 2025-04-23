@@ -1,4 +1,8 @@
-import { Card, Suit, Player } from '../types';
+import colors from 'colors';
+
+import { Player } from '../Player';
+import { Suit } from '../Card';
+import { Card } from '../Card';
 
 describe('Player Class', () => {
     it('should create a player with a name', () => {
@@ -12,6 +16,7 @@ describe('Player Class', () => {
         const card = new Card(1, Suit.Clubs);
         player.hand.push(card);
         expect(player.toString()).toBe("Alice: " + "🃑".black.bold);
+
     });
 
 });
@@ -74,6 +79,8 @@ describe('Player.add', () => {
         expect(card2.horizontals).toContain(card1);
         expect(card3.verticals).toContain(card1);
     });
+
+    it('should add multiple cards and verify combo', () => { });
 });
 
 
