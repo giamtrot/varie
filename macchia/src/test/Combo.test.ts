@@ -1,5 +1,5 @@
 import { Suit } from '../Card';
-import { Combo } from '../Combos';
+import { Combo, Combos } from '../Combos';
 import { Card } from '../Card';
 
 describe('Combo Class', () => {
@@ -191,5 +191,148 @@ describe('Combo.equals', () => {
 
         // Because Combo.equals uses Card.equals, and Card.equals checks ID, this should be false
         expect(combo1.equals(combo2)).toBe(false);
+    });
+});
+
+
+// Helper function to create valid combos for testing
+const createCombo = (cards: Card[]): Combo => {
+    // In a real test setup, you might want to mock the Combo constructor
+    // or ensure these cards *always* form a valid combo to avoid
+    // constructor errors interfering with Combos tests.
+    // For simplicity here, we assume valid inputs for combo creation.
+    try {
+        return new Combo(cards);
+    } catch (e) {
+        // If the test setup guarantees valid combos, this shouldn't happen.
+        // If it might, handle or rethrow appropriately for the test.
+        console.error("Test setup error: Failed to create a valid combo for testing.", cards, e);
+        throw e;
+    }
+};
+
+describe('Combos Class', () => {
+    let combos: Combos;
+
+    // Define some cards and combos to use across tests
+    const cardAS = new Card(1, Suit.Spades);
+    const card2S = new Card(2, Suit.Spades);
+    const card3S = new Card(3, Suit.Spades);
+    const card4S = new Card(4, Suit.Spades);
+
+    const card5H = new Card(5, Suit.Hearts);
+    const card5D = new Card(5, Suit.Diamonds);
+    const card5C = new Card(5, Suit.Clubs);
+    const card5S = new Card(5, Suit.Spades);
+
+
+    const comboStraightFlush = createCombo([cardAS, card2S, card3S]);
+    const comboStraightFlushSameCardsDifferentOrder = createCombo([card3S, cardAS, card2S]);
+    const comboStraightFlushLonger = createCombo([cardAS, card2S, card3S, card4S]);
+    const comboSet = createCombo([card5H, card5D, card5C]);
+    const comboSetDifferent = createCombo([card5S, card5D, card5C]); // Same values/suits, different card instances
+
+    // Create another instance of the same logical comboSet
+    const card5H_Instance2 = new Card(5, Suit.Hearts);
+    const card5D_Instance2 = new Card(5, Suit.Diamonds);
+    const card5C_Instance2 = new Card(5, Suit.Clubs);
+    const comboSetEquivalentInstance = createCombo([card5H_Instance2, card5D_Instance2, card5C_Instance2]);
+
+
+    beforeEach(() => {
+        combos = new Combos();
+        // Reset card counter if necessary, depending on how Card IDs affect Combo.equals
+        // Card.count = 0; // If Card ID matters and needs resetting between tests
+    });
+
+    it('should initialize with an empty list of combos', () => {
+        expect(combos.combos).toEqual([]);
+        expect(combos.combos.length).toBe(0);
+    });
+
+    describe('add', () => {
+        it('should add a combo to an empty list', () => {
+            combos.add(comboStraightFlush);
+            expect(combos.length).toBe(1);
+            // Use Combo.equals for comparison, not === or toEqual directly on Combo instances
+            expect(combos.combos[0].equals(comboStraightFlush)).toBe(true);
+        });
+
+        it('should add a unique combo to a non-empty list', () => {
+            combos.add(comboStraightFlush);
+            combos.add(comboSet);
+            expect(combos.length).toBe(2);
+            expect(combos.contains(comboStraightFlush)).toBe(true);
+            expect(combos.contains(comboSet)).toBe(true);
+        });
+
+        it('should not add a combo if an equal combo (same cards, potentially different order) is already present', () => {
+            combos.add(comboStraightFlush);
+            combos.add(comboStraightFlushSameCardsDifferentOrder); // Should be considered equal by Combo.equals
+            expect(combos.length).toBe(1);
+            expect(combos.combos[0].equals(comboStraightFlush)).toBe(true);
+        });
+
+        it('should not add a combo if an equal combo (different card instances, same value/suit) is already present', () => {
+            // This test depends HEAVILY on how Combo.equals and Card.equals are implemented.
+            // Current implementation: Card.equals checks ID, so Combo.equals will see these as different.
+            // If Combo.equals were changed to only compare value/suit, this test would expect length 1.
+
+            combos.add(comboSet);
+            combos.add(comboSetEquivalentInstance); // Logically same, but different Card instances
+
+            // Based on current Card.equals checking ID, these combos are NOT equal
+            expect(comboSet.equals(comboSetEquivalentInstance)).toBe(false);
+            // Therefore, adding the "equivalent" instance should succeed
+            expect(combos.combos.length).toBe(2);
+        });
+
+
+        it('should add multiple different combos correctly', () => {
+            combos.add(comboStraightFlush);
+            combos.add(comboSet);
+            combos.add(comboStraightFlushLonger); // Different length
+            combos.add(comboSetDifferent); // Different card instance
+
+            expect(combos.length).toBe(4); // Assumes Card ID check in equals
+            expect(combos.contains(comboStraightFlush)).toBe(true);
+            expect(combos.contains(comboSet)).toBe(true);
+            expect(combos.contains(comboStraightFlushLonger)).toBe(true);
+            expect(combos.contains(comboSetDifferent)).toBe(true);
+        });
+
+        it('should handle adding the exact same combo instance multiple times', () => {
+            combos.add(comboSet);
+            combos.add(comboSet); // Add the same instance again
+            expect(combos.length).toBe(1);
+            expect(combos.combos[0].equals(comboSet)).toBe(true);
+        });
+    });
+
+    describe('contains (if public)', () => {
+        it('should return false for an empty list', () => {
+            expect(combos['contains'](comboSet)).toBe(false); // Access private method for testing
+        });
+
+        it('should return true if the exact combo instance exists', () => {
+            combos.add(comboSet);
+            expect(combos['contains'](comboSet)).toBe(true);
+        });
+
+        it('should return true if an equal combo exists (different instance, same cards)', () => {
+            combos.add(comboStraightFlush);
+            expect(combos['contains'](comboStraightFlushSameCardsDifferentOrder)).toBe(true);
+        });
+
+        it('should return false if no equal combo exists', () => {
+            combos.add(comboStraightFlush);
+            expect(combos['contains'](comboSet)).toBe(false);
+        });
+
+        it('should return false if an "equivalent" combo (different card instances) exists (based on current equals)', () => {
+            combos.add(comboSet);
+            // Based on current Card.equals checking ID, these combos are NOT equal
+            expect(combos['contains'](comboSetEquivalentInstance)).toBe(false);
+        });
     });
 });

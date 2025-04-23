@@ -100,7 +100,11 @@ export class Combos {
         }
     }
 
-    private contains(combo: Combo) {
-        return this.combos.filter(c => c.equals(combo)).length == 0;
+    get length(): number {
+        return this.combos.length;
+    }
+
+    contains(combo: Combo) {
+        return this.combos.filter(c => c.equals(combo)).length > 0;
     }
 }

@@ -99,8 +99,9 @@ export class Card {
     }
 
     toString(): string {
-        const char = String.fromCodePoint(this.code());
-        return SuitInfo[this.suit].color(char);
+        // const char = String.fromCodePoint(this.code());
+        // return SuitInfo[this.suit].color(char);
+        return `${this.value}${this.suit[0]}`;
     }
 
     toStringExtra(): string {
