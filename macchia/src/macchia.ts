@@ -1,7 +1,8 @@
 
 
 // Import or define the Decks class
-import { Decks, Player } from './types'; // Adjust the path as needed
+import { Player } from './Player';
+import { Decks } from './Decks';
 
 const decks: Decks = new Decks(2).shuffle();
 

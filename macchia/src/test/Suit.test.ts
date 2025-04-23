@@ -1,4 +1,4 @@
-import { Suit, SuitInfo } from '../types';
+import { Suit, SuitInfo } from '../Card';
 
 describe('Suit Enum', () => {
     it('should have correct string values for each suit', () => {
