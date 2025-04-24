@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/macchia.js",
     "build": "tsc",
-    "dev": "nodemon --watch src --exec ts-node src/macchia.ts",
+    "dev": "nodemon --watch src --exec ts-node src/Macchiavelli.ts",
     "test": "jest --watchAll --detectOpenHandles --forceExit"
   },
   "keywords": [],

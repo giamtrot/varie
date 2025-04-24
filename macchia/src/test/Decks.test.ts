@@ -64,6 +64,23 @@ describe('Decks Class', () => {
         const newOrder = decks.toString();
         expect(newOrder).not.toBe(originalOrder);
     });
+    
+    it('should return the next card from the deck', () => {
+        const decks = new Decks(1);
+        const initialLength = decks.length();
+        const nextCard = decks.next();
 
+        expect(nextCard).toBeDefined();
+        expect(decks.length()).toBe(initialLength - 1);
+    });
+
+    it('should throw an error when calling next on an empty deck', () => {
+        const decks = new Decks(1);
+        while (decks.hasNext()) {
+            decks.next();
+        }
+
+        expect(() => decks.next()).toThrow("No card available");
+    });
 
 });

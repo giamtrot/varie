@@ -6,6 +6,14 @@ import { Suit } from './Card';
 
 export class Decks {
 
+    next() {
+        assert(this.hasNext(), "No card available")
+        return this.cards.pop()!;
+    }
+    hasNext(): boolean {
+        return this.cards.length > 0
+    }
+
     cards: Card[] = [];
 
     constructor(numDecks: number) {
@@ -46,4 +54,6 @@ export class Decks {
             });
         }
     }
+
+
 }

@@ -1,4 +1,4 @@
-import { Suit, Card } from '../Card';
+import { Suit, Card, cardSorter } from '../Card';
 import 'colors';
 
 describe('Card Class', () => {
@@ -257,5 +257,79 @@ describe('Card.toStringExtra', () => {
 
         const expectedString = `${card1}(H->${card2}${card3})(V->${card4}${card5})`;
         expect(card1.toStringExtra()).toBe(expectedString);
+    });
+});
+
+describe('Card.follows', () => {
+    it('should return true if the card follows another card in sequence', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        expect(card2.follows(card1)).toBe(true);
+    });
+
+    it('should return true if the card is an Ace and follows a King', () => {
+        const card1 = new Card(13, Suit.Spades); // King
+        const card2 = new Card(1, Suit.Spades); // Ace
+        expect(card2.follows(card1)).toBe(true);
+    });
+
+    it('should return false if the card does not follow another card in sequence', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(7, Suit.Spades);
+        expect(card2.follows(card1)).toBe(false);
+    });
+
+    it('should return false if the card is of a different suit', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Hearts);
+        expect(card2.follows(card1)).toBe(false);
+    });
+});
+
+describe('Card.sameSuit', () => {
+    it('should return true if two cards have the same suit', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        expect(card1.sameSuit(card2)).toBe(true);
+    });
+
+    it('should return false if two cards have different suits', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Hearts);
+        expect(card1.sameSuit(card2)).toBe(false);
+    });
+});
+
+describe('Card.sameValue', () => {
+    it('should return true if two cards have the same value', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        expect(card1.sameValue(card2)).toBe(true);
+    });
+
+    it('should return false if two cards have different values', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(6, Suit.Spades);
+        expect(card1.sameValue(card2)).toBe(false);
+    });
+});
+
+describe('Card.cardSorter', () => {
+    it('should sort cards by value first', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(3, Suit.Hearts);
+        const card3 = new Card(7, Suit.Diamonds);
+        const cards = [card1, card2, card3];
+        cards.sort(cardSorter);
+        expect(cards).toEqual([card2, card1, card3]);
+    });
+
+    it('should sort cards by suit index if values are the same', () => {
+        const card1 = new Card(5, Suit.Spades);
+        const card2 = new Card(5, Suit.Hearts);
+        const card3 = new Card(5, Suit.Diamonds);
+        const cards = [card1, card2, card3];
+        cards.sort(cardSorter);
+        expect(cards).toEqual([card1, card2, card3]);
     });
 });

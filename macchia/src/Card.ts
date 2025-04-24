@@ -71,9 +71,15 @@ export class Card {
     }
 
     follows(card: Card): boolean {
+
+        if (!this.sameSuit(card)) {
+            return false;
+        }
+
         if (this.value - card.value === 1) {
             return true;
         }
+
         if (this.value === 1 && card.value === 13) {
             return true;
         }
