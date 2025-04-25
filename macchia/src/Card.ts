@@ -38,9 +38,8 @@ export class Card {
     id: number;
     value: number;
     suit: Suit;
-    horizontals: Card[] = [];
-    verticals: Card[] = [];
-
+    horizontals = new Cards()
+    verticals = new Cards()
 
     constructor(value: number, suit: Suit) {
         assert(value >= 1 && value <= 13, "Value must be between 1 and 13");
@@ -111,8 +110,8 @@ export class Card {
     }
 
     toStringExtra(): string {
-        const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals.map(c => c.toString()).join("")})`;
-        const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals.map(c => c.toString()).join("")})`;
+        const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals})`;
+        const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals})`;
         return `${this.toString()}${horizs}${verts}`;
     }
 
@@ -126,9 +125,45 @@ export class Card {
         }
     }
 
+    unrelate(c: Card): void {
+        // if (this.horizontals.indexOf(c) >= 0) {
+
+        throw new Error('Method not implemented.');
+    }
+
     equals(other: Card): boolean {
         return this.value === other.value && this.suit === other.suit && this.id === other.id;
     }
 }
 
+export class Cards {
+
+    cards: Card[] = []
+
+    sort() {
+        this.cards.sort(cardSorter)
+    }
+
+    get length() {
+        return this.cards.length;
+    }
+
+    remove(card: Card) {
+        const index = this.cards.indexOf(card);
+        if (index > -1) {
+            this.cards.splice(index, 1);
+        }
+    }
+
+    push(card: Card) {
+        this.cards.forEach(c => {
+            c.relate(card);
+        });
+    }
+
+    toString() {
+        return this.cards.map(card => card.toString()).join("")
+    }
+
+}
 

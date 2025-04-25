@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { Card } from './Card';
-import { Player } from './Player';
+import { Player, Players } from './Players';
 import { Suit } from './Card';
 
 

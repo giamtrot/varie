@@ -1,4 +1,4 @@
-import { Player } from '../Player';
+import { Player } from '../Players';
 import { Decks } from '../Decks';
 
 describe('Decks Class', () => {
@@ -64,7 +64,7 @@ describe('Decks Class', () => {
         const newOrder = decks.toString();
         expect(newOrder).not.toBe(originalOrder);
     });
-    
+
     it('should return the next card from the deck', () => {
         const decks = new Decks(1);
         const initialLength = decks.length();

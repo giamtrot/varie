@@ -1,40 +1,32 @@
 
 
 // Import or define the Decks class
-import { Player } from './Player';
+import { Player, Players } from './Players';
 import { Decks } from './Decks';
+import { Combo } from './Combos';
+
+import { Desk } from './Desk';
+import { Match } from './Match';
 
 const decks: Decks = new Decks(2).shuffle();
 
 // console.log("Decks:\n" + decks.toString());
 const playersNumber = 5
-let players: Player[] = [];
+let ps: Player[] = [];
 
 for (let p = 1; p <= playersNumber; p++) {
-    players.push(new Player("Player " + p))
+    ps.push(new Player("Player " + p))
 }
 
-decks.distribute(players, 13);
+const players = new Players(ps)
 
-while (true) {
-    for (let p = 0; p < players.length; p++) {
-        if (!decks.hasNext()) {
-            console.log("Exit for")
-            break
-        }
-        const player = players[p];
-        console.log(`Doing player ${player.name}`)
-        const card = decks.next()
-        player.add(card)
-    }
+decks.distribute(players.players, 13);
+const desk: Desk = new Desk()
 
-    if (!decks.hasNext()) {
-        console.log("Exit while")
-        break
-    }
+let match = new Match(players, decks, desk)
+while (match.canContinue()) {
+    match.step()
 }
 
-players.forEach(p => { 
-    p.handSort(); 
-    console.log(p.toString()) 
-})
+console.log(match.toString())
+

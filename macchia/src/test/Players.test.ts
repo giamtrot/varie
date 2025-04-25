@@ -1,6 +1,6 @@
 import colors from 'colors';
 
-import { Player } from '../Player';
+import { Player, Players } from '../Players';
 import { Suit } from '../Card';
 import { Card } from '../Card';
 import { Combo } from '../Combos';
@@ -539,3 +539,100 @@ describe('Player.findCombosAgain', () => {
         expect(player.combos.combos.length).toBe(0);
     });
 });
+
+describe('Players Class', () => {
+    it('should create a Players instance with a list of players', () => {
+        const player1 = new Player("Alice");
+        const player2 = new Player("Bob");
+        const players = new Players([player1, player2]);
+
+        expect(players.players.length).toBe(2);
+        expect(players.players).toContain(player1);
+        expect(players.players).toContain(player2);
+    });
+
+    it('should throw an error if no players are provided', () => {
+        expect(() => new Players([])).toThrow("No player provided");
+    });
+
+    it('should return the next player in the sequence', () => {
+        const players = new Players([new Player("Alice"), new Player("Bob"), new Player("Charlie")]);
+
+        expect(players.nextPlayer().name).toBe("Alice");
+        expect(players.nextPlayer().name).toBe("Bob");
+        expect(players.nextPlayer().name).toBe("Charlie");
+    });
+
+    it('should loop back to the first player after the last player', () => {
+        const players = new Players([new Player("Alice"), new Player("Bob")]);
+
+        expect(players.nextPlayer().name).toBe("Alice");
+        expect(players.nextPlayer().name).toBe("Bob");
+        expect(players.nextPlayer().name).toBe("Alice");
+    });
+
+    it('should handle a single player correctly', () => {
+        const players = new Players([new Player("Alice")]);
+
+        expect(players.nextPlayer().name).toBe("Alice");
+        expect(players.nextPlayer().name).toBe("Alice");
+    });
+});
+
+describe('Players.toString', () => {
+    it('should return a string representation of all players and their sorted hands', () => {
+        const player1 = new Player("Alice");
+        const player2 = new Player("Bob");
+
+        const card1 = new Card(5, Suit.Spades); // 5 of Spades
+        const card2 = new Card(3, Suit.Hearts); // 3 of Hearts
+        const card3 = new Card(7, Suit.Clubs); // 7 of Clubs
+        const card4 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+
+        player1.add(card1);
+        player1.add(card2);
+        player2.add(card3);
+        player2.add(card4);
+
+        const players = new Players([player1, player2]);
+
+        const expectedOutput = [
+            "Alice: " + [card2.toString(), card1.toString()].join(""), // Sorted hand
+            "Bob: " + [card4.toString(), card3.toString()].join("")   // Sorted hand
+        ].join("\n");
+
+        expect(players.toString()).toBe(expectedOutput);
+    });
+
+    it('should return an empty string for players with no cards', () => {
+        const player1 = new Player("Alice");
+        const player2 = new Player("Bob");
+
+        const players = new Players([player1, player2]);
+
+        const expectedOutput = [
+            "Alice: ",
+            "Bob: "
+        ].join("\n");
+
+        expect(players.toString()).toBe(expectedOutput);
+    });
+
+    it('should handle a single player correctly', () => {
+        const player = new Player("Alice");
+
+        const card1 = new Card(10, Suit.Spades); // 10 of Spades
+        const card2 = new Card(1, Suit.Clubs);  // Ace of Clubs
+
+        player.add(card1);
+        player.add(card2);
+
+        const players = new Players([player]);
+
+        const expectedOutput = "Alice: " + [card2.toString(), card1.toString()].join(""); // Sorted hand
+
+        expect(players.toString()).toBe(expectedOutput);
+    });
+});
+
+

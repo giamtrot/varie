@@ -104,6 +104,11 @@ export class Combos {
         return this.combos.length;
     }
 
+    pop(): Combo {
+        assert(this.length > 0, "No combo avaliable")
+        return this.combos.pop()!;
+    }
+
     contains(combo: Combo) {
         return this.combos.filter(c => c.equals(combo)).length > 0;
     }
