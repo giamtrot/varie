@@ -11,7 +11,7 @@ export class Player {
     playCombo(): Combo {
         assert(this.hasCombo, "No combo available")
         const combo = this.combos.shift();
-        combo.cards.forEach(c => this.remove(c));
+        // combo.cards.forEach(c => this.remove(c));
         return combo;
     }
 
@@ -35,11 +35,11 @@ export class Player {
         this.hand.pushAndRelate(card);
     }
 
-    remove(card: Card): void {
-        card.horizontals.cards.forEach(h => h.unrelate(card))
-        card.verticals.cards.forEach(v => v.unrelate(card))
-        this.hand.remove(card)
-    }
+    // remove(card: Card): void {
+    //     card.horizontals.cards.forEach(h => h.unrelate(card))
+    //     card.verticals.cards.forEach(v => v.unrelate(card))
+    //     this.hand.remove(card)
+    // }
 
     findCombos() {
         this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {

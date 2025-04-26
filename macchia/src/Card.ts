@@ -125,10 +125,29 @@ export class Card {
         }
     }
 
-    unrelate(c: Card): void {
-        // if (this.horizontals.indexOf(c) >= 0) {
+    unrelate(card: Card): void {
+        assert(this.horizontals.contains(card) || this.verticals.contains(card), 
+            `Card ${card} not linked to ${this}`)
+        if (this.horizontals.contains(card)) {
+            this.unlinkHorizontal(card)
+        }
+        if (this.verticals.contains(card)) {
+            this.unlinkVertical(card)
+        }
+    }
 
-        throw new Error('Method not implemented.');
+    unlinkHorizontal(card: Card) {
+        assert(this.horizontals.contains(card) && card.horizontals.contains(this),
+            `Card ${card} not horizontally linked to ${this} or viceversa`)
+        this.horizontals.remove(card)
+        card.horizontals.remove(this)
+    }
+
+    unlinkVertical(card: Card) {
+        assert(this.verticals.contains(card) && card.verticals.contains(this),
+            `Card ${card} not vertically linked to ${this} or viceversa`)
+        this.verticals.remove(card)
+        card.verticals.remove(this)
     }
 
     equals(other: Card): boolean {
@@ -137,9 +156,13 @@ export class Card {
 }
 
 export class Cards {
-
+    
     cards: Card[] = []
-
+    
+    contains(c: Card) {
+        return this.cards.indexOf(c) >= 0;
+    }
+    
     sort() {
         this.cards.sort(cardSorter)
     }

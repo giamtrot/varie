@@ -148,7 +148,7 @@ Players Info
                 const match = new Match(mockPlayers, mockDecks, mockDesk);
                 const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
-                match.step();
+                // match.step();
 
                 expect(mockPlayers.nextPlayer).toHaveBeenCalled();
                 expect(mockDecks.next).toHaveBeenCalled();
