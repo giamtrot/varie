@@ -601,7 +601,44 @@ describe('Player Class', () => {
         });
     });
 
-    
+    describe('Player.hasCombo', () => {
+        it('should return false if the player has no combos', () => {
+            const player = new Player("Alice");
+            expect(player.hasCombo()).toBe(false);
+        });
+
+        it('should return true if the player has at least one combo', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            const card3 = new Card(5, Suit.Diamonds);
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+            player.findCombos();
+
+            expect(player.hasCombo()).toBe(true);
+        });
+
+        it('should return false after all combos are removed', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            const card3 = new Card(5, Suit.Diamonds);
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+            player.findCombos();
+
+            expect(player.hasCombo()).toBe(true);
+
+            player.combos.combos.shift(); // Simulate removing the combo
+            expect(player.hasCombo()).toBe(false);
+        });
+    });
+
 });
 
 describe('Players Class', () => {

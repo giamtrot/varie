@@ -5,7 +5,7 @@ import { Suit } from './Card';
 
 
 export class Decks {
-
+    
     next() {
         assert(this.hasNext(), "No card available")
         return this.cards.pop()!;
@@ -13,9 +13,9 @@ export class Decks {
     hasNext(): boolean {
         return this.cards.length > 0
     }
-
+    
     cards: Card[] = [];
-
+    
     constructor(numDecks: number) {
         for (let i = 0; i < numDecks; i++) {
             Object.values(Suit).forEach(
@@ -28,7 +28,7 @@ export class Decks {
             );
         }
     }
-
+    
     shuffle(): Decks {
         for (let i = this.cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -36,13 +36,17 @@ export class Decks {
         }
         return this;
     }
-
+    
     length(): number {
         return this.cards.length;
     }
-
+    
     toString(): string {
         return this.cards.map(card => card.toString()).join("");
+    }
+    
+    toJSON() {
+        return this.cards.map(card => card.toJSON());
     }
 
     distribute(players: Player[], cardNumber: number) {

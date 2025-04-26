@@ -1,12 +1,9 @@
 import assert from "assert";
-import * as fs from "fs";
 import { Decks } from "./Decks";
 import { Desk } from "./Desk";
-import { Player, Players } from "./Players";
-import { Combo } from "./Combos";
+import { Players } from "./Players";
 
 export class Match {
-
 
     private players: Players;
     private decks: Decks;
@@ -34,49 +31,24 @@ export class Match {
         }
     }
 
-    private noInteraction = false
-
-    canContinue(): boolean {
-        if (this.noInteraction) {
-            return this.checkCards();
-        }
-
-        const answer = this.read("S: step, Q: quit or R: run to end?");
-
-        switch (answer.trim().toLowerCase()) {
-            case "s":
-                return this.checkCards();
-            case "q":
-                return false
-            case "r":
-                this.noInteraction = true
-                return this.checkCards()
-            default:
-                this.write("Invalid input. Please enter 's', 'q', or 'r'.");
-                return this.canContinue();
-        }
-    }
-
-    private checkCards(): boolean {
+    checkCards(): boolean {
         return this.decks.hasNext();
-    }
-
-    private read(msg: string) {
-        this.write(msg)
-        const buffer = Buffer.alloc(1024);
-        const bytesRead = fs.readSync(process.stdin.fd, buffer);
-        const answer = buffer.toString("utf8", 0, bytesRead).trim().toLowerCase();
-        return answer;
-    }
-
-    private write(msg: string) {
-        process.stdout.write(msg + "\n");
     }
 
     toString() {
         return `Match State:
-        Players:\n${this.players}
-        Decks: ${this.decks}
-        Desk: ${this.desk}`;
+                Players:\n${this.players}
+                Decks: ${this.decks}
+                Desk: ${this.desk}`;
+    }
+
+    toJSON() {
+        return {
+            match: {
+                players: this.players.toJSON(),
+                decks: this.decks.toJSON(),
+                desk: this.desk.toJSON(),
+            }
+        }
     }
 }

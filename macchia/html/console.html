@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macchiavelli</title>
+    <script src="https://cdn.jsdelivr.net/npm/mustache@latest/mustache.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        cardred, cardblack {
+            font-size: 72px;
+        }
+
+        cardred {
+            color: red;
+        }
+
+        cardblack {
+            color: black;
+        }
+    </style>
+</head>
+
+<body onload="startMatch()">
+    <h1>Macchiavelli</h1>
+    <input type="text" id="userInput" placeholder="Enter 's', 'q', or 'r'" />
+    <button onclick="sendInput()">Submit</button>
+    <div id="output"></div>
+    <pre id="debug"></pre>
+    
+
+    <script>
+        async function startMatch() {
+            const response = await fetch("/start", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await response.json();
+            // console.log("data", data)
+            document.getElementById("debug").innerText = JSON.stringify(data, null, 2);
+            
+            // Mustache template
+            const template = `
+                <h2>Match State</h2>
+                <ul>
+                    <li><h3>Players:</h3>
+                        <ol>
+                            {{#match.players}}
+                            <li>{{name}}:{{#hand}}<card{{color}}>{{char}}</card{{color}}>{{/hand}}</li>
+                            {{/match.players}}
+                        </ol>
+                    </li>
+                    <li><h3>Decks:</h3>{{#match.decks}}<card{{color}}>{{char}}</card{{color}}>{{/match.decks}}</li>
+                    <li><h3>Desk:</h3>{{match.desk}}</li>
+                </ul>
+            `;
+
+            // Render the template with the data
+            const rendered = Mustache.render(template, { match: data.match });
+            document.getElementById("output").innerHTML = rendered;
+        }
+
+        async function sendInput() {
+            const input = document.getElementById("userInput").value;
+            const response = await fetch("/input", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ input })
+            });
+            const data = await response.json();
+            document.getElementById("output").innerText = data.message;
+        }
+    </script>
+</body>
+
+</html>

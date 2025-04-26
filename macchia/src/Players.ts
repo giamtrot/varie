@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Card, Cards, cardSorter } from './Card';
+import { Card, Cards } from './Card';
 import { Combos, Combo } from './Combos';
 
 
@@ -27,10 +27,6 @@ export class Player {
         this.name = name;
     }
 
-    toString(): string {
-        return this.name + ": " + this.hand.toString();
-    }
-
     add(card: Card) {
         this.hand.pushAndRelate(card);
     }
@@ -54,6 +50,17 @@ export class Player {
         });
     }
 
+    toString(): string {
+        return this.name + ": " + this.hand.toString();
+    }
+
+    toJSON() {
+        return {
+            name: this.name,
+            hand: this.hand.toJSON()
+        }
+    }
+
     private static collect(card: Card, cards: Card[]) {
         if (cards.includes(card)) {
             return;
@@ -64,6 +71,7 @@ export class Player {
 }
 
 export class Players {
+
     players: Player[];
     private playerPos = 0;
 
@@ -83,5 +91,14 @@ export class Players {
             player.handSort()
             return player.toString()
         }).join("\n");
+    }
+
+    toJSON() {
+        const ris = this.players.map(player => {
+            player.handSort();
+            return player.toJSON();
+        });
+        // console.log(ris)
+        return ris
     }
 }

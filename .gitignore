@@ -10,3 +10,4 @@ tb/dist/*
 **/node_modules/*
 rss/AdAltaVoce.CommitStatus.txt
 **/coverage/*
+macchia/dist/*
