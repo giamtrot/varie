@@ -141,383 +141,386 @@ describe('Card Class', () => {
         const card2 = new Card(8, Suit.Spades);
         expect(card1.isVerticalMatch(card2)).toBe(false);
     });
-});
 
-describe('Card.relate', () => {
-    it('should link cards horizontally if they have the same value but different suits', () => {
-        const card1 = new Card(5, Suit.Hearts);
-        const card2 = new Card(5, Suit.Spades);
 
-        card1.relate(card2);
+    describe('Card.relate', () => {
+        it('should link cards horizontally if they have the same value but different suits', () => {
+            const card1 = new Card(5, Suit.Hearts);
+            const card2 = new Card(5, Suit.Spades);
 
-        expect(card1.horizontals.cards).toContain(card2);
-        expect(card2.horizontals.cards).toContain(card1);
+            card1.relate(card2);
+
+            expect(card1.horizontals.cards).toContain(card2);
+            expect(card2.horizontals.cards).toContain(card1);
+        });
+
+        it('should link cards vertically if they have the same suit and consecutive values', () => {
+            const card1 = new Card(5, Suit.Hearts);
+            const card2 = new Card(6, Suit.Hearts);
+
+            card1.relate(card2);
+
+            expect(card1.verticals.cards).toContain(card2);
+            expect(card2.verticals.cards).toContain(card1);
+        });
+
+        it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
+            const card1 = new Card(1, Suit.Spades); // Ace of Spades
+            const card2 = new Card(13, Suit.Spades); // King of Spades
+
+            card1.relate(card2);
+
+            expect(card1.verticals.cards).toContain(card2);
+            expect(card2.verticals.cards).toContain(card1);
+        });
+
+        it('should not link cards horizontally if they have the same suit', () => {
+            const card1 = new Card(5, Suit.Hearts);
+            const card2 = new Card(5, Suit.Hearts);
+
+            card1.relate(card2);
+
+            expect(card1.horizontals).not.toContain(card2);
+            expect(card2.horizontals).not.toContain(card1);
+        });
+
+        it('should not link cards vertically if they have different suits', () => {
+            const card1 = new Card(5, Suit.Hearts);
+            const card2 = new Card(6, Suit.Spades);
+
+            card1.relate(card2);
+
+            expect(card1.verticals).not.toContain(card2);
+            expect(card2.verticals).not.toContain(card1);
+        });
+
+        it('should not link cards horizontally or vertically if they do not match any criteria', () => {
+            const card1 = new Card(5, Suit.Hearts);
+            const card2 = new Card(7, Suit.Spades);
+
+            card1.relate(card2);
+
+            expect(card1.horizontals).not.toContain(card2);
+            expect(card2.horizontals).not.toContain(card1);
+            expect(card1.verticals).not.toContain(card2);
+            expect(card2.verticals).not.toContain(card1);
+        });
     });
 
-    it('should link cards vertically if they have the same suit and consecutive values', () => {
-        const card1 = new Card(5, Suit.Hearts);
-        const card2 = new Card(6, Suit.Hearts);
+    describe('Card.toStringExtra', () => {
+        it('should return the correct string representation with no relationships', () => {
+            const card = new Card(1, Suit.Spades); // Ace of Spades
+            const expectedString = card.toString();
+            expect(card.toStringExtra()).toBe(expectedString);
+        });
 
-        card1.relate(card2);
+        it('should return the correct string representation with horizontal relationships', () => {
+            const card1 = new Card(1, Suit.Spades); // Ace of Spades
+            const card2 = new Card(1, Suit.Hearts); // Ace of Hearts
+            card1.linkHorizontal(card2);
 
-        expect(card1.verticals.cards).toContain(card2);
-        expect(card2.verticals.cards).toContain(card1);
+            const expectedString = `${card1}(H->${card2})`;
+            expect(card1.toStringExtra()).toBe(expectedString);
+        });
+
+        it('should return the correct string representation with vertical relationships', () => {
+            const card1 = new Card(1, Suit.Spades); // Ace of Spades
+            const card2 = new Card(2, Suit.Spades); // 2 of Spades
+            card1.linkVertical(card2);
+
+            const expectedString = `${card1}(V->${card2})`;
+            expect(card1.toStringExtra()).toBe(expectedString);
+        });
+
+        it('should return the correct string representation with both horizontal and vertical relationships', () => {
+            const card1 = new Card(1, Suit.Spades); // Ace of Spades
+            const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
+            const card3 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
+            card1.linkHorizontal(card2);
+            card1.linkVertical(card3);
+
+            const expectedString = `${card1}(H->${card2})(V->${card3})`;
+            expect(card1.toStringExtra()).toBe(expectedString);
+        });
+
+        it('should handle multiple horizontal and vertical relationships', () => {
+            const card1 = new Card(1, Suit.Spades); // Ace of Spades
+            const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
+            const card3 = new Card(1, Suit.Diamonds); // Ace of Diamonds (horizontal)
+            const card4 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
+            const card5 = new Card(13, Suit.Spades); // King of Spades (vertical)
+
+            card1.linkHorizontal(card2);
+            card1.linkHorizontal(card3);
+            card1.linkVertical(card4);
+            card1.linkVertical(card5);
+
+            const expectedString = `${card1}(H->${card2}${card3})(V->${card4}${card5})`;
+            expect(card1.toStringExtra()).toBe(expectedString);
+        });
     });
 
-    it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
-        const card1 = new Card(1, Suit.Spades); // Ace of Spades
-        const card2 = new Card(13, Suit.Spades); // King of Spades
+    describe('Card.follows', () => {
+        it('should return true if the card follows another card in sequence', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Spades);
+            expect(card2.follows(card1)).toBe(true);
+        });
 
-        card1.relate(card2);
+        it('should return true if the card is an Ace and follows a King', () => {
+            const card1 = new Card(13, Suit.Spades); // King
+            const card2 = new Card(1, Suit.Spades); // Ace
+            expect(card2.follows(card1)).toBe(true);
+        });
 
-        expect(card1.verticals.cards).toContain(card2);
-        expect(card2.verticals.cards).toContain(card1);
+        it('should return false if the card does not follow another card in sequence', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(7, Suit.Spades);
+            expect(card2.follows(card1)).toBe(false);
+        });
+
+        it('should return false if the card is of a different suit', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Hearts);
+            expect(card2.follows(card1)).toBe(false);
+        });
     });
 
-    it('should not link cards horizontally if they have the same suit', () => {
-        const card1 = new Card(5, Suit.Hearts);
-        const card2 = new Card(5, Suit.Hearts);
+    describe('Card.sameSuit', () => {
+        it('should return true if two cards have the same suit', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Spades);
+            expect(card1.sameSuit(card2)).toBe(true);
+        });
 
-        card1.relate(card2);
-
-        expect(card1.horizontals).not.toContain(card2);
-        expect(card2.horizontals).not.toContain(card1);
+        it('should return false if two cards have different suits', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Hearts);
+            expect(card1.sameSuit(card2)).toBe(false);
+        });
     });
 
-    it('should not link cards vertically if they have different suits', () => {
-        const card1 = new Card(5, Suit.Hearts);
-        const card2 = new Card(6, Suit.Spades);
+    describe('Card.sameValue', () => {
+        it('should return true if two cards have the same value', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            expect(card1.sameValue(card2)).toBe(true);
+        });
 
-        card1.relate(card2);
-
-        expect(card1.verticals).not.toContain(card2);
-        expect(card2.verticals).not.toContain(card1);
+        it('should return false if two cards have different values', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Spades);
+            expect(card1.sameValue(card2)).toBe(false);
+        });
     });
 
-    it('should not link cards horizontally or vertically if they do not match any criteria', () => {
-        const card1 = new Card(5, Suit.Hearts);
-        const card2 = new Card(7, Suit.Spades);
+    describe('Card.cardSorter', () => {
+        it('should sort cards by value first', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(3, Suit.Hearts);
+            const card3 = new Card(7, Suit.Diamonds);
+            const cards = [card1, card2, card3];
+            cards.sort(cardSorter);
+            expect(cards).toEqual([card2, card1, card3]);
+        });
 
-        card1.relate(card2);
-
-        expect(card1.horizontals).not.toContain(card2);
-        expect(card2.horizontals).not.toContain(card1);
-        expect(card1.verticals).not.toContain(card2);
-        expect(card2.verticals).not.toContain(card1);
-    });
-});
-
-describe('Card.toStringExtra', () => {
-    it('should return the correct string representation with no relationships', () => {
-        const card = new Card(1, Suit.Spades); // Ace of Spades
-        const expectedString = card.toString();
-        expect(card.toStringExtra()).toBe(expectedString);
-    });
-
-    it('should return the correct string representation with horizontal relationships', () => {
-        const card1 = new Card(1, Suit.Spades); // Ace of Spades
-        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts
-        card1.linkHorizontal(card2);
-
-        const expectedString = `${card1}(H->${card2})`;
-        expect(card1.toStringExtra()).toBe(expectedString);
+        it('should sort cards by suit index if values are the same', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            const card3 = new Card(5, Suit.Diamonds);
+            const cards = [card1, card2, card3];
+            cards.sort(cardSorter);
+            expect(cards).toEqual([card1, card2, card3]);
+        });
     });
 
-    it('should return the correct string representation with vertical relationships', () => {
-        const card1 = new Card(1, Suit.Spades); // Ace of Spades
-        const card2 = new Card(2, Suit.Spades); // 2 of Spades
-        card1.linkVertical(card2);
+    describe('Card.unrelate', () => {
+        it('should unlink a horizontal relationship between two cards', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            card1.relate(card2);
 
-        const expectedString = `${card1}(V->${card2})`;
-        expect(card1.toStringExtra()).toBe(expectedString);
+            card1.unrelate(card2);
+
+            expect(card1.horizontals.cards).not.toContain(card2);
+            expect(card2.horizontals.cards).not.toContain(card1);
+            expect(card1.verticals.cards).not.toContain(card2);
+            expect(card2.verticals.cards).not.toContain(card1);
+        });
+
+        it('should unlink a vertical relationship between two cards', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Spades);
+            card1.relate(card2);
+
+            card1.unrelate(card2);
+
+            expect(card1.horizontals.cards).not.toContain(card2);
+            expect(card2.horizontals.cards).not.toContain(card1);
+            expect(card1.verticals.cards).not.toContain(card2);
+            expect(card2.verticals.cards).not.toContain(card1);
+        });
+
+        it('should throw an error if the cards are not linked', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Hearts);
+
+            expect(() => card1.unrelate(card2)).toThrow(
+                `Card ${card2} not linked to ${card1}`
+            );
+        });
     });
 
-    it('should return the correct string representation with both horizontal and vertical relationships', () => {
-        const card1 = new Card(1, Suit.Spades); // Ace of Spades
-        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
-        const card3 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
-        card1.linkHorizontal(card2);
-        card1.linkVertical(card3);
+    describe('Card.unlinkHorizontal', () => {
+        it('should unlink a horizontal relationship between two cards', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            card1.linkHorizontal(card2);
 
-        const expectedString = `${card1}(H->${card2})(V->${card3})`;
-        expect(card1.toStringExtra()).toBe(expectedString);
+            card1.unlinkHorizontal(card2);
+
+            expect(card1.horizontals.cards).not.toContain(card2);
+            expect(card2.horizontals.cards).not.toContain(card1);
+        });
+
+        it('should throw an error if the cards are not horizontally linked', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+
+            expect(() => card1.unlinkHorizontal(card2)).toThrow(
+                `Card ${card2} not horizontally linked to ${card1} or viceversa`
+            );
+        });
     });
 
-    it('should handle multiple horizontal and vertical relationships', () => {
-        const card1 = new Card(1, Suit.Spades); // Ace of Spades
-        const card2 = new Card(1, Suit.Hearts); // Ace of Hearts (horizontal)
-        const card3 = new Card(1, Suit.Diamonds); // Ace of Diamonds (horizontal)
-        const card4 = new Card(2, Suit.Spades); // 2 of Spades (vertical)
-        const card5 = new Card(13, Suit.Spades); // King of Spades (vertical)
+    describe('Card.unlinkVertical', () => {
+        it('should unlink a vertical relationship between two cards', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Spades);
+            card1.linkVertical(card2);
 
-        card1.linkHorizontal(card2);
-        card1.linkHorizontal(card3);
-        card1.linkVertical(card4);
-        card1.linkVertical(card5);
+            card1.unlinkVertical(card2);
 
-        const expectedString = `${card1}(H->${card2}${card3})(V->${card4}${card5})`;
-        expect(card1.toStringExtra()).toBe(expectedString);
-    });
-});
+            expect(card1.verticals.cards).not.toContain(card2);
+            expect(card2.verticals.cards).not.toContain(card1);
+        });
 
-describe('Card.follows', () => {
-    it('should return true if the card follows another card in sequence', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Spades);
-        expect(card2.follows(card1)).toBe(true);
-    });
+        it('should throw an error if the cards are not vertically linked', () => {
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(6, Suit.Hearts);
 
-    it('should return true if the card is an Ace and follows a King', () => {
-        const card1 = new Card(13, Suit.Spades); // King
-        const card2 = new Card(1, Suit.Spades); // Ace
-        expect(card2.follows(card1)).toBe(true);
-    });
-
-    it('should return false if the card does not follow another card in sequence', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(7, Suit.Spades);
-        expect(card2.follows(card1)).toBe(false);
-    });
-
-    it('should return false if the card is of a different suit', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Hearts);
-        expect(card2.follows(card1)).toBe(false);
-    });
-});
-
-describe('Card.sameSuit', () => {
-    it('should return true if two cards have the same suit', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Spades);
-        expect(card1.sameSuit(card2)).toBe(true);
-    });
-
-    it('should return false if two cards have different suits', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Hearts);
-        expect(card1.sameSuit(card2)).toBe(false);
-    });
-});
-
-describe('Card.sameValue', () => {
-    it('should return true if two cards have the same value', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-        expect(card1.sameValue(card2)).toBe(true);
-    });
-
-    it('should return false if two cards have different values', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Spades);
-        expect(card1.sameValue(card2)).toBe(false);
-    });
-});
-
-describe('Card.cardSorter', () => {
-    it('should sort cards by value first', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(3, Suit.Hearts);
-        const card3 = new Card(7, Suit.Diamonds);
-        const cards = [card1, card2, card3];
-        cards.sort(cardSorter);
-        expect(cards).toEqual([card2, card1, card3]);
-    });
-
-    it('should sort cards by suit index if values are the same', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-        const card3 = new Card(5, Suit.Diamonds);
-        const cards = [card1, card2, card3];
-        cards.sort(cardSorter);
-        expect(cards).toEqual([card1, card2, card3]);
-    });
-});
-
-describe('Card.unrelate', () => {
-    it('should unlink a horizontal relationship between two cards', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-        card1.relate(card2);
-
-        card1.unrelate(card2);
-
-        expect(card1.horizontals.cards).not.toContain(card2);
-        expect(card2.horizontals.cards).not.toContain(card1);
-        expect(card1.verticals.cards).not.toContain(card2);
-        expect(card2.verticals.cards).not.toContain(card1);
-    });
-
-    it('should unlink a vertical relationship between two cards', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Spades);
-        card1.relate(card2);
-
-        card1.unrelate(card2);
-
-        expect(card1.horizontals.cards).not.toContain(card2);
-        expect(card2.horizontals.cards).not.toContain(card1);
-        expect(card1.verticals.cards).not.toContain(card2);
-        expect(card2.verticals.cards).not.toContain(card1);
-    });
-
-    it('should throw an error if the cards are not linked', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Hearts);
-
-        expect(() => card1.unrelate(card2)).toThrow(
-            `Card ${card2} not linked to ${card1}`
-        );
-    });
-});
-
-describe('Card.unlinkHorizontal', () => {
-    it('should unlink a horizontal relationship between two cards', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-        card1.linkHorizontal(card2);
-
-        card1.unlinkHorizontal(card2);
-
-        expect(card1.horizontals.cards).not.toContain(card2);
-        expect(card2.horizontals.cards).not.toContain(card1);
-    });
-
-    it('should throw an error if the cards are not horizontally linked', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-
-        expect(() => card1.unlinkHorizontal(card2)).toThrow(
-            `Card ${card2} not horizontally linked to ${card1} or viceversa`
-        );
-    });
-});
-
-describe('Card.unlinkVertical', () => {
-    it('should unlink a vertical relationship between two cards', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Spades);
-        card1.linkVertical(card2);
-
-        card1.unlinkVertical(card2);
-
-        expect(card1.verticals.cards).not.toContain(card2);
-        expect(card2.verticals.cards).not.toContain(card1);
-    });
-
-    it('should throw an error if the cards are not vertically linked', () => {
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(6, Suit.Hearts);
-
-        expect(() => card1.unlinkVertical(card2)).toThrow(
-            `Card ${card2} not vertically linked to ${card1} or viceversa`
-        );
-    });
-});
-
-describe('Cards.pushAndRelate', () => {
-    it('should add a card to the collection and relate it to existing cards', () => {
-        const cards = new Cards();
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-
-        cards.push(card1);
-        cards.pushAndRelate(card2);
-
-        expect(cards.cards).toContain(card1);
-        expect(cards.cards).toContain(card2);
-        expect(card1.horizontals.cards).toContain(card2);
-        expect(card2.horizontals.cards).toContain(card1);
-    });
-
-    it('should not relate the new card if no matching criteria are met', () => {
-        const cards = new Cards();
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(7, Suit.Hearts);
-
-        cards.push(card1);
-        cards.pushAndRelate(card2);
-
-        expect(cards.cards).toContain(card1);
-        expect(cards.cards).toContain(card2);
-        expect(card1.horizontals.cards).not.toContain(card2);
-        expect(card1.verticals.cards).not.toContain(card2);
-    });
-
-    it('should not relate the new card if no relate is asked', () => {
-        const cards = new Cards();
-        const card1 = new Card(5, Suit.Spades);
-        const card2 = new Card(5, Suit.Hearts);
-
-        cards.push(card1);
-        cards.push(card2);
-
-        expect(cards.cards).toContain(card1);
-        expect(cards.cards).toContain(card2);
-        expect(card1.horizontals.cards).not.toContain(card2);
-        expect(card1.verticals.cards).not.toContain(card2);
+            expect(() => card1.unlinkVertical(card2)).toThrow(
+                `Card ${card2} not vertically linked to ${card1} or viceversa`
+            );
+        });
     });
 });
-describe('Cards.sort', () => {
-    it('should sort cards by value in ascending order', () => {
-        const cards = new Cards();
-        const card1 = new Card(10, Suit.Hearts);
-        const card2 = new Card(3, Suit.Spades);
-        const card3 = new Card(7, Suit.Diamonds);
 
-        cards.push(card1);
-        cards.push(card2);
-        cards.push(card3);
+describe('Cards Class', () => {
+    describe('Cards.pushAndRelate', () => {
+        it('should add a card to the collection and relate it to existing cards', () => {
+            const cards = new Cards();
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
 
-        cards.sort();
+            cards.push(card1);
+            cards.pushAndRelate(card2);
 
-        expect(cards.cards).toEqual([card2, card3, card1]);
+            expect(cards.cards).toContain(card1);
+            expect(cards.cards).toContain(card2);
+            expect(card1.horizontals.cards).toContain(card2);
+            expect(card2.horizontals.cards).toContain(card1);
+        });
+
+        it('should not relate the new card if no matching criteria are met', () => {
+            const cards = new Cards();
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(7, Suit.Hearts);
+
+            cards.push(card1);
+            cards.pushAndRelate(card2);
+
+            expect(cards.cards).toContain(card1);
+            expect(cards.cards).toContain(card2);
+            expect(card1.horizontals.cards).not.toContain(card2);
+            expect(card1.verticals.cards).not.toContain(card2);
+        });
+
+        it('should not relate the new card if no relate is asked', () => {
+            const cards = new Cards();
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+
+            cards.push(card1);
+            cards.push(card2);
+
+            expect(cards.cards).toContain(card1);
+            expect(cards.cards).toContain(card2);
+            expect(card1.horizontals.cards).not.toContain(card2);
+            expect(card1.verticals.cards).not.toContain(card2);
+        });
     });
+    describe('Cards.sort', () => {
+        it('should sort cards by value in ascending order', () => {
+            const cards = new Cards();
+            const card1 = new Card(10, Suit.Hearts);
+            const card2 = new Card(3, Suit.Spades);
+            const card3 = new Card(7, Suit.Diamonds);
 
-    it('should sort cards by suit index if values are the same', () => {
-        const cards = new Cards();
-        const card1 = new Card(5, Suit.Clubs);
-        const card2 = new Card(5, Suit.Spades);
-        const card3 = new Card(5, Suit.Hearts);
+            cards.push(card1);
+            cards.push(card2);
+            cards.push(card3);
 
-        cards.push(card1);
-        cards.push(card2);
-        cards.push(card3);
+            cards.sort();
 
-        cards.sort();
+            expect(cards.cards).toEqual([card2, card3, card1]);
+        });
 
-        expect(cards.cards).toEqual([card2, card3, card1]);
-    });
+        it('should sort cards by suit index if values are the same', () => {
+            const cards = new Cards();
+            const card1 = new Card(5, Suit.Clubs);
+            const card2 = new Card(5, Suit.Spades);
+            const card3 = new Card(5, Suit.Hearts);
 
-    it('should handle an empty collection without errors', () => {
-        const cards = new Cards();
+            cards.push(card1);
+            cards.push(card2);
+            cards.push(card3);
 
-        expect(() => cards.sort()).not.toThrow();
-        expect(cards.cards).toEqual([]);
-    });
+            cards.sort();
 
-    it('should handle a single card without changing the order', () => {
-        const cards = new Cards();
-        const card = new Card(7, Suit.Diamonds);
+            expect(cards.cards).toEqual([card2, card3, card1]);
+        });
 
-        cards.push(card);
-        cards.sort();
+        it('should handle an empty collection without errors', () => {
+            const cards = new Cards();
 
-        expect(cards.cards).toEqual([card]);
-    });
+            expect(() => cards.sort()).not.toThrow();
+            expect(cards.cards).toEqual([]);
+        });
 
-    it('should maintain the correct order for already sorted cards', () => {
-        const cards = new Cards();
-        const card1 = new Card(3, Suit.Spades);
-        const card2 = new Card(7, Suit.Diamonds);
-        const card3 = new Card(10, Suit.Hearts);
+        it('should handle a single card without changing the order', () => {
+            const cards = new Cards();
+            const card = new Card(7, Suit.Diamonds);
 
-        cards.push(card1);
-        cards.push(card2);
-        cards.push(card3);
+            cards.push(card);
+            cards.sort();
 
-        cards.sort();
+            expect(cards.cards).toEqual([card]);
+        });
 
-        expect(cards.cards).toEqual([card1, card2, card3]);
+        it('should maintain the correct order for already sorted cards', () => {
+            const cards = new Cards();
+            const card1 = new Card(3, Suit.Spades);
+            const card2 = new Card(7, Suit.Diamonds);
+            const card3 = new Card(10, Suit.Hearts);
+
+            cards.push(card1);
+            cards.push(card2);
+            cards.push(card3);
+
+            cards.sort();
+
+            expect(cards.cards).toEqual([card1, card2, card3]);
+        });
     });
 });
