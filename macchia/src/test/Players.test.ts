@@ -1,5 +1,3 @@
-import colors from 'colors';
-
 import { Player, Players } from '../Players';
 import { Suit } from '../Card';
 import { Card } from '../Card';
@@ -17,7 +15,6 @@ describe('Player Class', () => {
         const card = new Card(1, Suit.Clubs);
         player.hand.push(card);
         expect(player.toString()).toBe("Alice: " + "🃑".black.bold);
-
     });
 
 });
@@ -28,7 +25,7 @@ describe('Player.add', () => {
         const card = new Card(1, Suit.Spades);
         player.add(card);
         expect(player.hand.length).toBe(1);
-        expect(player.hand[0]).toBe(card);
+        expect(player.hand.cards[0]).toBe(card);
     });
 
     it('should relate the new card with existing cards in the hand (horizontal match)', () => {
@@ -38,8 +35,8 @@ describe('Player.add', () => {
         player.add(card1);
         player.add(card2);
 
-        expect(card1.horizontals).toContain(card2);
-        expect(card2.horizontals).toContain(card1);
+        expect(card1.horizontals.cards).toContain(card2);
+        expect(card2.horizontals.cards).toContain(card1);
     });
 
     it('should relate the new card with existing cards in the hand (vertical match)', () => {
@@ -49,8 +46,8 @@ describe('Player.add', () => {
         player.add(card1);
         player.add(card2);
 
-        expect(card1.verticals).toContain(card2);
-        expect(card2.verticals).toContain(card1);
+        expect(card1.verticals.cards).toContain(card2);
+        expect(card2.verticals.cards).toContain(card1);
     });
 
     it('should not relate the new card if there is no match', () => {
@@ -60,10 +57,10 @@ describe('Player.add', () => {
         player.add(card1);
         player.add(card2);
 
-        expect(card1.horizontals).not.toContain(card2);
-        expect(card1.verticals).not.toContain(card2);
-        expect(card2.horizontals).not.toContain(card1);
-        expect(card2.verticals).not.toContain(card1);
+        expect(card1.horizontals.cards).not.toContain(card2);
+        expect(card1.verticals.cards).not.toContain(card2);
+        expect(card2.horizontals.cards).not.toContain(card1);
+        expect(card2.verticals.cards).not.toContain(card1);
     });
 
     it('should handle adding multiple cards and maintain relationships', () => {
@@ -75,10 +72,10 @@ describe('Player.add', () => {
         player.add(card2);
         player.add(card3);
 
-        expect(card1.horizontals).toContain(card2);
-        expect(card1.verticals).toContain(card3);
-        expect(card2.horizontals).toContain(card1);
-        expect(card3.verticals).toContain(card1);
+        expect(card1.horizontals.cards).toContain(card2);
+        expect(card1.verticals.cards).toContain(card3);
+        expect(card2.horizontals.cards).toContain(card1);
+        expect(card3.verticals.cards).toContain(card1);
     });
 
     it('should add multiple cards and verify combo', () => { });
@@ -104,7 +101,7 @@ describe('Player.handSort', () => {
 
         player.handSort();
 
-        expect(player.hand).toEqual([
+        expect(player.hand.cards).toEqual([
             card2, // Ace of Spades
             card5, // 2 of Diamonds
             card6, // 2 of Diamonds
@@ -128,7 +125,7 @@ describe('Player.handSort', () => {
         player.handSort();
 
         expect(player.hand.length).toBe(1);
-        expect(player.hand[0]).toBe(card);
+        expect(player.hand.cards[0]).toBe(card);
     });
 
     it('should not modify a hand that is already sorted', () => {
@@ -145,10 +142,10 @@ describe('Player.handSort', () => {
 
         player.handSort();
 
-        const sortedHand = [...player.hand];
+        const sortedHand = [...player.hand.cards];
         player.handSort();
 
-        expect(player.hand).toEqual(sortedHand);
+        expect(player.hand.cards).toEqual(sortedHand);
     });
 });
 

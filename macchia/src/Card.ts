@@ -113,6 +113,7 @@ export class Card {
         const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals})`;
         const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals})`;
         return `${this.toString()}${horizs}${verts}`;
+        // return ""
     }
 
     relate(card: Card) {
@@ -156,9 +157,14 @@ export class Cards {
     }
 
     push(card: Card) {
+        this.cards.push(card);
+    }
+
+    pushAndRelate(card: Card) {
         this.cards.forEach(c => {
             c.relate(card);
         });
+        this.push(card)
     }
 
     toString() {

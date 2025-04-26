@@ -35,7 +35,7 @@ describe('Decks Class', () => {
         const players = [new Player("Alice"), new Player("Bob")];
         decks.distribute(players, 5);
 
-        const allCards = [...players[0].hand, ...players[1].hand];
+        const allCards = [...players[0].hand.cards, ...players[1].hand.cards];
         const uniqueCards = new Set(allCards.map(card => card.code()));
         expect(allCards.length).toBe(uniqueCards.size);
     });

@@ -32,7 +32,7 @@ export class Player {
     }
 
     add(card: Card) {
-        this.hand.push(card);
+        this.hand.pushAndRelate(card);
     }
 
     remove(card: Card): void {
@@ -45,7 +45,6 @@ export class Player {
         this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
             this.combos.add(new Combo([card, ...card.horizontals.cards]));
         });
-
 
         this.hand.cards.filter(card => card.verticals.length >= 2).forEach(card => {
             let newCards: Card[] = [];

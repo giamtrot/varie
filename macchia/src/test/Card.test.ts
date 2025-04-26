@@ -81,16 +81,16 @@ describe('Card Class', () => {
         const card1 = new Card(5, Suit.Spades);
         const card2 = new Card(5, Suit.Hearts);
         card1.linkHorizontal(card2);
-        expect(card1.horizontals).toContain(card2);
-        expect(card2.horizontals).toContain(card1);
+        expect(card1.horizontals.cards).toContain(card2);
+        expect(card2.horizontals.cards).toContain(card1);
     });
 
     it('should add a vertical match correctly', () => {
         const card1 = new Card(5, Suit.Spades);
         const card2 = new Card(6, Suit.Spades);
         card1.linkVertical(card2);
-        expect(card1.verticals).toContain(card2);
-        expect(card2.verticals).toContain(card1);
+        expect(card1.verticals.cards).toContain(card2);
+        expect(card2.verticals.cards).toContain(card1);
     });
 
     it('should correctly identify a horizontal match', () => {
@@ -150,8 +150,8 @@ describe('Card.relate', () => {
 
         card1.relate(card2);
 
-        expect(card1.horizontals).toContain(card2);
-        expect(card2.horizontals).toContain(card1);
+        expect(card1.horizontals.cards).toContain(card2);
+        expect(card2.horizontals.cards).toContain(card1);
     });
 
     it('should link cards vertically if they have the same suit and consecutive values', () => {
@@ -160,8 +160,8 @@ describe('Card.relate', () => {
 
         card1.relate(card2);
 
-        expect(card1.verticals).toContain(card2);
-        expect(card2.verticals).toContain(card1);
+        expect(card1.verticals.cards).toContain(card2);
+        expect(card2.verticals.cards).toContain(card1);
     });
 
     it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
@@ -170,8 +170,8 @@ describe('Card.relate', () => {
 
         card1.relate(card2);
 
-        expect(card1.verticals).toContain(card2);
-        expect(card2.verticals).toContain(card1);
+        expect(card1.verticals.cards).toContain(card2);
+        expect(card2.verticals.cards).toContain(card1);
     });
 
     it('should not link cards horizontally if they have the same suit', () => {
