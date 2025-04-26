@@ -8,12 +8,12 @@ export class Player {
     hand = new Cards();
     combos = new Combos();
 
-    playCombo(): Combo {
-        assert(this.hasCombo, "No combo available")
-        const combo = this.combos.shift();
-        // combo.cards.forEach(c => this.remove(c));
-        return combo;
-    }
+    // playCombo(): Combo {
+    //     assert(this.hasCombo, "No combo available")
+    //     const combo = this.combos.shift();
+    //     // combo.cards.forEach(c => this.remove(c));
+    //     return combo;
+    // }
 
     hasCombo() {
         return this.combos.length > 0;

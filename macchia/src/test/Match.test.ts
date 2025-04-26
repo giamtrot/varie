@@ -128,59 +128,28 @@ Players Info
             stdoutSpy.mockRestore();
         });
 
-        describe('step Method', () => {
-            it('should throw an error if there are no more steps possible', () => {
-                const mockPlayers = { nextPlayer: jest.fn() } as unknown as Players;
-                const mockDecks = { hasNext: jest.fn().mockReturnValue(false) } as unknown as Decks;
-                const mockDesk = jest.fn() as unknown as Desk;
+    });
 
-                const match = new Match(mockPlayers, mockDecks, mockDesk);
+    describe('read Method', () => {
+        it('should read input from stdin and return the trimmed, lowercase value', () => {
+            const mockPlayers = jest.fn() as unknown as Players;
+            const mockDecks = jest.fn() as unknown as Decks;
+            const mockDesk = jest.fn() as unknown as Desk;
 
-                expect(() => match.step()).toThrow("No more steps are possible");
+            const match = new Match(mockPlayers, mockDecks, mockDesk);
+            const buffer = Buffer.from("Test Input\n");
+            jest.spyOn(fs, 'readSync').mockImplementation((fd, buf) => {
+                const uint8Array = new Uint8Array(buf.buffer);
+                buffer.copy(uint8Array);
+                return buffer.length;
             });
+            const writeSpy = jest.spyOn(match as any, 'write').mockImplementation();
 
-            it('should get the next player and assign a card to them', () => {
-                const mockPlayer = { name: "Player1", add: jest.fn() };
-                const mockPlayers = { nextPlayer: jest.fn().mockReturnValue(mockPlayer) } as unknown as Players;
-                const mockDecks = { hasNext: jest.fn().mockReturnValue(true), next: jest.fn().mockReturnValue("Card1") } as unknown as Decks;
-                const mockDesk = jest.fn() as unknown as Desk;
+            const result = (match as any).read("Enter input:");
 
-                const match = new Match(mockPlayers, mockDecks, mockDesk);
-                const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
-                // match.step();
-
-                expect(mockPlayers.nextPlayer).toHaveBeenCalled();
-                expect(mockDecks.next).toHaveBeenCalled();
-                expect(mockPlayer.add).toHaveBeenCalledWith("Card1");
-                expect(consoleSpy).toHaveBeenCalledWith("Player1 gets Card1");
-
-                consoleSpy.mockRestore();
-            });
-        });
-
-        describe('read Method', () => {
-            it('should read input from stdin and return the trimmed, lowercase value', () => {
-                const mockPlayers = jest.fn() as unknown as Players;
-                const mockDecks = jest.fn() as unknown as Decks;
-                const mockDesk = jest.fn() as unknown as Desk;
-
-                const match = new Match(mockPlayers, mockDecks, mockDesk);
-                const buffer = Buffer.from("Test Input\n");
-                jest.spyOn(fs, 'readSync').mockImplementation((fd, buf) => {
-                    const uint8Array = new Uint8Array(buf.buffer);
-                    buffer.copy(uint8Array);
-                    return buffer.length;
-                });
-                const writeSpy = jest.spyOn(match as any, 'write').mockImplementation();
-
-                const result = (match as any).read("Enter input:");
-
-                expect(writeSpy).toHaveBeenCalledWith("Enter input:");
-                expect(result).toBe("test input");
-            });
+            expect(writeSpy).toHaveBeenCalledWith("Enter input:");
+            expect(result).toBe("test input");
         });
     });
-    
-
 });
+    

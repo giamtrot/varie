@@ -23,9 +23,9 @@ export class Match {
         const player = this.players.nextPlayer()
 
         if (player.hasCombo()) {
-            const combo: Combo = player.playCombo()
-            console.log(`${player.name} plays ${combo}`)
-            this.desk.addCombo(combo)
+            // const combo: Combo = player.playCombo()
+            // console.log(`${player.name} plays ${combo}`)
+            // this.desk.addCombo(combo)
         }
         else {
             const card = this.decks.next()

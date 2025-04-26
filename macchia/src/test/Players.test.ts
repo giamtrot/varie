@@ -600,6 +600,8 @@ describe('Player Class', () => {
             expect(card3.verticals.cards).toHaveLength(0);
         });
     });
+
+    
 });
 
 describe('Players Class', () => {
@@ -696,64 +698,6 @@ describe('Players Class', () => {
         });
     });
 
-    describe('Player.playCombo', () => {
-        // it('should play the first combo and remove its cards from the hand', () => {
-        //     const player = new Player("Alice");
-        //     const card1 = new Card(5, Suit.Spades);
-        //     const card2 = new Card(5, Suit.Hearts);
-        //     const card3 = new Card(5, Suit.Diamonds);
-
-        //     player.add(card1);
-        //     player.add(card2);
-        //     player.add(card3);
-
-        //     player.findCombos();
-
-        //     const playedCombo = player.playCombo();
-
-        //     // expect(playedCombo.cards).toEqual(expect.arrayContaining([card1, card2, card3]));
-        //     // expect(player.hand.cards).not.toEqual(expect.arrayContaining([card1, card2, card3]));
-        //     expect(player.combos.length).toBe(0);
-        // });
-
-        it('should throw an error if there are no combos to play', () => {
-            const player = new Player("Alice");
-            const card1 = new Card(7, Suit.Spades);
-            const card2 = new Card(8, Suit.Hearts);
-
-            player.add(card1);
-            player.add(card2);
-
-            expect(() => player.playCombo()).toThrow("No combo available");
-        });
-
-        // it('should play the first combo and leave other combos intact', () => {
-        //     const player = new Player("Alice");
-        //     const card1 = new Card(5, Suit.Spades);
-        //     const card2 = new Card(5, Suit.Hearts);
-        //     const card3 = new Card(5, Suit.Diamonds);
-        //     const card4 = new Card(6, Suit.Clubs);
-        //     const card5 = new Card(6, Suit.Diamonds);
-        //     const card6 = new Card(6, Suit.Spades);
-
-        //     player.add(card1);
-        //     player.add(card2);
-        //     player.add(card3);
-        //     player.add(card4);
-        //     player.add(card5);
-        //     player.add(card6);
-
-        //     player.findCombos();
-
-        //     const playedCombo = player.playCombo();
-
-        //     expect(playedCombo.cards).toEqual(expect.arrayContaining([card1, card2, card3]));
-        //     expect(player.hand.cards).not.toEqual(expect.arrayContaining([card1, card2, card3]));
-        //     expect(player.combos.length).toBe(1);
-
-        //     const remainingCombo = new Combo([card4, card5, card6]);
-        //     expect(player.combos.contains(remainingCombo)).toBe(true);
-        // });
-    });
+    
 
 });
