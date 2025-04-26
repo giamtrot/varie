@@ -104,9 +104,9 @@ export class Combos {
         return this.combos.length;
     }
 
-    pop(): Combo {
-        assert(this.length > 0, "No combo avaliable")
-        return this.combos.pop()!;
+    shift(): Combo {
+        assert(this.length > 0, "No combo available");
+        return this.combos.shift()!;
     }
 
     contains(combo: Combo) {

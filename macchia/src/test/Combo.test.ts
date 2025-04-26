@@ -336,3 +336,47 @@ describe('Combos Class', () => {
         });
     });
 });
+
+describe('Combos.shift', () => {
+    it('should remove and return the first combo added', () => {
+        const combos = new Combos();
+        const combo1 = new Combo([
+            new Card(1, Suit.Spades),
+            new Card(2, Suit.Spades),
+            new Card(3, Suit.Spades),
+        ]);
+        const combo2 = new Combo([
+            new Card(5, Suit.Hearts),
+            new Card(5, Suit.Diamonds),
+            new Card(5, Suit.Clubs),
+        ]);
+
+        combos.add(combo1);
+        combos.add(combo2);
+
+        const firstCombo = combos.shift();
+        expect(firstCombo).toBe(combo1);
+        expect(combos.length).toBe(1);
+        expect(combos.contains(combo2)).toBe(true);
+    });
+
+    it('should throw an error if there are no combos to retrieve', () => {
+        const combos = new Combos();
+        expect(() => combos.shift()).toThrow("No combo available");
+    });
+
+    it('should correctly update the length after popping', () => {
+        const combos = new Combos();
+        const combo = new Combo([
+            new Card(1, Suit.Spades),
+            new Card(2, Suit.Spades),
+            new Card(3, Suit.Spades),
+        ]);
+
+        combos.add(combo);
+        expect(combos.length).toBe(1);
+
+        combos.shift();
+        expect(combos.length).toBe(0);
+    });
+});

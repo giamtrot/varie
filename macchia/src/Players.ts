@@ -10,7 +10,7 @@ export class Player {
 
     playCombo(): Combo {
         assert(this.hasCombo, "No combo available")
-        const combo = this.combos.pop();
+        const combo = this.combos.shift();
         combo.cards.forEach(c => this.remove(c));
         return combo;
     }

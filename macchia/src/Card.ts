@@ -113,7 +113,6 @@ export class Card {
         const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals})`;
         const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals})`;
         return `${this.toString()}${horizs}${verts}`;
-        // return ""
     }
 
     relate(card: Card) {
