@@ -100,6 +100,10 @@ export class Combos {
         }
     }
 
+    reset() {
+        this.combos = [];
+    }
+    
     get length(): number {
         return this.combos.length;
     }

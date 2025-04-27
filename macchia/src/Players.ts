@@ -8,12 +8,12 @@ export class Player {
     hand = new Cards();
     combos = new Combos();
 
-    // playCombo(): Combo {
-    //     assert(this.hasCombo, "No combo available")
-    //     const combo = this.combos.shift();
-    //     // combo.cards.forEach(c => this.remove(c));
-    //     return combo;
-    // }
+    playCombo(): Combo {
+        assert(this.hasCombo, "No combo available")
+        const combo = this.combos.shift();
+        combo.cards.forEach(c => this.remove(c));
+        return combo;
+    }
 
     hasCombo() {
         return this.combos.length > 0;
@@ -35,9 +35,11 @@ export class Player {
         card.horizontals.cards.forEach(h => h.unrelate(card))
         card.verticals.cards.forEach(v => v.unrelate(card))
         this.hand.remove(card)
+        this.findCombos()
     }
 
     findCombos() {
+        this.combos.reset();
         this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
             this.combos.add(new Combo([card, ...card.horizontals.cards]));
         });

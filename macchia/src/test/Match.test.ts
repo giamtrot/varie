@@ -40,5 +40,57 @@ Players Info
         });
     });
 
+    describe('toJSON Method', () => {
+        it('should return a JSON representation of the match state', () => {
+            const mockPlayers = { toJSON: jest.fn().mockReturnValue({ players: "Players JSON" }) } as unknown as Players;
+            const mockDecks = { toJSON: jest.fn().mockReturnValue({ decks: "Decks JSON" }) } as unknown as Decks;
+            const mockDesk = { toJSON: jest.fn().mockReturnValue({ desk: "Desk JSON" }) } as unknown as Desk;
+
+            const match = new Match(mockPlayers, mockDecks, mockDesk);
+
+            const result = match.toJSON();
+
+            expect(result).toEqual({
+                match: {
+                    players: { players: "Players JSON" },
+                    decks: { decks: "Decks JSON" },
+                    desk: { desk: "Desk JSON" },
+                }
+            });
+
+            expect(mockPlayers.toJSON).toHaveBeenCalled();
+            expect(mockDecks.toJSON).toHaveBeenCalled();
+            expect(mockDesk.toJSON).toHaveBeenCalled();
+        });
+    });
+    
+    describe('checkCards Method', () => {
+        it('should return true if the deck has more cards', () => {
+            const mockPlayers = jest.fn() as unknown as Players;
+            const mockDecks = { hasNext: jest.fn().mockReturnValue(true) } as unknown as Decks;
+            const mockDesk = jest.fn() as unknown as Desk;
+
+            const match = new Match(mockPlayers, mockDecks, mockDesk);
+
+            const result = match.checkCards();
+
+            expect(result).toBe(true);
+            expect(mockDecks.hasNext).toHaveBeenCalled();
+        });
+
+        it('should return false if the deck has no more cards', () => {
+            const mockPlayers = jest.fn() as unknown as Players;
+            const mockDecks = { hasNext: jest.fn().mockReturnValue(false) } as unknown as Decks;
+            const mockDesk = jest.fn() as unknown as Desk;
+
+            const match = new Match(mockPlayers, mockDecks, mockDesk);
+
+            const result = match.checkCards();
+
+            expect(result).toBe(false);
+            expect(mockDecks.hasNext).toHaveBeenCalled();
+        });
+    });
+
 });
     

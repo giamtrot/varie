@@ -40,7 +40,6 @@ declare global {
 }
 const matches: Map<string, Match> = new Map();
 app.use((req: Request, res: Response, next) => {
-
     // console.log(req.session)
     // console.log(req.sessionID)
     if (!matches.has(req.sessionID)) {

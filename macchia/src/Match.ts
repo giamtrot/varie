@@ -2,6 +2,7 @@ import assert from "assert";
 import { Decks } from "./Decks";
 import { Desk } from "./Desk";
 import { Players } from "./Players";
+import { Combo } from "./Combos";
 
 export class Match {
 
@@ -20,7 +21,7 @@ export class Match {
         const player = this.players.nextPlayer()
 
         if (player.hasCombo()) {
-            // const combo: Combo = player.playCombo()
+            const combo: Combo = player.playCombo()
             // console.log(`${player.name} plays ${combo}`)
             // this.desk.addCombo(combo)
         }
