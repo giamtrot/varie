@@ -16,13 +16,11 @@ const match = initMatch()
 
 // Serve the HTML page
 app.get("/", (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "../html/console.html"));
+    res.sendFile(path.join(__dirname, "../html/Macchiavelli.html"));
 });
 
 app.get("/start", (req: Request, res: Response) => {
-    const ris = match.toJSON();
-    // console.log(ris)
-    res.json(ris)
+    status(res);
 });
 
 // Handle user input from the web page
@@ -34,26 +32,61 @@ app.post("/input", (req: Request, res: Response) => {
     let responseMessage: string;
     const answer = userInput.trim().toLowerCase();
     switch (answer) {
-        case "s":
-            responseMessage = "Step executed.";
+        case "step":
+            match.step()
+            status(res);
             break;
-        case "q":
-            responseMessage = "Quit.";
-            break;
-        case "r":
-            responseMessage = "Run to end.";
+        case "run":
             break;
         default:
             responseMessage = "Invalid input. Please enter 's', 'q', or 'r'.";
+            // do nothing
+            res.json({ message: "" });
     }
 
-    res.json({ message: responseMessage });
+    
 });
+
+// loop() {
+//     let loop_status = LOOP_STATUS.STEP
+//     while (true) {
+//         if (!this.match.checkCards()) {
+//             return
+//         }
+
+//         if (loop_status == LOOP_STATUS.RUN) {
+//             this.match.step()
+//             continue
+//         }
+
+//         if (loop_status == LOOP_STATUS.STEP) {
+//             let answer = this.read("S: step, Q: quit or R: run to end?")
+//             console.log(`answer: ${answer}`)
+
+//             switch (answer.trim().toLowerCase()) {
+//                 case "q":
+//                     return 
+//                 case "s":
+//                     this.match.step()
+//                     break
+//                 case "r":
+//                     loop_status = LOOP_STATUS.RUN
+//                     break;
+//                 default:
+//                     this.write("Invalid input. Please enter 's', 'q', or 'r'.");
+//             }
+//         }
+//     }
+// }
 
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+function status(res: express.Response<any, Record<string, any>>) {
+    res.json(match.toJSON());
+}
 
 function initMatch(): Match {
     const decks: Decks = new Decks(2).shuffle();

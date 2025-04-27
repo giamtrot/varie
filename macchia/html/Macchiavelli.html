@@ -19,7 +19,8 @@
             background-color: #f9f9f9;
         }
 
-        cardred, cardblack {
+        cardred,
+        cardblack {
             font-size: 72px;
         }
 
@@ -36,10 +37,11 @@
 <body onload="startMatch()">
     <h1>Macchiavelli</h1>
     <input type="text" id="userInput" placeholder="Enter 's', 'q', or 'r'" />
-    <button onclick="sendInput()">Submit</button>
+    <button onclick="sendInput('step')">Step</button>
+    <button onclick="sendInput('run')">Run to end</button>
     <div id="output"></div>
     <pre id="debug"></pre>
-    
+
 
     <script>
         async function startMatch() {
@@ -50,9 +52,13 @@
                 }
             });
             const data = await response.json();
+            renderResponse(data)
+        }
+
+        function renderResponse(data) {
             // console.log("data", data)
             document.getElementById("debug").innerText = JSON.stringify(data, null, 2);
-            
+
             // Mustache template
             const template = `
                 <h2>Match State</h2>
@@ -74,8 +80,8 @@
             document.getElementById("output").innerHTML = rendered;
         }
 
-        async function sendInput() {
-            const input = document.getElementById("userInput").value;
+
+        async function sendInput(input) {
             const response = await fetch("/input", {
                 method: "POST",
                 headers: {
@@ -84,7 +90,7 @@
                 body: JSON.stringify({ input })
             });
             const data = await response.json();
-            document.getElementById("output").innerText = data.message;
+            renderResponse(data)
         }
     </script>
 </body>
