@@ -76,7 +76,24 @@ describe('Player Class', () => {
             expect(card3.verticals.cards).toContain(card1);
         });
 
-        it('should add multiple cards and verify combo', () => { });
+        it('should add multiple cards and verify combo', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(13, Suit.Hearts); // King of Hearts
+            const card2 = new Card(1, Suit.Spades); // Ace of Spades
+            const card3 = new Card(5, Suit.Clubs); // 5 of Clubs
+            const card4 = new Card(2, Suit.Clubs); // 2 of Clubs
+            const card5 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+            const card6 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+            player.add(card4);
+            player.add(card5);
+            player.add(card6);
+
+            fail
+         });
     });
 
     describe('Player.handSort', () => {
@@ -443,6 +460,22 @@ describe('Player Class', () => {
             expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
         });
 
+        it('should find horizontal combos (same value, different suits) and reset if seacrh again', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(5, Suit.Spades);
+            const card2 = new Card(5, Suit.Hearts);
+            const card3 = new Card(5, Suit.Diamonds);
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            player.findCombos();
+
+            expect(player.combos.combos.length).toBe(1);
+            expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+        });
+
         it('should find vertical combos (same suit, consecutive values)', () => {
             const player = new Player("Alice");
             const card1 = new Card(3, Suit.Clubs);
@@ -592,12 +625,19 @@ describe('Player Class', () => {
             player.add(card2);
             player.add(card3);
 
+            player.findCombos();
+
+            expect(player.combos.combos.length).toBe(1);
+            expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+
             player.remove(card1);
 
             expect(card2.horizontals.cards).not.toContain(card1);
             expect(card3.verticals.cards).not.toContain(card1);
             expect(card2.horizontals.cards).toHaveLength(0);
             expect(card3.verticals.cards).toHaveLength(0);
+
+
         });
     });
 

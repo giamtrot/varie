@@ -15,21 +15,14 @@ export class Macchiavelli_CLI {
     match: Match;
 
     constructor() {
-        const decks: Decks = new Decks(2).shuffle();
-        // console.log("Decks:\n" + decks.toString());
         const playersNumber = 5
         let ps: Player[] = [];
-
         for (let p = 1; p <= playersNumber; p++) {
             ps.push(new Player("Player " + p))
         }
-
         const players = new Players(ps)
 
-        decks.distribute(players.players, 13);
-        const desk: Desk = new Desk()
-
-        this.match = new Match(players, decks, desk)
+        this.match = new Match(players, 2)
     }
 
     main() {

@@ -1,9 +1,6 @@
 import * as fs from "fs";
 import { Macchiavelli_CLI } from '../Macchiavelli_CLI';
 import { Match } from '../Match';
-import { Players } from '../Players';
-import { Decks } from '../Decks';
-import { Desk } from '../Desk';
 
 jest.mock("fs");
 

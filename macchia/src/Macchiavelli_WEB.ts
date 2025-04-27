@@ -94,19 +94,13 @@ function sendStatus(res: express.Response<any, Record<string, any>>, match: Matc
 }
 
 function initMatch(): Match {
-    const decks: Decks = new Decks(2).shuffle();
 
     const playersNumber = 5
     let ps: Player[] = [];
-
     for (let p = 1; p <= playersNumber; p++) {
         ps.push(new Player("Player " + p))
     }
-
     const players = new Players(ps)
 
-    decks.distribute(players.players, 13);
-    const desk: Desk = new Desk()
-
-    return new Match(players, decks, desk)
+    return new Match(players, 2)
 }

@@ -10,10 +10,11 @@ export class Match {
     private decks: Decks;
     private desk: Desk;
 
-    constructor(players: Players, decks: Decks, desk: Desk) {
+    constructor(players: Players, decksNumber: number) {
         this.players = players;
-        this.decks = decks;
-        this.desk = desk;
+        this.decks = new Decks(decksNumber).shuffle();
+        this.desk = new Desk();
+        this.decks.distribute(this.players.players, 13);
     }
 
     step() {
