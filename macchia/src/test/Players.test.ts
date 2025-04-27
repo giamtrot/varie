@@ -639,6 +639,40 @@ describe('Player Class', () => {
         });
     });
 
+    describe('Player.toJSON', () => {
+        it('should return the correct JSON representation of a player', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(13, Suit.Clubs);// King of Clubs
+            const card2 = new Card(10, Suit.Diamonds); // 10 of Diamonds
+            const card3 = new Card(1, Suit.Spades); // Ace of Spades
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            const expectedJSON = {
+                name: "Alice",
+                hand: [
+                    { char: "🃞", color: "Black" },
+                    { char: "🃊", color: "Red" },
+                    { char: "🂡", color: "Black" },
+                ]
+            };
+
+            expect(player.toJSON()).toEqual(expectedJSON);
+        });
+
+        it('should return an empty hand in the JSON representation if the player has no cards', () => {
+            const player = new Player("Bob");
+
+            const expectedJSON = {
+                name: "Bob",
+                hand: []
+            };
+
+            expect(player.toJSON()).toEqual(expectedJSON);
+        });
+    });
 });
 
 describe('Players Class', () => {
@@ -735,6 +769,56 @@ describe('Players Class', () => {
         });
     });
 
-    
+
+    describe('Players.toJSON', () => {
+        it('should return the correct JSON representation of all players', () => {
+            const player1 = new Player("Alice");
+            const player2 = new Player("Bob");
+
+            const card1 = new Card(13, Suit.Clubs);// King of Clubs
+            const card2 = new Card(10, Suit.Diamonds); // 10 of Diamonds
+            const card3 = new Card(1, Suit.Spades); // Ace of Spades
+
+            player1.add(card1);
+            player1.add(card2);
+            player2.add(card3);
+
+            const players = new Players([player1, player2]);
+
+            const expectedJSON = [
+                {
+                    name: "Alice",
+                    hand: [
+                        { char: "🃊", color: "Red" },
+                        { char: "🃞", color: "Black" },
+                    ]
+                },
+                {
+                    name: "Bob",
+                    hand: [
+                        { char: "🂡", color: "Black" },
+                    ]
+                }
+            ];
+
+            expect(players.toJSON()).toEqual(expectedJSON);
+        });
+
+        it('should return an empty hand for all players if no cards are added', () => {
+            const player1 = new Player("Alice");
+            const player2 = new Player("Bob");
+
+            const players = new Players([player1, player2]);
+
+            const expectedJSON = [
+                { name: "Alice", hand: [] },
+                { name: "Bob", hand: [] }
+            ];
+
+            expect(players.toJSON()).toEqual(expectedJSON);
+        });
+    });
+
+
 
 });

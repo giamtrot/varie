@@ -4,12 +4,13 @@ import { Desk } from './Desk';
 import { Match } from './Match';
 import * as fs from "fs";
 
+
 enum LOOP_STATUS {
     STEP,
     RUN
 }
 
-class Macchiavelli_CLI {
+export class Macchiavelli_CLI {
 
     match: Match;
 
@@ -35,8 +36,6 @@ class Macchiavelli_CLI {
         this.loop()
         console.log(this.match.toString())
     }
-
-
 
     read(msg: string) {
         this.write(msg)
@@ -69,7 +68,7 @@ class Macchiavelli_CLI {
 
                 switch (answer.trim().toLowerCase()) {
                     case "q":
-                        return 
+                        return
                     case "s":
                         this.match.step()
                         break
@@ -85,4 +84,7 @@ class Macchiavelli_CLI {
 }
 
 
-new Macchiavelli_CLI().main()
+if (process.env.NODE_ENV !== 'test') {
+    new Macchiavelli_CLI().main()
+}
+

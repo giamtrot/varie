@@ -7,7 +7,7 @@
     "start": "node dist/macchia.js",
     "build": "tsc",
     "web": "nodemon --watch src --exec ts-node src/Macchiavelli_WEB.ts",
-    "cli": "nodemon --watch src --exec ts-node src/Macchiavelli_CLI.ts",
+    "cli": "nodemon --watch src --exec ts-node src/Macchiavelli_CLI.ts --eval 'new Macchiavelli_CLI().main()'",
     "test": "jest --watchAll --detectOpenHandles --forceExit"
   },
   "keywords": [],
