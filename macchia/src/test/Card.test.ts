@@ -414,6 +414,32 @@ describe('Card Class', () => {
             );
         });
     });
+
+    describe('Card.toJSON', () => {
+        it('should return the correct JSON representation for a red card', () => {
+            const card = new Card(1, Suit.Hearts); // Ace of Hearts
+            const expectedJSON = { char: "🂱", color: "Red" };
+            expect(card.toJSON()).toEqual(expectedJSON);
+        });
+
+        it('should return the correct JSON representation for a black card', () => {
+            const card = new Card(1, Suit.Spades); // Ace of Spades
+            const expectedJSON = { char: "🂡", color: "Black" };
+            expect(card.toJSON()).toEqual(expectedJSON);
+        });
+
+        it('should return the correct JSON representation for a card with a value of 10', () => {
+            const card = new Card(10, Suit.Diamonds); // 10 of Diamonds
+            const expectedJSON = { char: "🃊", color: "Red" };
+            expect(card.toJSON()).toEqual(expectedJSON);
+        });
+
+        it('should return the correct JSON representation for a King card', () => {
+            const card = new Card(13, Suit.Clubs); // King of Clubs
+            const expectedJSON = { char: "🃞", color: "Black" };
+            expect(card.toJSON()).toEqual(expectedJSON);
+        });
+    });
 });
 
 describe('Cards Class', () => {
@@ -460,6 +486,7 @@ describe('Cards Class', () => {
             expect(card1.verticals.cards).not.toContain(card2);
         });
     });
+
     describe('Cards.sort', () => {
         it('should sort cards by value in ascending order', () => {
             const cards = new Cards();
@@ -479,6 +506,7 @@ describe('Cards Class', () => {
         it('should sort cards by suit index if values are the same', () => {
             const cards = new Cards();
             const card1 = new Card(5, Suit.Clubs);
+
             const card2 = new Card(5, Suit.Spades);
             const card3 = new Card(5, Suit.Hearts);
 
@@ -523,4 +551,27 @@ describe('Cards Class', () => {
             expect(cards.cards).toEqual([card1, card2, card3]);
         });
     });
+
+    describe('Cards.toJSON', () => {
+        it('should return the correct JSON representation for a red card and a black card', () => {
+            const cards = new Cards();
+            const card1 = new Card(13, Suit.Clubs);// King of Clubs
+            const card2 = new Card(10, Suit.Diamonds); // 10 of Diamonds
+            const card3 = new Card(1, Suit.Spades); // Ace of Spades
+
+            cards.push(card1);
+            cards.push(card2);
+            cards.push(card3);
+
+            cards.sort();
+
+            const expectedJSON = [
+                { char: "🂡", color: "Black" },
+                { char: "🃊", color: "Red" },
+                { char: "🃞", color: "Black" }, 
+            ]
+            expect(cards.toJSON()).toEqual(expectedJSON);
+        });
+    });
+
 });

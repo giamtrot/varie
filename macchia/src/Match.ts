@@ -36,10 +36,11 @@ export class Match {
     }
 
     toString() {
-        return `Match State:
-                Players:\n${this.players}
-                Decks: ${this.decks}
-                Desk: ${this.desk}`;
+        return "" +
+`Match State:
+    Players:\n${this.players}
+    Decks: ${this.decks}
+    Desk: ${this.desk}`;
     }
 
     toJSON() {

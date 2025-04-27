@@ -165,8 +165,6 @@ export class Card {
 }
 
 export class Cards {
-    
-    
     cards: Card[] = []
     
     contains(c: Card) {

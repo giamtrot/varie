@@ -82,5 +82,26 @@ describe('Decks Class', () => {
 
         expect(() => decks.next()).toThrow("No card available");
     });
+    it('should return a JSON representation of the deck', () => {
+        const decks = new Decks(1);
+        const json = decks.toJSON();
 
+        expect(Array.isArray(json)).toBe(true);
+        expect(json.length).toBe(52);
+        json.forEach(card => {
+            expect(card).toHaveProperty('char');
+            expect(card).toHaveProperty('color');
+        });
+    });
+
+    it('should return an empty array when the deck is empty', () => {
+        const decks = new Decks(1);
+        while (decks.hasNext()) {
+            decks.next();
+        }
+
+        const json = decks.toJSON();
+        expect(Array.isArray(json)).toBe(true);
+        expect(json.length).toBe(0);
+    });
 });

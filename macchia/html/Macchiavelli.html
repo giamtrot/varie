@@ -36,14 +36,21 @@
 
 <body onload="startMatch()">
     <h1>Macchiavelli</h1>
-    <input type="text" id="userInput" placeholder="Enter 's', 'q', or 'r'" />
-    <button onclick="sendInput('step')">Step</button>
-    <button onclick="sendInput('run')">Run to end</button>
+    <button id="stepButton" onclick="sendStep()">Step</button>
+    <button id="runButton" onclick="sendRun()">Run to End</button>
     <div id="output"></div>
     <pre id="debug"></pre>
 
 
     <script>
+        async function sendStep() {
+            await sendInput("step")
+        }
+
+        async function sendRun() {
+            await sendInput("run")
+        }
+
         async function startMatch() {
             const response = await fetch("/start", {
                 method: "GET",
@@ -52,16 +59,16 @@
                 }
             });
             const data = await response.json();
-            renderResponse(data)
+            handleResponse(data)
         }
 
-        function renderResponse(data) {
+        function handleResponse(data) {
             // console.log("data", data)
             document.getElementById("debug").innerText = JSON.stringify(data, null, 2);
 
             // Mustache template
             const template = `
-                <h2>Match State</h2>
+                <h2>Match State: {{status}}</h2>
                 <ul>
                     <li><h3>Players:</h3>
                         <ol>
@@ -76,12 +83,30 @@
             `;
 
             // Render the template with the data
-            const rendered = Mustache.render(template, { match: data.match });
+            const rendered = Mustache.render(template, { status: data.status, match: data.info.match });
             document.getElementById("output").innerHTML = rendered;
+
+            if (data.status === "step") {
+                const stepButton = document.getElementById("stepButton");
+                const runButton = document.getElementById("runButton");
+                stepButton.disabled = false;
+                runButton.disabled = false;
+                stepButton.focus()
+            }
+
+            if (data.status === "run" ) {
+                setTimeout(sendRun, 500)
+            }
         }
 
 
         async function sendInput(input) {
+            const stepButton = document.getElementById("stepButton");
+            const runButton = document.getElementById("runButton");
+
+            stepButton.disabled = true;
+            runButton.disabled = true;
+
             const response = await fetch("/input", {
                 method: "POST",
                 headers: {
@@ -90,7 +115,7 @@
                 body: JSON.stringify({ input })
             });
             const data = await response.json();
-            renderResponse(data)
+            handleResponse(data);
         }
     </script>
 </body>
