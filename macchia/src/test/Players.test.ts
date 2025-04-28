@@ -679,6 +679,112 @@ describe('Player Class', () => {
             expect(player.toJSON()).toEqual(expectedJSON);
         });
     });
+
+    describe('Player.playCombo', () => {
+        let player: Player;
+        let card1: Card;
+        let card2: Card;
+        let card3: Card;
+        let combo: Combo;
+
+        beforeEach(() => {
+            player = new Player("Test Player");
+            card1 = new Card(5, Suit.Spades);
+            card2 = new Card(5, Suit.Hearts);
+            card3 = new Card(5, Suit.Diamonds);
+
+            // Add cards to hand and let findCombos run
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            // Ensure a combo exists (findCombos should have added it)
+            expect(player.hasCombo()).toBe(true);
+            // Store the combo that should be played
+            combo = player.combos.combos[0]; // Get the actual combo instance
+
+            // Spy on the remove method to check if it's called
+            jest.spyOn(player, 'remove');
+            // Spy on findCombos as it's called within remove
+            jest.spyOn(player, 'findCombos');
+        });
+
+        it('should return the first available combo', () => {
+            const playedCombo = player.playCombo();
+            // Check if the returned combo is the one we expected
+            // Using equals because it might be a new instance depending on implementation details
+            expect(playedCombo.equals(combo)).toBe(true);
+        });
+
+        it('should remove the cards of the played combo from the player hand', () => {
+            player.playCombo();
+
+            // Verify remove was called for each card in the combo
+            expect(player.remove).toHaveBeenCalledTimes(combo.cards.length);
+            expect(player.remove).toHaveBeenCalledWith(card1);
+            expect(player.remove).toHaveBeenCalledWith(card2);
+            expect(player.remove).toHaveBeenCalledWith(card3);
+
+            // Optionally, check the hand state directly (though covered by remove calls)
+            expect(player.hand.cards).not.toContain(card1);
+            expect(player.hand.cards).not.toContain(card2);
+            expect(player.hand.cards).not.toContain(card3);
+            expect(player.hand.length).toBe(0); // Assuming only combo cards were in hand
+        });
+
+        it('should recalculate combos after removing cards', () => {
+            // Add another card to make the test more robust
+            const unrelatedCard = new Card(10, Suit.Clubs);
+            player.add(unrelatedCard); // Hand: 5S, 5H, 5D, 10C
+
+            // Reset spies called during the extra add
+            (player.remove as jest.Mock).mockClear();
+            (player.findCombos as jest.Mock).mockClear();
+
+            player.playCombo(); // Plays the 5s combo
+
+            // remove is called 3 times (for 5S, 5H, 5D)
+            // findCombos is called once *inside* each of those 3 remove calls
+            expect(player.findCombos).toHaveBeenCalledTimes(3);
+        });
+
+
+        it('should throw an error if the player has no combo', () => {
+            // Manually clear combos for this test case
+            player.combos.reset();
+            expect(player.hasCombo()).toBe(false); // Pre-condition check
+
+            // Expect the assert to throw an error
+            expect(() => player.playCombo()).toThrow("No combo available");
+        });
+
+        it('should handle playing multiple combos sequentially', () => {
+            // Add a second combo
+            const cardA = new Card(1, Suit.Clubs);
+            const cardB = new Card(2, Suit.Clubs);
+            const cardC = new Card(3, Suit.Clubs);
+            player.add(cardA);
+            player.add(cardB);
+            player.add(cardC); // Hand: 5S, 5H, 5D (from prev test setup), AC, 2C, 3C
+
+            expect(player.combos.length).toBe(2); // Should have found both combos
+            const combo1 = player.combos.combos[0]; // The 5s combo
+            const combo2 = player.combos.combos[1]; // The Clubs straight
+
+            // Play the first combo
+            const playedCombo1 = player.playCombo();
+            expect(playedCombo1.equals(combo1)).toBe(true);
+            expect(player.hand.length).toBe(3); // AC, 2C, 3C left
+            expect(player.combos.length).toBe(1); // Only the Clubs straight left
+
+            // Play the second combo
+            const playedCombo2 = player.playCombo();
+            expect(playedCombo2.equals(combo2)).toBe(true);
+            expect(player.hand.length).toBe(0); // No cards left
+            expect(player.hasCombo()).toBe(false); // No combos left
+        });
+    });
+
 });
 
 describe('Players Class', () => {
@@ -824,7 +930,5 @@ describe('Players Class', () => {
             expect(players.toJSON()).toEqual(expectedJSON);
         });
     });
-
-
 
 });
