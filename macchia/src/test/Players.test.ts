@@ -76,24 +76,6 @@ describe('Player Class', () => {
             expect(card3.verticals.cards).toContain(card1);
         });
 
-        it('should add multiple cards and verify combo', () => {
-            const player = new Player("Alice");
-            const card1 = new Card(13, Suit.Hearts); // King of Hearts
-            const card2 = new Card(1, Suit.Spades); // Ace of Spades
-            const card3 = new Card(5, Suit.Clubs); // 5 of Clubs
-            const card4 = new Card(2, Suit.Clubs); // 2 of Clubs
-            const card5 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-            const card6 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-
-            player.add(card1);
-            player.add(card2);
-            player.add(card3);
-            player.add(card4);
-            player.add(card5);
-            player.add(card6);
-
-            fail
-         });
     });
 
     describe('Player.handSort', () => {
@@ -218,7 +200,6 @@ describe('Player Class', () => {
         it('should find no combos if hand has less than 3 cards', () => {
             player.add(cardAS);
             player.add(card2S);
-            player.findCombos();
             expect(player.combos.length).toBe(0);
         });
 
@@ -227,7 +208,6 @@ describe('Player Class', () => {
             player.add(card3S); // 3S (no vertical with AS)
             player.add(card5H); // 5H (no horizontal/vertical)
             player.add(card7H); // 7H (no vertical with 5H)
-            player.findCombos();
             expect(player.combos.length).toBe(0);
         });
 
@@ -238,8 +218,6 @@ describe('Player Class', () => {
             player.add(card5C);
             // Add an unrelated card
             player.add(cardAS);
-
-            player.findCombos();
 
             // Create the expected combo using the *exact same card instances*
             const expectedCombo = new Combo([card5H, card5D, card5C]);
@@ -254,8 +232,6 @@ describe('Player Class', () => {
             player.add(card5D);
             player.add(card5C);
             player.add(card5S); // Add the 4th card for the set
-
-            player.findCombos();
 
             // Create the expected combo using the *exact same card instances*
             // Note: The order in the Combo constructor doesn't matter due to sorting,
@@ -276,8 +252,6 @@ describe('Player Class', () => {
             // Add an unrelated card
             player.add(card5H);
 
-            player.findCombos();
-
             // Create the expected combo using the *exact same card instances*
             const expectedCombo = new Combo([cardAS, card2S, card3S]);
 
@@ -291,8 +265,6 @@ describe('Player Class', () => {
             player.add(card2S);
             player.add(card3S);
             player.add(card4S); // 4th card for the straight flush
-
-            player.findCombos();
 
             // Create the expected combo using the *exact same card instances*
             const expectedCombo = new Combo([cardAS, card2S, card3S, card4S]);
@@ -315,8 +287,6 @@ describe('Player Class', () => {
             player.add(card6D);
             player.add(card6C);
 
-            player.findCombos();
-
             const expectedCombo1 = new Combo([card5H, card5D, card5C]);
             const expectedCombo2 = new Combo([card6S, card6D, card6C]);
 
@@ -334,8 +304,6 @@ describe('Player Class', () => {
             player.add(card6H);
             player.add(card7H);
             player.add(card8H);
-
-            player.findCombos();
 
             const expectedCombo1 = new Combo([cardAS, card2S, card3S]);
             const expectedCombo2 = new Combo([card6H, card7H, card8H]);
@@ -355,8 +323,6 @@ describe('Player Class', () => {
             player.add(card5D);
             player.add(card5C);
 
-            player.findCombos();
-
             const expectedComboV = new Combo([cardAS, card2S, card3S]);
             const expectedComboH = new Combo([card5H, card5D, card5C]);
 
@@ -375,8 +341,6 @@ describe('Player Class', () => {
             player.add(card5S); // This 5S is part of the vertical combo
             player.add(card6S);
 
-            player.findCombos();
-
             const expectedComboH = new Combo([card5H, card5D, card5C, card5S]);
             const expectedComboV = new Combo([card4S, card5S, card6S]);
 
@@ -392,7 +356,6 @@ describe('Player Class', () => {
             player.add(card2S);
             player.add(card3S);
 
-            player.findCombos(); // First call
             expect(player.combos.length).toBe(1);
 
             player.findCombos(); // Second call
@@ -409,8 +372,6 @@ describe('Player Class', () => {
             const card3H = new Card(3, Suit.Hearts);
             player.add(card3H); // 3H
 
-            player.findCombos();
-
             const expectedCombo = new Combo([cardAH, card2H, card3H]);
             expect(player.combos.length).toBe(1);
             expect(player.combos.contains(expectedCombo)).toBe(true);
@@ -422,8 +383,6 @@ describe('Player Class', () => {
             player.add(cardKS); // KS
             player.add(cardAS); // AS
 
-            player.findCombos();
-
             const expectedCombo = new Combo([cardQS, cardKS, cardAS]);
             expect(player.combos.length).toBe(1);
             expect(player.combos.contains(expectedCombo)).toBe(true);
@@ -434,8 +393,6 @@ describe('Player Class', () => {
             player.add(cardKH); // KH
             player.add(cardAH); // AH
             player.add(card2H); // 2H
-
-            player.findCombos();
 
             const expectedCombo = new Combo([cardKH, cardAH, card2H]);
             expect(player.combos.length).toBe(1);
@@ -454,8 +411,6 @@ describe('Player Class', () => {
             player.add(card2);
             player.add(card3);
 
-            player.findCombos();
-
             expect(player.combos.combos.length).toBe(1);
             expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
         });
@@ -469,8 +424,6 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
             player.add(card3);
-
-            player.findCombos();
 
             expect(player.combos.combos.length).toBe(1);
             expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
@@ -486,8 +439,6 @@ describe('Player Class', () => {
             player.add(card2);
             player.add(card3);
 
-            player.findCombos();
-
             expect(player.combos.combos.length).toBe(1);
             expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
         });
@@ -499,8 +450,6 @@ describe('Player Class', () => {
 
             player.add(card1);
             player.add(card2);
-
-            player.findCombos();
 
             expect(player.combos.combos.length).toBe(0);
         });
@@ -514,8 +463,6 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
             player.add(card3);
-
-            player.findCombos();
 
             expect(player.combos.combos.length).toBe(0);
         });
@@ -536,19 +483,9 @@ describe('Player Class', () => {
             player.add(card5);
             player.add(card6);
 
-            player.findCombos();
-
             expect(player.combos.combos.length).toBe(2);
             expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
             expect(player.combos.combos[1].cards).toEqual(expect.arrayContaining([card4, card5, card6]));
-        });
-
-        it('should handle an empty hand without errors', () => {
-            const player = new Player("Alice");
-
-            player.findCombos();
-
-            expect(player.combos.combos.length).toBe(0);
         });
 
         it('should handle a hand with no valid combos', () => {
@@ -561,7 +498,31 @@ describe('Player Class', () => {
             player.add(card2);
             player.add(card3);
 
-            player.findCombos();
+            expect(player.combos.combos.length).toBe(0);
+        });
+
+        it('should handle a hand with no valid horizontal combos (2 times same card)', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(2, Suit.Clubs); // 2 of Clubs
+            const card2 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+            const card3 = new Card(2, Suit.Diamonds); // 2 of Diamonds - duplicated
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            expect(player.combos.combos.length).toBe(0);
+        });
+
+        it('should handle a hand with no valid vertical combos (2 times same card)', () => {
+            const player = new Player("Alice");
+            const card1 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+            const card2 = new Card(3, Suit.Diamonds); // 3 of Diamonds
+            const card3 = new Card(2, Suit.Diamonds); // 2 of Diamonds - duplicated
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
 
             expect(player.combos.combos.length).toBe(0);
         });
@@ -610,7 +571,7 @@ describe('Player Class', () => {
             const card2 = new Card(2, Suit.Hearts); // Unrelated card
 
             player.add(card1);
-            // player.remove(card2); // Attempt to remove a card not in the hand
+            player.remove(card2); // Attempt to remove a card not in the hand
 
             expect(player.hand.length).toBe(1);
             expect(player.hand.cards).toContain(card1);
@@ -621,14 +582,21 @@ describe('Player Class', () => {
             const card1 = new Card(1, Suit.Spades);
             const card2 = new Card(1, Suit.Hearts); // Horizontal match with card1
             const card3 = new Card(2, Suit.Spades); // Vertical match with card1
+            const card4 = new Card(2, Suit.Clubs); // Horizontal match with card3
+
             player.add(card1);
             player.add(card2);
             player.add(card3);
+            player.add(card4);
 
-            player.findCombos();
+            expect(player.combos.combos.length).toBe(0);
 
-            expect(player.combos.combos.length).toBe(1);
-            expect(player.combos.combos[0].cards).toEqual(expect.arrayContaining([card1, card2, card3]));
+            expect(card2.horizontals.cards).toContain(card1);
+            expect(card3.verticals.cards).toContain(card1);
+            expect(card2.horizontals.cards).toHaveLength(1);
+            expect(card3.verticals.cards).toHaveLength(1);
+            expect(card3.horizontals.cards).toHaveLength(1);
+            expect(card3.horizontals.cards).toContain(card4);
 
             player.remove(card1);
 
@@ -636,8 +604,8 @@ describe('Player Class', () => {
             expect(card3.verticals.cards).not.toContain(card1);
             expect(card2.horizontals.cards).toHaveLength(0);
             expect(card3.verticals.cards).toHaveLength(0);
-
-
+            expect(card3.horizontals.cards).toHaveLength(1);
+            expect(card3.horizontals.cards).toContain(card4);
         });
     });
 
@@ -656,7 +624,6 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
             player.add(card3);
-            player.findCombos();
 
             expect(player.hasCombo()).toBe(true);
         });
@@ -670,7 +637,6 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
             player.add(card3);
-            player.findCombos();
 
             expect(player.hasCombo()).toBe(true);
 

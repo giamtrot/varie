@@ -43,7 +43,7 @@ export class Player {
         this.combos.reset();
         this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
             let newCards: Card[] = [card, ...card.horizontals.cards]
-            if (Combo.checkValid(Combo.prepareForCheck(newCards)) {
+            if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
@@ -51,8 +51,9 @@ export class Player {
         this.hand.cards.filter(card => card.verticals.length >= 2).forEach(card => {
             let newCards: Card[] = [];
             Player.collect(card, newCards)
-
-            this.combos.add(new Combo(Array.from(newCards)));
+            if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
+                this.combos.add(new Combo(newCards));
+            }
         });
     }
 
@@ -78,12 +79,16 @@ export class Player {
 
 export class Players {
 
-    players: Player[];
+    _players: Player[];
     private playerPos = 0;
 
     constructor(players: Player[]) {
         assert(players.length > 0, "No player provided")
-        this.players = players;
+        this._players = players;
+    }
+
+    get players(): Player[] {
+        return this._players;
     }
 
     nextPlayer(): Player {

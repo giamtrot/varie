@@ -13,9 +13,11 @@ export class Match {
     constructor(players: Players, decksNumber: number) {
         this.players = players;
         this.decks = new Decks(decksNumber).shuffle();
-        this.desk = new Desk();
         this.decks.distribute(this.players.players, 13);
+        this.desk = new Desk();
     }
+
+
 
     step() {
         assert(this.decks.hasNext(), "No more steps are possible")
@@ -39,7 +41,7 @@ export class Match {
 
     toString() {
         return "" +
-`Match State:
+            `Match State:
     Players:\n${this.players}
     Decks: ${this.decks}
     Desk: ${this.desk}`;

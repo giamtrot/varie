@@ -1,83 +1,202 @@
-jest.mock("fs");
-import * as fs from "fs";
 import { Match } from '../Match';
-import { Players } from '../Players';
+import { Player, Players } from '../Players';
 import { Decks } from '../Decks';
 import { Desk } from '../Desk';
-import { ReadSyncOptions } from "fs";
+import { Card, Suit } from '../Card';
+import { Combo } from '../Combos';
+
+// Mock dependencies
+jest.mock('../Players');
+jest.mock('../Decks');
+jest.mock('../Desk');
+jest.mock('../Combos'); // Mock Combo if needed for playCombo return
 
 describe('Match Class', () => {
+    let playersInstance: Players;
+    let decksInstance: Decks;
+    let deskInstance: Desk;
+    let player1: Player;
+    let player2: Player;
+    let mockPlayersArray: Player[];
 
-    it('should initialize Match with given players, decks, and desk', () => {
-        const mockPlayers = jest.fn() as unknown as Players;
+    beforeEach(() => {
+        // Reset mocks before each test
+        jest.clearAllMocks();
 
-        const match = new Match(mockPlayers, 2);
+        // Create mock player instances
+        player1 = {
+            name: "Alice",
+            hand: [],
+            hasCombo: jest.fn().mockReturnValue(true),
+            playCombo: jest.fn(),
+            add: jest.fn(),
+        } as unknown as jest.Mocked<Player>;
+        player2 = {
+            name: "Bob",
+            hand: [],
+            hasCombo: jest.fn().mockReturnValue(false),
+            playCombo: jest.fn(),
+            add: jest.fn(),
+        } as unknown as jest.Mocked<Player>;
 
-        expect(match).toBeInstanceOf(Match);
-        expect((match as any).players).toBe(mockPlayers);
+        mockPlayersArray = [player1, player2];
+
+        playersInstance = {
+            players: mockPlayersArray,
+            nextPlayer: jest.fn().mockReturnValueOnce(player1).mockReturnValueOnce(player2).mockReturnValue(player1),
+            toString: jest.fn().mockReturnValue("Alice: \nBob: "),
+            toJSON: jest.fn().mockReturnValue([{ name: "Alice", hand: [] }, { name: "Bob", hand: [] }])
+        } as unknown as jest.Mocked<Players>;
+        // Tell the mocked Players constructor *what to return* when called
+        (Players as jest.MockedClass<typeof Players>).mockImplementation(() => playersInstance);
+
+        const card = new Card(10, Suit.Hearts);
+        decksInstance = {
+            shuffle: jest.fn().mockReturnThis(),
+            distribute: jest.fn(),
+            hasNext: jest.fn().mockReturnValue(true),
+            next: jest.fn().mockReturnValue(card), // Provide a default mock card
+            toJSON: jest.fn().mockReturnValue([card.toJSON()]), // Example JSON
+            toString: jest.fn().mockReturnValue(card.toString()),
+            cards: [],
+            length: jest.fn().mockReturnValue(52), // Mock length method if used
+        } as unknown as jest.Mocked<Decks>; // Cast to satisfy type checks
+        (Decks as jest.MockedClass<typeof Decks>).mockImplementation(() => decksInstance);
+
+        deskInstance = {
+            toString: jest.fn().mockReturnValue(""),
+            toJSON: jest.fn().mockReturnValue([]),
+        } as unknown as jest.Mocked<Desk>;
+        (Desk as jest.MockedClass<typeof Desk>).mockImplementation(() => deskInstance);
+        // jest.spyOn(deskInstance, 'addCombo').mockImplementation(() => { });
     });
 
+    it('should initialize players, decks, and desk', () => {
+        const match = new Match(playersInstance, 2);
 
-    describe('toString Method', () => {
+        expect(Decks).toHaveBeenCalledWith(2);
+        expect(Decks).toHaveBeenCalledTimes(1);
+
+        expect(decksInstance.shuffle).toHaveBeenCalledTimes(1);
+        expect(decksInstance.distribute).toHaveBeenCalledTimes(1);
+        expect(decksInstance.distribute).toHaveBeenCalledWith(playersInstance.players, 13);
+
+        expect(Desk).toHaveBeenCalledTimes(1);
+        expect(match['players']).toBe(playersInstance);
+        expect(match['decks']).toBe(decksInstance);
+        expect(match['desk']).toBe(deskInstance);
+    });
+
+    describe('step', () => {
+        it('should get the next player', () => {
+            const match = new Match(playersInstance, 2);
+            match.step();
+            expect(playersInstance.nextPlayer).toHaveBeenCalledTimes(1);
+        });
+
+        it('should make the player draw a card if they have no combo', () => {
+            const match = new Match(playersInstance, 2);
+            const drawnCard = new Card(5, Suit.Clubs);
+            jest.spyOn(decksInstance, 'next').mockReturnValueOnce(drawnCard);
+            jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(false); // Ensure player1 has no combo
+
+            match.step(); // player1's turn
+
+            expect(player1.hasCombo).toHaveBeenCalledTimes(1);
+            expect(decksInstance.next).toHaveBeenCalledTimes(1);
+            expect(player1.add).toHaveBeenCalledWith(drawnCard);
+            expect(player1.playCombo).not.toHaveBeenCalled();
+            // expect(deskInstance.addCombo).not.toHaveBeenCalled(); // Currently commented out in Match.ts
+        });
+
+        it('should make the player play a combo if they have one', () => {
+            const match = new Match(playersInstance, 2);
+            const mockCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]);
+            (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
+            jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true); // Player1 has a combo
+            jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value
+
+            match.step(); // player1's turn
+
+            expect(player1.hasCombo).toHaveBeenCalledTimes(1);
+            expect(player1.playCombo).toHaveBeenCalledTimes(1);
+            // expect(deskInstance.addCombo).toHaveBeenCalledWith(mockCombo); // Currently commented out in Match.ts
+            expect(decksInstance.next).not.toHaveBeenCalled();
+            expect(player1.add).not.toHaveBeenCalled();
+        });
+
+        it('should throw an error if step is called when no cards are left in the deck', () => {
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(decksInstance, 'hasNext').mockReturnValue(false); // No cards left
+
+            expect(() => match.step()).toThrow("No more steps are possible");
+        });
+
+        it('should alternate players correctly', () => {
+            const match = new Match(playersInstance, 2);
+            const card1 = new Card(1, Suit.Diamonds);
+            const card2 = new Card(2, Suit.Diamonds);
+            jest.spyOn(decksInstance, 'next').mockReturnValueOnce(card1).mockReturnValueOnce(card2);
+            jest.spyOn(player1, 'hasCombo').mockReturnValue(false);
+            jest.spyOn(player2, 'hasCombo').mockReturnValue(false);
+
+            match.step(); // player1's turn
+            expect(playersInstance.nextPlayer).toHaveBeenCalledTimes(1);
+            expect(player1.add).toHaveBeenCalledWith(card1);
+            expect(player2.add).not.toHaveBeenCalled();
+
+            match.step(); // player2's turn
+            expect(playersInstance.nextPlayer).toHaveBeenCalledTimes(2);
+            expect(player2.add).toHaveBeenCalledWith(card2);
+        });
+    });
+
+    describe('checkCards', () => {
+        it('should return true if the deck has cards', () => {
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(decksInstance, 'hasNext').mockReturnValue(true);
+            expect(match.checkCards()).toBe(true);
+            expect(decksInstance.hasNext).toHaveBeenCalledTimes(1);
+        });
+
+        it('should return false if the deck has no cards', () => {
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(decksInstance, 'hasNext').mockReturnValue(false);
+            expect(match.checkCards()).toBe(false);
+            expect(decksInstance.hasNext).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('toString', () => {
         it('should return a string representation of the match state', () => {
-            const mockPlayers = { toString: jest.fn().mockReturnValue("Players Info") } as unknown as Players;
-
-            const match = new Match(mockPlayers, 2);
-
-            const result = match.toString();
-
-            expect(result).toBe(`Match State:
-    Players:
-Players Info
-    Decks: Decks Info
-    Desk: Desk Info`);
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(decksInstance, 'toString').mockReturnValue("🂾");
+            const expectedString = `Match State:
+    Players:\nAlice: \nBob: 
+    Decks: 🂾
+    Desk: `;
+            expect(match.toString()).toBe(expectedString);
+            expect(playersInstance.toString).toHaveBeenCalledTimes(1);
+            expect(decksInstance.toString).toHaveBeenCalledTimes(1);
+            expect(deskInstance.toString).toHaveBeenCalledTimes(1);
         });
     });
 
-    describe('toJSON Method', () => {
+    describe('toJSON', () => {
         it('should return a JSON representation of the match state', () => {
-            const mockPlayers = { toJSON: jest.fn().mockReturnValue({ players: "Players JSON" }) } as unknown as Players;
-
-            const match = new Match(mockPlayers, 0);
-
-            const result = match.toJSON();
-
-            expect(result).toEqual({
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(decksInstance, 'toJSON').mockReturnValue([{ char: "🂾", color: "Black" }]);
+            const expectedJSON = {
                 match: {
-                    players: { players: "Players JSON" },
-                    decks: { decks: "Decks JSON" },
-                    desk: { desk: "Desk JSON" },
+                    players: [{ name: "Alice", hand: [] }, { name: "Bob", hand: [] }],
+                    decks: [{ char: "🂾", color: "Black" }],
+                    desk: [],
                 }
-            });
-
-            expect(mockPlayers.toJSON).toHaveBeenCalled();
+            };
+            expect(match.toJSON()).toEqual(expectedJSON);
+            expect(playersInstance.toJSON).toHaveBeenCalledTimes(1);
+            expect(decksInstance.toJSON).toHaveBeenCalledTimes(1);
+            expect(deskInstance.toJSON).toHaveBeenCalledTimes(1);
         });
     });
-
-    describe('checkCards Method', () => {
-        it('should return true if the deck has more cards', () => {
-            const mockPlayers = jest.fn() as unknown as Players;
-
-            const match = new Match(mockPlayers, 2);
-
-            const result = match.checkCards();
-
-            expect(result).toBe(true);
-        });
-
-        it('should return false if the deck has no more cards', () => {
-            const mockPlayers = jest.fn() as unknown as Players;
-            const mockDecks = { hasNext: jest.fn().mockReturnValue(false) } as unknown as Decks;
-            const mockDesk = jest.fn() as unknown as Desk;
-
-            const match = new Match(mockPlayers, 0);
-
-            const result = match.checkCards();
-
-            expect(result).toBe(false);
-            expect(mockDecks.hasNext).toHaveBeenCalled();
-        });
-    });
-
 });
-    
