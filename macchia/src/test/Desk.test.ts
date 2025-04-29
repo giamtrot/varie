@@ -8,14 +8,15 @@ describe('Desk', () => {
     beforeEach(() => {
         desk = new Desk();
         mockCombo = {
-            toString: jest.fn().mockReturnValue('Mock Combo')
+            toString: jest.fn().mockReturnValue('Mock Combo'),
+            toJSON: jest.fn().mockReturnValue({ value: 'Mock Combo' })
         } as unknown as Combo;
     });
 
     describe('addCombo', () => {
         it('should add a combo to the desk', () => {
             desk.addCombo(mockCombo);
-            expect(desk.toJSON()).toContain('Mock Combo');
+            expect(desk.toString()).toContain('Mock Combo');
         });
     });
 
@@ -23,7 +24,7 @@ describe('Desk', () => {
         it('should return a string representation of all combos', () => {
             desk.addCombo(mockCombo);
             desk.addCombo(mockCombo);
-            expect(desk.toString()).toBe('Mock Combo\nMock Combo');
+            expect(desk.toString()).toBe('Mock Combo Mock Combo');
         });
 
         it('should return an empty string if no combos are added', () => {
@@ -35,7 +36,7 @@ describe('Desk', () => {
         it('should return a JSON representation of all combos', () => {
             desk.addCombo(mockCombo);
             desk.addCombo(mockCombo);
-            expect(desk.toJSON()).toEqual(['Mock Combo', 'Mock Combo']);
+            expect(desk.toJSON()).toEqual([{ value: 'Mock Combo' }, { value: 'Mock Combo' }]);
         });
 
         it('should return an empty array if no combos are added', () => {

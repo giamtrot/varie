@@ -19,8 +19,15 @@
             background-color: #f9f9f9;
         }
 
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
         cardred,
-        cardblack {
+        cardblack,
+        .space {
             font-size: 72px;
         }
 
@@ -35,9 +42,8 @@
 </head>
 
 <body onload="startMatch()">
-    <h1>Macchiavelli</h1>
-    <button id="stepButton" onclick="sendStep()">Step</button>
-    <button id="runButton" onclick="sendRun()">Run to End</button>
+    <span class="title">Macchiavelli</span>&nbsp;<button id="stepButton" onclick="sendStep()">Step</button><button
+        id="runButton" onclick="sendRun()">Run to End</button>
     <div id="output"></div>
     <pre id="debug"></pre>
 
@@ -68,21 +74,17 @@
 
             // Mustache template
             const template = `
-                <h2>Match State: {{status}}</h2>
-                <ul>
-                    <li><h3>Players:</h3>
-                        <ol>
-                            {{#match.players}}
-                            <li>{{name}}:{{#hand}}<card{{color}}>{{char}}</card{{color}}>{{/hand}}</li>
-                            {{/match.players}}
-                        </ol>
-                    </li>
-                    <li><h3>Decks:</h3>{{#match.decks}}<card{{color}}>{{char}}</card{{color}}>{{/match.decks}}</li>
-                    <li><h3>Desk:</h3>{{match.desk}}</li>
-                </ul>
+                <div class="title">Match State: {{status}}</div>
+                <hr />
+                <span class='title'>Desk:</span>&nbsp;{{#match.desk}}{{#.}}<card{{color}}>{{char}}</card{{color}}>{{/.}}<span class='space'> </span>{{/match.desk}}
+                <hr  />
+                {{#match.players}}
+                    {{name}}:{{#hand}}<card{{color}}>{{char}}</card{{color}}>{{/hand}}
+                    {{/match.players}}
+                <hr />
+                <span class='title'>Decks:</span>&nbsp;{{#match.decks}}<card{{color}}>{{char}}</card{{color}}>{{/match.decks}}
             `;
 
-            // Render the template with the data
             const rendered = Mustache.render(template, { status: data.status, match: data.info.match });
             document.getElementById("output").innerHTML = rendered;
 
@@ -94,7 +96,7 @@
                 stepButton.focus()
             }
 
-            if (data.status === "run" ) {
+            if (data.status === "run") {
                 setTimeout(sendRun, 500)
             }
         }

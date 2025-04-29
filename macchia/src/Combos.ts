@@ -89,6 +89,13 @@ export class Combo {
         return true;
     }
 
+    toString(): string {
+        return this.cards.map(card => card.toString()).join('');
+    }
+
+    toJSON(): any {
+        return this.cards.map(card => card.toJSON());
+    }
 }
 
 export class Combos {
@@ -103,7 +110,7 @@ export class Combos {
     reset() {
         this.combos = [];
     }
-    
+
     get length(): number {
         return this.combos.length;
     }

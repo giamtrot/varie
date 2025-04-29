@@ -12,10 +12,10 @@ export class Desk {
     }
 
     toString(): string {
-        return this.combos.map(combo => combo.toString()).join('\n');
+        return this.combos.map(combo => combo.toString()).join(' ');
     }
 
     toJSON() {
-        return this.combos.map(combo => combo.toString());
+        return this.combos.map(combo => combo.toJSON());
     }
 }

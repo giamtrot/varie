@@ -56,6 +56,7 @@ export class Macchiavelli_CLI {
             }
 
             if (loop_status == LOOP_STATUS.STEP) {
+                console.log(this.match.toString())
                 let answer = this.read("S: step, Q: quit or R: run to end?")
                 console.log(`answer: ${answer}`)
 
