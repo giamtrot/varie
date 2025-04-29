@@ -23,13 +23,25 @@ export class Match {
         assert(this.decks.hasNext(), "No more steps are possible")
         const player = this.players.nextPlayer()
 
-        if (player.hasCombo()) {
-            const combo: Combo = player.playCombo()
+        let comboPlayed = false
+        let iterationCount = 0;
+        const maxIterations = 10; // Safeguard to prevent infinite loop
 
-            console.log(`${player.name} plays ${combo}`)
-            this.desk.addCombo(combo)
+        while (player.hasCombo()) {
+            comboPlayed = true;
+            const combo: Combo = player.playCombo();
+
+            console.log(`${player.name} plays ${combo}`);
+            this.desk.addCombo(combo);
+
+            iterationCount++;
+            if (iterationCount > maxIterations) {
+                console.warn(`Potential infinite loop detected for player ${player.name}. Exiting loop.`);
+                break;
+            }
         }
-        else {
+
+        if (!comboPlayed) {
             const card = this.decks.next()
             console.log(`${player.name} gets ${card}`)
             player.add(card)
