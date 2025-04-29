@@ -12,7 +12,7 @@ describe('Player Class', () => {
 
     it('should return the correct string representation of a player', () => {
         const player = new Player("Alice");
-        const card = new Card(1, Suit.Clubs);
+        const card = Card.of("1C");
         player.hand.push(card);
         expect(player.toString()).toBe("Alice: " + "(1C)".black.bold);
     });
@@ -20,7 +20,7 @@ describe('Player Class', () => {
     describe('Player.add', () => {
         it('should add a card to the player\'s hand', () => {
             const player = new Player("Alice");
-            const card = new Card(1, Suit.Spades);
+            const card = Card.of("1S");
             player.add(card);
             expect(player.hand.length).toBe(1);
             expect(player.hand.cards[0]).toBe(card);
@@ -28,8 +28,8 @@ describe('Player Class', () => {
 
         it('should relate the new card with existing cards in the hand (horizontal match)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(1, Suit.Hearts); // Same value, different suit
+            const card1 = Card.of("1S");
+            const card2 = Card.of("1H"); // Same value, different suit
             player.add(card1);
             player.add(card2);
 
@@ -39,8 +39,8 @@ describe('Player Class', () => {
 
         it('should relate the new card with existing cards in the hand (vertical match)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(2, Suit.Spades); // Same suit, consecutive value
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2S"); // Same suit, consecutive value
             player.add(card1);
             player.add(card2);
 
@@ -50,8 +50,8 @@ describe('Player Class', () => {
 
         it('should not relate the new card if there is no match', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(3, Suit.Hearts); // Different value and suit
+            const card1 = Card.of("1S");
+            const card2 = Card.of("3H"); // Different value and suit
             player.add(card1);
             player.add(card2);
 
@@ -63,9 +63,9 @@ describe('Player Class', () => {
 
         it('should handle adding multiple cards and maintain relationships', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(1, Suit.Hearts); // Horizontal match with card1
-            const card3 = new Card(2, Suit.Spades); // Vertical match with card1
+            const card1 = Card.of("1S");
+            const card2 = Card.of("1H"); // Horizontal match with card1
+            const card3 = Card.of("2S"); // Vertical match with card1
             player.add(card1);
             player.add(card2);
             player.add(card3);
@@ -81,12 +81,12 @@ describe('Player Class', () => {
     describe('Player.handSort', () => {
         it('should sort the hand by suit and value', () => {
             const player = new Player("Alice");
-            const card1 = new Card(13, Suit.Hearts); // King of Hearts
-            const card2 = new Card(1, Suit.Spades); // Ace of Spades
-            const card3 = new Card(5, Suit.Clubs); // 5 of Clubs
-            const card4 = new Card(2, Suit.Clubs); // 2 of Clubs
-            const card5 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-            const card6 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+            const card1 = Card.of("13H"); // King of Hearts
+            const card2 = Card.of("1S"); // Ace of Spades
+            const card3 = Card.of("5C"); // 5 of Clubs
+            const card4 = Card.of("2C"); // 2 of Clubs
+            const card5 = Card.of("2D"); // 2 of Diamonds
+            const card6 = Card.of("2D"); // 2 of Diamonds
 
             player.add(card1);
             player.add(card2);
@@ -115,7 +115,7 @@ describe('Player Class', () => {
 
         it('should handle a hand with one card without errors', () => {
             const player = new Player("Alice");
-            const card = new Card(7, Suit.Hearts); // 7 of Hearts
+            const card = Card.of("7H"); // 7 of Hearts
             player.add(card);
 
             player.handSort();
@@ -126,10 +126,10 @@ describe('Player Class', () => {
 
         it('should not modify a hand that is already sorted', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades); // Ace of Spades
-            const card2 = new Card(5, Suit.Clubs); // 5 of Clubs
-            const card3 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-            const card4 = new Card(13, Suit.Hearts); // King of Hearts
+            const card1 = Card.of("1S"); // Ace of Spades
+            const card2 = Card.of("5C"); // 5 of Clubs
+            const card3 = Card.of("2D"); // 2 of Diamonds
+            const card4 = Card.of("13H"); // King of Hearts
 
             player.add(card1);
             player.add(card2);
@@ -174,22 +174,22 @@ describe('Player Class', () => {
         beforeEach(() => {
             player = new Player("Test Player");
             // Reset cards
-            cardAS = new Card(1, Suit.Spades);
-            card2S = new Card(2, Suit.Spades);
-            card3S = new Card(3, Suit.Spades);
-            card4S = new Card(4, Suit.Spades);
-            card5H = new Card(5, Suit.Hearts);
-            card5D = new Card(5, Suit.Diamonds);
-            card5C = new Card(5, Suit.Clubs);
-            card5S = new Card(5, Suit.Spades);
-            card6H = new Card(6, Suit.Hearts);
-            card7H = new Card(7, Suit.Hearts);
-            card8H = new Card(8, Suit.Hearts);
-            cardKH = new Card(13, Suit.Hearts);
-            cardAH = new Card(1, Suit.Hearts);
-            card2H = new Card(2, Suit.Hearts);
-            cardQS = new Card(12, Suit.Spades);
-            cardKS = new Card(13, Suit.Spades);
+            cardAS = Card.of("1S");
+            card2S = Card.of("2S");
+            card3S = Card.of("3S");
+            card4S = Card.of("4S");
+            card5H = Card.of("5H");
+            card5D = Card.of("5D");
+            card5C = Card.of("5C");
+            card5S = Card.of("5S");
+            card6H = Card.of("6H");
+            card7H = Card.of("7H");
+            card8H = Card.of("8H");
+            cardKH = Card.of("13H");
+            cardAH = Card.of("1H");
+            card2H = Card.of("2H");
+            cardQS = Card.of("12S");
+            cardKS = Card.of("13S");
         });
 
         it('should find no combos in an empty hand', () => {
@@ -280,9 +280,9 @@ describe('Player Class', () => {
             player.add(card5D);
             player.add(card5C);
             // Combo 2: Needs new cards, e.g., 6s
-            const card6S = new Card(6, Suit.Spades);
-            const card6D = new Card(6, Suit.Diamonds);
-            const card6C = new Card(6, Suit.Clubs);
+            const card6S = Card.of("6S");
+            const card6D = Card.of("6D");
+            const card6C = Card.of("6C");
             player.add(card6S);
             player.add(card6D);
             player.add(card6C);
@@ -333,7 +333,7 @@ describe('Player Class', () => {
 
         it('should handle overlapping cards correctly if they form distinct combos', () => {
             // Hand: 5H, 5D, 5C (Horizontal) and 4S, 5S, 6S (Vertical, needs new 6S)
-            const card6S = new Card(6, Suit.Spades);
+            const card6S = Card.of("6S");
             player.add(card5H);
             player.add(card5D);
             player.add(card5C);
@@ -369,7 +369,7 @@ describe('Player Class', () => {
             // Use Hearts for this test
             player.add(cardAH); // 1H
             player.add(card2H); // 2H
-            const card3H = new Card(3, Suit.Hearts);
+            const card3H = Card.of("3H");
             player.add(card3H); // 3H
 
             const expectedCombo = new Combo([cardAH, card2H, card3H]);
@@ -403,9 +403,9 @@ describe('Player Class', () => {
     describe('Player.findCombosAgain', () => {
         it('should find horizontal combos (same value, different suits)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(5, Suit.Spades);
-            const card2 = new Card(5, Suit.Hearts);
-            const card3 = new Card(5, Suit.Diamonds);
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const card3 = Card.of("5D");
 
             player.add(card1);
             player.add(card2);
@@ -417,9 +417,9 @@ describe('Player Class', () => {
 
         it('should find horizontal combos (same value, different suits) and reset if seacrh again', () => {
             const player = new Player("Alice");
-            const card1 = new Card(5, Suit.Spades);
-            const card2 = new Card(5, Suit.Hearts);
-            const card3 = new Card(5, Suit.Diamonds);
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const card3 = Card.of("5D");
 
             player.add(card1);
             player.add(card2);
@@ -431,9 +431,9 @@ describe('Player Class', () => {
 
         it('should find vertical combos (same suit, consecutive values)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(3, Suit.Clubs);
-            const card2 = new Card(4, Suit.Clubs);
-            const card3 = new Card(5, Suit.Clubs);
+            const card1 = Card.of("3C");
+            const card2 = Card.of("4C");
+            const card3 = Card.of("5C");
 
             player.add(card1);
             player.add(card2);
@@ -445,8 +445,8 @@ describe('Player Class', () => {
 
         it('should not find combos if there are less than 3 cards', () => {
             const player = new Player("Alice");
-            const card1 = new Card(7, Suit.Spades);
-            const card2 = new Card(7, Suit.Hearts);
+            const card1 = Card.of("7S");
+            const card2 = Card.of("7H");
 
             player.add(card1);
             player.add(card2);
@@ -456,9 +456,9 @@ describe('Player Class', () => {
 
         it('should not find combos if cards do not match horizontally or vertically', () => {
             const player = new Player("Alice");
-            const card1 = new Card(2, Suit.Spades);
-            const card2 = new Card(5, Suit.Hearts);
-            const card3 = new Card(8, Suit.Diamonds);
+            const card1 = Card.of("2S");
+            const card2 = Card.of("5H");
+            const card3 = Card.of("8D");
 
             player.add(card1);
             player.add(card2);
@@ -469,12 +469,12 @@ describe('Player Class', () => {
 
         it('should find multiple combos in the hand', () => {
             const player = new Player("Alice");
-            const card1 = new Card(6, Suit.Spades);
-            const card2 = new Card(6, Suit.Hearts);
-            const card3 = new Card(6, Suit.Diamonds);
-            const card4 = new Card(10, Suit.Clubs);
-            const card5 = new Card(11, Suit.Clubs);
-            const card6 = new Card(12, Suit.Clubs);
+            const card1 = Card.of("6S");
+            const card2 = Card.of("6H");
+            const card3 = Card.of("6D");
+            const card4 = Card.of("10C");
+            const card5 = Card.of("11C");
+            const card6 = Card.of("12C");
 
             player.add(card1);
             player.add(card2);
@@ -490,9 +490,9 @@ describe('Player Class', () => {
 
         it('should handle a hand with no valid combos', () => {
             const player = new Player("Alice");
-            const card1 = new Card(9, Suit.Spades);
-            const card2 = new Card(3, Suit.Hearts);
-            const card3 = new Card(7, Suit.Diamonds);
+            const card1 = Card.of("9S");
+            const card2 = Card.of("3H");
+            const card3 = Card.of("7D");
 
             player.add(card1);
             player.add(card2);
@@ -503,9 +503,9 @@ describe('Player Class', () => {
 
         it('should handle a hand with no valid horizontal combos (2 times same card)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(2, Suit.Clubs); // 2 of Clubs
-            const card2 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-            const card3 = new Card(2, Suit.Diamonds); // 2 of Diamonds - duplicated
+            const card1 = Card.of("2C"); // 2 of Clubs
+            const card2 = Card.of("2D"); // 2 of Diamonds
+            const card3 = Card.of("2D"); // 2 of Diamonds - duplicated
 
             player.add(card1);
             player.add(card2);
@@ -516,9 +516,9 @@ describe('Player Class', () => {
 
         it('should handle a hand with no valid vertical combos (2 times same card)', () => {
             const player = new Player("Alice");
-            const card1 = new Card(2, Suit.Diamonds); // 2 of Diamonds
-            const card2 = new Card(3, Suit.Diamonds); // 3 of Diamonds
-            const card3 = new Card(2, Suit.Diamonds); // 2 of Diamonds - duplicated
+            const card1 = Card.of("2D"); // 2 of Diamonds
+            const card2 = Card.of("3D"); // 3 of Diamonds
+            const card3 = Card.of("2D"); // 2 of Diamonds - duplicated
 
             player.add(card1);
             player.add(card2);
@@ -531,7 +531,7 @@ describe('Player Class', () => {
     describe('Player.remove', () => {
         it('should remove a card from the player\'s hand', () => {
             const player = new Player("Alice");
-            const card = new Card(1, Suit.Spades);
+            const card = Card.of("1S");
 
             player.add(card);
 
@@ -543,8 +543,8 @@ describe('Player Class', () => {
 
         it('should unrelate the removed card from horizontal relationships', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(1, Suit.Hearts); // Same value, different suit
+            const card1 = Card.of("1S");
+            const card2 = Card.of("1H"); // Same value, different suit
             player.add(card1);
             player.add(card2);
 
@@ -555,8 +555,8 @@ describe('Player Class', () => {
 
         it('should unrelate the removed card from vertical relationships', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(2, Suit.Spades); // Same suit, consecutive value
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2S"); // Same suit, consecutive value
             player.add(card1);
             player.add(card2);
 
@@ -567,8 +567,8 @@ describe('Player Class', () => {
 
         it('should handle removing a card that is not in the hand without errors', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(2, Suit.Hearts); // Unrelated card
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2H"); // Unrelated card
 
             player.add(card1);
             player.remove(card2); // Attempt to remove a card not in the hand
@@ -579,10 +579,10 @@ describe('Player Class', () => {
 
         it('should maintain relationships between other cards after removal', () => {
             const player = new Player("Alice");
-            const card1 = new Card(1, Suit.Spades);
-            const card2 = new Card(1, Suit.Hearts); // Horizontal match with card1
-            const card3 = new Card(2, Suit.Spades); // Vertical match with card1
-            const card4 = new Card(2, Suit.Clubs); // Horizontal match with card3
+            const card1 = Card.of("1S");
+            const card2 = Card.of("1H"); // Horizontal match with card1
+            const card3 = Card.of("2S"); // Vertical match with card1
+            const card4 = Card.of("2C"); // Horizontal match with card3
 
             player.add(card1);
             player.add(card2);
@@ -617,9 +617,9 @@ describe('Player Class', () => {
 
         it('should return true if the player has at least one combo', () => {
             const player = new Player("Alice");
-            const card1 = new Card(5, Suit.Spades);
-            const card2 = new Card(5, Suit.Hearts);
-            const card3 = new Card(5, Suit.Diamonds);
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const card3 = Card.of("5D");
 
             player.add(card1);
             player.add(card2);
@@ -630,9 +630,9 @@ describe('Player Class', () => {
 
         it('should return false after all combos are removed', () => {
             const player = new Player("Alice");
-            const card1 = new Card(5, Suit.Spades);
-            const card2 = new Card(5, Suit.Hearts);
-            const card3 = new Card(5, Suit.Diamonds);
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const card3 = Card.of("5D");
 
             player.add(card1);
             player.add(card2);
@@ -648,9 +648,9 @@ describe('Player Class', () => {
     describe('Player.toJSON', () => {
         it('should return the correct JSON representation of a player', () => {
             const player = new Player("Alice");
-            const card1 = new Card(13, Suit.Clubs);// King of Clubs
-            const card2 = new Card(10, Suit.Diamonds); // 10 of Diamonds
-            const card3 = new Card(1, Suit.Spades); // Ace of Spades
+            const card1 = Card.of("13C");// King of Clubs
+            const card2 = Card.of("10D"); // 10 of Diamonds
+            const card3 = Card.of("1S"); // Ace of Spades
 
             player.add(card1);
             player.add(card2);
@@ -689,9 +689,9 @@ describe('Player Class', () => {
 
         beforeEach(() => {
             player = new Player("Test Player");
-            card1 = new Card(5, Suit.Spades);
-            card2 = new Card(5, Suit.Hearts);
-            card3 = new Card(5, Suit.Diamonds);
+            card1 = Card.of("5S");
+            card2 = Card.of("5H");
+            card3 = Card.of("5D");
 
             // Add cards to hand and let findCombos run
             player.add(card1);
@@ -734,7 +734,7 @@ describe('Player Class', () => {
 
         it('should recalculate combos after removing cards', () => {
             // Add another card to make the test more robust
-            const unrelatedCard = new Card(10, Suit.Clubs);
+            const unrelatedCard = Card.of("10C");
             player.add(unrelatedCard); // Hand: 5S, 5H, 5D, 10C
 
             // Reset spies called during the extra add
@@ -760,9 +760,9 @@ describe('Player Class', () => {
 
         it('should handle playing multiple combos sequentially', () => {
             // Add a second combo
-            const cardA = new Card(1, Suit.Clubs);
-            const cardB = new Card(2, Suit.Clubs);
-            const cardC = new Card(3, Suit.Clubs);
+            const cardA = Card.of("1C");
+            const cardB = Card.of("2C");
+            const cardC = Card.of("3C");
             player.add(cardA);
             player.add(cardB);
             player.add(cardC); // Hand: 5S, 5H, 5D (from prev test setup), AC, 2C, 3C
@@ -785,10 +785,10 @@ describe('Player Class', () => {
         });
 
         it('should handle adding a combo with two times the same card', () => {
-            const card1 = new Card(9, Suit.Clubs);
-            const card2 = new Card(9, Suit.Clubs);
-            const card3 = new Card(10, Suit.Clubs);
-            const card4 = new Card(11, Suit.Clubs);
+            const card1 = Card.of("9C");
+            const card2 = Card.of("9C");
+            const card3 = Card.of("10C");
+            const card4 = Card.of("11C");
 
             player = new Player("Test Player");
 
@@ -801,27 +801,27 @@ describe('Player Class', () => {
             expect(player.hasCombo()).toBe(true);
             expect(player.combos.length).toBe(1);
 
-            const card5 = new Card(9, Suit.Hearts);
+            const card5 = Card.of("9H");
             player.add(card5);
             expect(player.combos.length).toBe(1);
 
-            const card6 = new Card(9, Suit.Hearts);
+            const card6 = Card.of("9H");
             player.add(card6);
             expect(player.combos.length).toBe(1);
 
-            const card7 = new Card(9, Suit.Diamonds);
+            const card7 = Card.of("9D");
             player.add(card7);
             expect(player.combos.length).toBe(2);
 
-            const card8 = new Card(9, Suit.Diamonds);
+            const card8 = Card.of("9D");
             player.add(card8);
             expect(player.combos.length).toBe(2);
         });
 
         // it('should handle adding a combo with the same suit but different values', () => {
-        //     const card1 = new Card(1, Suit.Spades);
-        //     const card2 = new Card(2, Suit.Spades);
-        //     const card3 = new Card(3, Suit.Spades);
+        //     const card1 = Card.of("1S");
+        //     const card2 = Card.of("2S");
+        //     const card3 = Card.of("3S");
         //     const combo = new Combo([card1, card2, card3]);
 
         //     combos.add(combo);
@@ -875,10 +875,10 @@ describe('Players Class', () => {
             const player1 = new Player("Alice");
             const player2 = new Player("Bob");
 
-            const card1 = new Card(5, Suit.Spades); // 5 of Spades
-            const card2 = new Card(3, Suit.Hearts); // 3 of Hearts
-            const card3 = new Card(7, Suit.Clubs); // 7 of Clubs
-            const card4 = new Card(2, Suit.Diamonds); // 2 of Diamonds
+            const card1 = Card.of("5S"); // 5 of Spades
+            const card2 = Card.of("3H"); // 3 of Hearts
+            const card3 = Card.of("7C"); // 7 of Clubs
+            const card4 = Card.of("2D"); // 2 of Diamonds
 
             player1.add(card1);
             player1.add(card2);
@@ -912,8 +912,8 @@ describe('Players Class', () => {
         it('should handle a single player correctly', () => {
             const player = new Player("Alice");
 
-            const card1 = new Card(10, Suit.Spades); // 10 of Spades
-            const card2 = new Card(1, Suit.Clubs);  // Ace of Clubs
+            const card1 = Card.of("10S"); // 10 of Spades
+            const card2 = Card.of("1C");  // Ace of Clubs
 
             player.add(card1);
             player.add(card2);
@@ -932,9 +932,9 @@ describe('Players Class', () => {
             const player1 = new Player("Alice");
             const player2 = new Player("Bob");
 
-            const card1 = new Card(13, Suit.Clubs);// King of Clubs
-            const card2 = new Card(10, Suit.Diamonds); // 10 of Diamonds
-            const card3 = new Card(1, Suit.Spades); // Ace of Spades
+            const card1 = Card.of("13C");// King of Clubs
+            const card2 = Card.of("10D"); // 10 of Diamonds
+            const card3 = Card.of("1S"); // Ace of Spades
 
             player1.add(card1);
             player1.add(card2);

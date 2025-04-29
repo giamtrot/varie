@@ -1,6 +1,5 @@
 import assert from 'assert';
 import { Card } from './Card';
-import { cardSorter } from './Card';
 
 
 export class Combo {
@@ -13,13 +12,17 @@ export class Combo {
 
     static prepareForCheck(cards: Card[]): ReadonlyArray<Card> {
         const sortedCards = [...cards]; // Shallow copy
-        sortedCards.sort(cardSorter);
+        sortedCards.sort(Card.cardSorter);
         return Object.freeze(sortedCards)
     }
 
     static checkSameValue(cards: ReadonlyArray<Card>): boolean {
         const first = cards[0];
         return cards.filter(card => !card.sameValue(first)).length == 0;
+    }
+
+    static fromString(cardDesc: string) {
+        throw new Error('Method not implemented.');
     }
 
     static checkDifferentSuit(cards: ReadonlyArray<Card>) {

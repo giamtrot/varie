@@ -5,39 +5,39 @@ import 'colors'; // Import colors for the string assertion
 
 describe('Combo Class', () => {
     it('should create a valid combo with same suit and straight values', () => {
-        const cards = [new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)];
+        const cards = [Card.of("1S"), Card.of("2S"), Card.of("3S")];
         const combo = new Combo(cards);
         expect(combo.cards).toEqual(cards);
     });
 
     it('should create a valid combo with same value and different suits', () => {
-        const cards = [new Card(5, Suit.Spades), new Card(5, Suit.Hearts), new Card(5, Suit.Diamonds)];
+        const cards = [Card.of("5S"), Card.of("5H"), Card.of("5D")];
         const combo = new Combo(cards);
         expect(combo.cards).toEqual(cards);
     });
 
     it('should throw an error for invalid combo', () => {
-        const cards = [new Card(1, Suit.Spades), new Card(3, Suit.Spades), new Card(5, Suit.Spades)];
+        const cards = [Card.of("1S"), Card.of("3S"), Card.of("5S")];
         expect(() => new Combo(cards)).toThrow();
     });
 
     it('should throw an error if cards have different suits and are not consecutive', () => {
-        const cards = [new Card(1, Suit.Spades), new Card(2, Suit.Hearts), new Card(3, Suit.Diamonds)];
+        const cards = [Card.of("1S"), Card.of("2H"), Card.of("3D")];
         expect(() => new Combo(cards)).toThrow();
     });
 
     it('should throw an error if cards have the same suit but are not consecutive', () => {
-        const cards = [new Card(1, Suit.Spades), new Card(3, Suit.Spades), new Card(4, Suit.Spades)];
+        const cards = [Card.of("1S"), Card.of("3S"), Card.of("4S")];
         expect(() => new Combo(cards)).toThrow();
     });
 
     it('should throw an error if cards have the same value but duplicate suits', () => {
-        const cards = [new Card(5, Suit.Spades), new Card(5, Suit.Spades), new Card(5, Suit.Hearts)];
+        const cards = [Card.of("5S"), Card.of("5S"), Card.of("5H")];
         expect(() => new Combo(cards)).toThrow();
     });
 
     it('should throw an error with a single card', () => {
-        const cards = [new Card(7, Suit.Clubs)];
+        const cards = [Card.of("7C")];
         expect(() => new Combo(cards)).toThrow();
     });
 
@@ -48,73 +48,73 @@ describe('Combo Class', () => {
 
     describe('Combo.checkValid', () => {
         it('should return true for a valid vertical combo (same suit, consecutive values)', () => {
-            const cards = [new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)];
+            const cards = [Card.of("1S"), Card.of("2S"), Card.of("3S")];
             expect(Combo.checkValid(cards)).toBe(true);
         });
 
         it('should return false if two card not consecutive are of the same suit', () => {
-            const cards = [new Card(4, Suit.Spades), new Card(4, Suit.Hearts), new Card(4, Suit.Spades)];
+            const cards = [Card.of("4S"), Card.of("4H"), Card.of("4S")];
             const sorted = Combo.prepareForCheck(cards)
             expect(Combo.checkDifferentSuit(sorted)).toBe(false);
         });
 
         it('should return true for a valid horizontal combo (same value, different suits)', () => {
-            const cards = [new Card(5, Suit.Spades), new Card(5, Suit.Hearts), new Card(5, Suit.Diamonds)];
+            const cards = [Card.of("5S"), Card.of("5H"), Card.of("5D")];
             expect(Combo.checkValid(cards)).toBe(true);
         });
 
         it('should return false for cards with the same suit but non-consecutive values', () => {
-            const cards = [new Card(1, Suit.Spades), new Card(3, Suit.Spades), new Card(4, Suit.Spades)];
+            const cards = [Card.of("1S"), Card.of("3S"), Card.of("4S")];
             expect(Combo.checkValid(cards)).toBe(false);
         });
 
         it('should return false for cards with the same value but duplicate suits', () => {
-            const cards = [new Card(5, Suit.Spades), new Card(5, Suit.Spades), new Card(5, Suit.Hearts)];
+            const cards = [Card.of("5S"), Card.of("5S"), Card.of("5H")];
             expect(Combo.checkValid(cards)).toBe(false);
         });
 
         it('should return false for cards with the straight but replicated values', () => {
-            const cards = [new Card(4, Suit.Spades), new Card(5, Suit.Spades), new Card(5, Suit.Spades)];
+            const cards = [Card.of("4S"), Card.of("5S"), Card.of("5S")];
             expect(Combo.checkValid(cards)).toBe(false);
         });
 
         it('should return false for cards with different suits and non-consecutive values', () => {
-            const cards = [new Card(1, Suit.Spades), new Card(2, Suit.Hearts), new Card(3, Suit.Diamonds)];
+            const cards = [Card.of("1S"), Card.of("2H"), Card.of("3D")];
             expect(Combo.checkValid(cards)).toBe(false);
         });
 
         it('should throw an error for cards with less than 3 cards', () => {
-            const cards = [new Card(1, Suit.Spades), new Card(2, Suit.Spades)];
+            const cards = [Card.of("1S"), Card.of("2S")];
             expect(() => Combo.checkValid(cards)).toThrow();
         });
 
         it('should return true for a valid vertical combo with edge case values (Ace, King, Queen)', () => {
-            const cards = [new Card(12, Suit.Clubs), new Card(13, Suit.Clubs), new Card(1, Suit.Clubs)];
+            const cards = [Card.of("12C"), Card.of("13C"), Card.of("1C")];
             expect(Combo.checkValid(cards)).toBe(true);
         });
 
         it('should return true for a valid vertical combo with edge case values (Two, Ace, King)', () => {
-            const cards = [new Card(2, Suit.Clubs), new Card(13, Suit.Clubs), new Card(1, Suit.Clubs)];
+            const cards = [Card.of("2C"), Card.of("13C"), Card.of("1C")];
             expect(Combo.checkValid(cards)).toBe(true);
         });
 
 
         it('should return false for an invalid combo with mixed suits and values', () => {
-            const cards = [new Card(1, Suit.Spades), new Card(3, Suit.Hearts), new Card(5, Suit.Diamonds)];
+            const cards = [Card.of("1S"), Card.of("3H"), Card.of("5D")];
             expect(Combo.checkValid(cards)).toBe(false);
         });
     });
 
     describe('Combo.equals', () => {
         // Helper cards
-        const cardAS = new Card(1, Suit.Spades);
-        const card2S = new Card(2, Suit.Spades);
-        const card3S = new Card(3, Suit.Spades);
-        const card4S = new Card(4, Suit.Spades);
-        const card5H = new Card(5, Suit.Hearts);
-        const card5D = new Card(5, Suit.Diamonds);
-        const card5C = new Card(5, Suit.Clubs);
-        const card5S = new Card(5, Suit.Spades);
+        const cardAS = Card.of("1S");
+        const card2S = Card.of("2S");
+        const card3S = Card.of("3S");
+        const card4S = Card.of("4S");
+        const card5H = Card.of("5H");
+        const card5D = Card.of("5D");
+        const card5C = Card.of("5C");
+        const card5S = Card.of("5S");
 
 
         it('should return true when comparing a combo to itself', () => {
@@ -176,10 +176,10 @@ describe('Combo Class', () => {
         // Let's test this specific interaction.
         it('should return false if Card.equals returns false due to different IDs (current behavior)', () => {
             // Create two distinct Card instances with same value/suit
-            const cardInstance1 = new Card(1, Suit.Spades);
-            const cardInstance2 = new Card(1, Suit.Spades);
-            const cardInstance3 = new Card(2, Suit.Spades);
-            const cardInstance4 = new Card(3, Suit.Spades);
+            const cardInstance1 = Card.of("1S");
+            const cardInstance2 = Card.of("1S");
+            const cardInstance3 = Card.of("2S");
+            const cardInstance4 = Card.of("3S");
 
             // Ensure IDs are different (they should be by default)
             expect(cardInstance1.id).not.toBe(cardInstance2.id);
@@ -204,17 +204,17 @@ describe('Combo Class', () => {
             // Create cards for a vertical combo (straight flush)
             // Note: Combo constructor sorts cards, so the order here doesn't strictly matter for the final combo state
             cardsVertical = [
-                new Card(3, Suit.Spades), // 3S
-                new Card(1, Suit.Spades), // AS
-                new Card(2, Suit.Spades), // 2S
+                Card.of("3S"), // 3S
+                Card.of("1S"), // AS
+                Card.of("2S"), // 2S
             ];
             comboVertical = new Combo(cardsVertical); // Will be sorted to AS, 2S, 3S
 
             // Create cards for a horizontal combo (set)
             cardsHorizontal = [
-                new Card(7, Suit.Hearts),   // 7H
-                new Card(7, Suit.Diamonds), // 7D
-                new Card(7, Suit.Clubs),    // 7C
+                Card.of("7H"),   // 7H
+                Card.of("7D"), // 7D
+                Card.of("7C"),    // 7C
             ];
             comboHorizontal = new Combo(cardsHorizontal); // Will be sorted by suit index: 7H, 7D, 7C
         });
@@ -235,7 +235,7 @@ describe('Combo Class', () => {
             it('should return an empty string if the combo somehow had no cards (though constructor prevents this)', () => {
                 // This case is technically unreachable due to constructor validation,
                 // but tests the core logic of the method itself.
-                const emptyCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]); // Create valid
+                const emptyCombo = new Combo([Card.of("1S"), Card.of("2S"), Card.of("3S")]); // Create valid
                 (emptyCombo as any).cards = []; // Force cards to be empty for test
                 expect(emptyCombo.toString()).toBe('');
             });
@@ -264,7 +264,7 @@ describe('Combo Class', () => {
 
             it('should return an empty array if the combo somehow had no cards (though constructor prevents this)', () => {
                 // Similar to the toString test case for empty cards
-                const emptyCombo = new Combo([new Card(4, Suit.Hearts), new Card(5, Suit.Hearts), new Card(6, Suit.Hearts)]); // Create valid
+                const emptyCombo = new Combo([Card.of("4H"), Card.of("5H"), Card.of("6H")]); // Create valid
                 (emptyCombo as any).cards = []; // Force cards to be empty
                 expect(emptyCombo.toJSON()).toEqual([]);
             });
@@ -293,15 +293,15 @@ describe('Combos Class', () => {
     let combos: Combos;
 
     // Define some cards and combos to use across tests
-    const cardAS = new Card(1, Suit.Spades);
-    const card2S = new Card(2, Suit.Spades);
-    const card3S = new Card(3, Suit.Spades);
-    const card4S = new Card(4, Suit.Spades);
+    const cardAS = Card.of("1S");
+    const card2S = Card.of("2S");
+    const card3S = Card.of("3S");
+    const card4S = Card.of("4S");
 
-    const card5H = new Card(5, Suit.Hearts);
-    const card5D = new Card(5, Suit.Diamonds);
-    const card5C = new Card(5, Suit.Clubs);
-    const card5S = new Card(5, Suit.Spades);
+    const card5H = Card.of("5H");
+    const card5D = Card.of("5D");
+    const card5C = Card.of("5C");
+    const card5S = Card.of("5S");
 
 
     const comboStraightFlush = createCombo([cardAS, card2S, card3S]);
@@ -311,9 +311,9 @@ describe('Combos Class', () => {
     const comboSetDifferent = createCombo([card5S, card5D, card5C]); // Same values/suits, different card instances
 
     // Create another instance of the same logical comboSet
-    const card5H_Instance2 = new Card(5, Suit.Hearts);
-    const card5D_Instance2 = new Card(5, Suit.Diamonds);
-    const card5C_Instance2 = new Card(5, Suit.Clubs);
+    const card5H_Instance2 = Card.of("5H");
+    const card5D_Instance2 = Card.of("5D");
+    const card5C_Instance2 = Card.of("5C");
     const comboSetEquivalentInstance = createCombo([card5H_Instance2, card5D_Instance2, card5C_Instance2]);
 
 
@@ -419,14 +419,14 @@ describe('Combos Class', () => {
         it('should remove and return the first combo added', () => {
             const combos = new Combos();
             const combo1 = new Combo([
-                new Card(1, Suit.Spades),
-                new Card(2, Suit.Spades),
-                new Card(3, Suit.Spades),
+                Card.of("1S"),
+                Card.of("2S"),
+                Card.of("3S"),
             ]);
             const combo2 = new Combo([
-                new Card(5, Suit.Hearts),
-                new Card(5, Suit.Diamonds),
-                new Card(5, Suit.Clubs),
+                Card.of("5H"),
+                Card.of("5D"),
+                Card.of("5C"),
             ]);
 
             combos.add(combo1);
@@ -446,9 +446,9 @@ describe('Combos Class', () => {
         it('should correctly update the length after popping', () => {
             const combos = new Combos();
             const combo = new Combo([
-                new Card(1, Suit.Spades),
-                new Card(2, Suit.Spades),
-                new Card(3, Suit.Spades),
+                Card.of("1S"),
+                Card.of("2S"),
+                Card.of("3S"),
             ]);
 
             combos.add(combo);
@@ -461,11 +461,11 @@ describe('Combos Class', () => {
 
     describe('Combos.reset', () => {
         it('should clear all combos when reset is called', () => {
-            const card1 = new Card(1, Suit.Spades)
-            const card2 = new Card(2, Suit.Spades)
-            const card3 = new Card(3, Suit.Spades)
-            const card4 = new Card(2, Suit.Hearts)
-            const card5 = new Card(2, Suit.Clubs)
+            const card1 = Card.of("1S")
+            const card2 = Card.of("2S")
+            const card3 = Card.of("3S")
+            const card4 = Card.of("2H")
+            const card5 = Card.of("2C")
             const combo1 = new Combo([card1, card2, card3]);
             const combo2 = new Combo([card2, card4, card5]);
 

@@ -43,4 +43,16 @@ describe('Desk', () => {
             expect(desk.toJSON()).toEqual([]);
         });
     });
+
+    describe('New Deck decider', () => {
+        it('should rearrange cards after addition to create a new deck', () => {
+            const desk = new Desk();
+            // const combo1 = Combo.fromString("1C 2C 3C");
+
+
+
+        });
+
+
+    });
 });

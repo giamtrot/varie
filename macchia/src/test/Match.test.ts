@@ -50,7 +50,7 @@ describe('Match Class', () => {
         // Tell the mocked Players constructor *what to return* when called
         (Players as jest.MockedClass<typeof Players>).mockImplementation(() => playersInstance);
 
-        const card = new Card(10, Suit.Hearts);
+        const card = Card.of("10H");
         decksInstance = {
             shuffle: jest.fn().mockReturnThis(),
             distribute: jest.fn(),
@@ -97,7 +97,7 @@ describe('Match Class', () => {
 
         it('should make the player draw a card if they have no combo', () => {
             const match = new Match(playersInstance, 2);
-            const drawnCard = new Card(5, Suit.Clubs);
+            const drawnCard = Card.of("5C");
             jest.spyOn(decksInstance, 'next').mockReturnValueOnce(drawnCard);
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(false); // Ensure player1 has no combo
 
@@ -112,7 +112,7 @@ describe('Match Class', () => {
 
         it('should make the player play a combo if they have one', () => {
             const match = new Match(playersInstance, 2);
-            const mockCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]);
+            const mockCombo = new Combo([Card.of("1S"), Card.of("2S"), Card.of("3S")]);
             (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true).mockReturnValueOnce(false); // Player1 has a combo
             jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value
@@ -135,8 +135,8 @@ describe('Match Class', () => {
 
         it('should alternate players correctly', () => {
             const match = new Match(playersInstance, 2);
-            const card1 = new Card(1, Suit.Diamonds);
-            const card2 = new Card(2, Suit.Diamonds);
+            const card1 = Card.of("1D");
+            const card2 = Card.of("2D");
             jest.spyOn(decksInstance, 'next').mockReturnValueOnce(card1).mockReturnValueOnce(card2);
             jest.spyOn(player1, 'hasCombo').mockReturnValue(false);
             jest.spyOn(player2, 'hasCombo').mockReturnValue(false);
@@ -154,7 +154,7 @@ describe('Match Class', () => {
         // Test for the infinite loop safeguard
         it('should break the loop if a player keeps having combos (safeguard)', () => {
             const match = new Match(playersInstance, 2);
-            const mockCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]);
+            const mockCombo = new Combo([Card.of("1S"), Card.of("2S"), Card.of("3S")]);
             (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
             const hasComboMock = jest.spyOn(player1, 'hasCombo').mockReturnValue(true); // Player1 has a combo
             const playComboMock = jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value

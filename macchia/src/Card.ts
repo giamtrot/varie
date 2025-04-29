@@ -12,6 +12,7 @@ export enum Suit {
     Diamonds = "Diamonds",
     Clubs = "Clubs"
 }
+
 const RED = (msg: string) => msg.red.bold;
 const BLACK = (msg: string) => msg.black.bold;
 
@@ -22,13 +23,7 @@ export const SuitInfo: Record<Suit, { color: any; index: number; colorName: stri
     [Suit.Clubs]: { color: BLACK, index: 3, colorName: "Black" }
 };
 
-export const cardSorter = (a: Card, b: Card): number => {
-    if (a.value === b.value) {
-        return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
-    } else {
-        return a.value - b.value;
-    }
-};
+
 
 export class Card {
 
@@ -46,6 +41,40 @@ export class Card {
         this.id = ++Card.count;
         this.value = value;
         this.suit = suit;
+    }
+
+    static cardSorter = (a: Card, b: Card): number => {
+        if (a.value === b.value) {
+            return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
+        } else {
+            return a.value - b.value;
+        }
+    };
+
+    static suitFromString(desc: string): Suit {
+        switch (desc) {
+            case "S":
+                return Suit.Spades;
+            case "H":
+                return Suit.Hearts;
+            case "D":
+                return Suit.Diamonds;
+            case "C":
+                return Suit.Clubs;
+            default:
+                throw new Error(`Invalid suit description: ${desc}`);
+        }
+
+    }
+
+    static of(desc: string) {
+        assert(desc.length >= 2 && desc.length <= 3, "Card description must be 2 or 3 characters long");
+        const vs = desc.substring(0, 2);
+        const value = parseInt(vs);
+        assert(!isNaN(value), `Invalid card value '${vs}': Value must be between 1 and 13`);
+        const suit = Card.suitFromString(desc[desc.length - 1]);
+
+        return new Card(value, suit);
     }
 
     code(): number {
@@ -175,7 +204,7 @@ export class Cards {
     }
 
     sort() {
-        this.cards.sort(cardSorter)
+        this.cards.sort(Card.cardSorter)
     }
 
     get length() {
