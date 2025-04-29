@@ -41,16 +41,16 @@ export class Player {
 
     findCombos() {
         this.combos.reset();
-        this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
+        this.hand.cards.filter(card => card.horizontals.length >= 3).forEach(card => {
             let newCards: Card[] = [card, ...card.horizontals.cards]
             if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
 
-        this.hand.cards.filter(card => card.verticals.length >= 2).forEach(card => {
-            let newCards: Card[] = [];
-            Player.collect(card, newCards)
+        this.hand.cards.filter(card => card.verticals.length >= 3).forEach(card => {
+            let newCards: Card[] = [card, ...card.verticals.cards]
+            // Player.collectVerticals(card, newCards)
             if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
@@ -68,12 +68,12 @@ export class Player {
         }
     }
 
-    private static collect(card: Card, cards: Card[]) {
-        if (cards.includes(card)) {
+    private static collectVerticals(card: Card, cards: Card[]) {
+        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
             return;
         }
         cards.push(card);
-        card.verticals.cards.forEach(c => Player.collect(c, cards));
+        card.verticals.cards.forEach(c => Player.collectVerticals(c, cards));
     }
 }
 

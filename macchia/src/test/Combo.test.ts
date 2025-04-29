@@ -390,26 +390,29 @@ describe('Combos Class', () => {
             const card5 = new Card(2, Suit.Clubs)
             const combo1 = new Combo([card1, card2, card3]);
             const combo2 = new Combo([card2, card4, card5]);
-    
+
             const combos = new Combos();
             combos.add(combo1);
             combos.add(combo2);
-    
+
             expect(combos.length).toBe(2);
-    
+
             combos.reset();
-    
+
             expect(combos.length).toBe(0);
         });
-    
+
         it('should not throw an error when reset is called on an empty Combos instance', () => {
             const combos = new Combos();
-    
+
             expect(combos.length).toBe(0);
-    
+
             expect(() => combos.reset()).not.toThrow();
-    
+
             expect(combos.length).toBe(0);
         });
     });
+
+
+
 });

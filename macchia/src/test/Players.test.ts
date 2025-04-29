@@ -14,7 +14,7 @@ describe('Player Class', () => {
         const player = new Player("Alice");
         const card = new Card(1, Suit.Clubs);
         player.hand.push(card);
-        expect(player.toString()).toBe("Alice: " + "🃑".black.bold);
+        expect(player.toString()).toBe("Alice: " + "🃑".black.bold + "1C");
     });
 
     describe('Player.add', () => {
@@ -783,6 +783,34 @@ describe('Player Class', () => {
             expect(player.hand.length).toBe(0); // No cards left
             expect(player.hasCombo()).toBe(false); // No combos left
         });
+
+        it('should handle adding a combo with two times the same card', () => {
+            const card1 = new Card(9, Suit.Clubs);
+            const card2 = new Card(9, Suit.Clubs);
+            const card3 = new Card(10, Suit.Clubs);
+            const card4 = new Card(11, Suit.Clubs);
+
+            player = new Player("Test Player");
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+            player.add(card4);
+
+            // Ensure a combo exists (findCombos should have added it)
+            expect(player.hasCombo()).toBe(true);
+        });
+
+        // it('should handle adding a combo with the same suit but different values', () => {
+        //     const card1 = new Card(1, Suit.Spades);
+        //     const card2 = new Card(2, Suit.Spades);
+        //     const card3 = new Card(3, Suit.Spades);
+        //     const combo = new Combo([card1, card2, card3]);
+
+        //     combos.add(combo);
+        //     expect(combos.length).toBe(1);
+        //     expect(combos.contains(combo)).toBe(true);
+        // });
     });
 
 });

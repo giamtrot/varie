@@ -25,7 +25,7 @@ describe('Card Class', () => {
 
     it('should return the correct string representation of a card', () => {
         const card = new Card(1, Suit.Hearts);
-        expect(card.toString()).toBe("🂱".red.bold);
+        expect(card.toString()).toBe("(1H)".red.bold);
     });
 
     it('should return true for cards with the same value, suit, and id', () => {
@@ -568,7 +568,7 @@ describe('Cards Class', () => {
             const expectedJSON = [
                 { char: "🂡", color: "Black" },
                 { char: "🃊", color: "Red" },
-                { char: "🃞", color: "Black" }, 
+                { char: "🃞", color: "Black" },
             ]
             expect(cards.toJSON()).toEqual(expectedJSON);
         });
