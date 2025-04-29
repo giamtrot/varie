@@ -78,7 +78,7 @@ export class Macchiavelli_CLI {
 }
 
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV !== 'test') {
     new Macchiavelli_CLI().main()
 }
-
