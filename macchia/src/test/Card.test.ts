@@ -7,7 +7,7 @@ describe('Card Class', () => {
         expect(card1.id).toBe(1); // Assuming this is the first card created
         expect(card1.value).toBe(1);
         expect(card1.suit).toBe(Suit.Spades);
-        const card2 = Card.of("3H");
+        const card2 = Card.of("3h");
         expect(card2.id).toBe(2);
         expect(card2.value).toBe(3);
         expect(card2.suit).toBe(Suit.Hearts);

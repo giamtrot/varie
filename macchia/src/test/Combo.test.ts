@@ -21,6 +21,19 @@ describe('Combo Class', () => {
         expect(() => new Combo(cards)).toThrow();
     });
 
+    it('should create a valid combo with same suit and straight values - by string', () => {
+        expect(() => Combo.of("1S 2S 3S")).not.toThrow();
+    });
+
+    it('should create a valid combo with same value and different suits - by string', () => {
+        expect(() => Combo.of("5S 5H 5D")).not.toThrow();
+    });
+
+    it('should throw an error for invalid combo - by string', () => {
+        expect(() => Combo.of("1S 3S 5S")).toThrow();
+    });
+
+
     it('should throw an error if cards have different suits and are not consecutive', () => {
         const cards = [Card.of("1S"), Card.of("2H"), Card.of("3D")];
         expect(() => new Combo(cards)).toThrow();
@@ -273,22 +286,6 @@ describe('Combo Class', () => {
 });
 
 
-// Helper function to create valid combos for testing
-const createCombo = (cards: Card[]): Combo => {
-    // In a real test setup, you might want to mock the Combo constructor
-    // or ensure these cards *always* form a valid combo to avoid
-    // constructor errors interfering with Combos tests.
-    // For simplicity here, we assume valid inputs for combo creation.
-    try {
-        return new Combo(cards);
-    } catch (e) {
-        // If the test setup guarantees valid combos, this shouldn't happen.
-        // If it might, handle or rethrow appropriately for the test.
-        console.error("Test setup error: Failed to create a valid combo for testing.", cards, e);
-        throw e;
-    }
-};
-
 describe('Combos Class', () => {
     let combos: Combos;
 
@@ -303,18 +300,17 @@ describe('Combos Class', () => {
     const card5C = Card.of("5C");
     const card5S = Card.of("5S");
 
-
-    const comboStraightFlush = createCombo([cardAS, card2S, card3S]);
-    const comboStraightFlushSameCardsDifferentOrder = createCombo([card3S, cardAS, card2S]);
-    const comboStraightFlushLonger = createCombo([cardAS, card2S, card3S, card4S]);
-    const comboSet = createCombo([card5H, card5D, card5C]);
-    const comboSetDifferent = createCombo([card5S, card5D, card5C]); // Same values/suits, different card instances
+    const comboStraightFlush = new Combo([cardAS, card2S, card3S]);
+    const comboStraightFlushSameCardsDifferentOrder = new Combo([card3S, cardAS, card2S]);
+    const comboStraightFlushLonger = new Combo([cardAS, card2S, card3S, card4S]);
+    const comboSet = new Combo([card5H, card5D, card5C]);
+    const comboSetDifferent = new Combo([card5S, card5D, card5C]); // Same values/suits, different card instances
 
     // Create another instance of the same logical comboSet
     const card5H_Instance2 = Card.of("5H");
     const card5D_Instance2 = Card.of("5D");
     const card5C_Instance2 = Card.of("5C");
-    const comboSetEquivalentInstance = createCombo([card5H_Instance2, card5D_Instance2, card5C_Instance2]);
+    const comboSetEquivalentInstance = new Combo([card5H_Instance2, card5D_Instance2, card5C_Instance2]);
 
 
     beforeEach(() => {
@@ -413,7 +409,6 @@ describe('Combos Class', () => {
             expect(combos['contains'](comboSetEquivalentInstance)).toBe(true);
         });
     });
-
 
     describe('Combos.shift', () => {
         it('should remove and return the first combo added', () => {

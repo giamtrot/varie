@@ -21,8 +21,13 @@ export class Combo {
         return cards.filter(card => !card.sameValue(first)).length == 0;
     }
 
-    static fromString(cardDesc: string) {
-        throw new Error('Method not implemented.');
+    static of(cardDesc: string) {
+        const cards: Card[] = [];
+        cardDesc.split(' ').forEach(c => {
+            const card = Card.of(c);
+            cards.push(card);
+        })
+        return new Combo(cards);
     }
 
     static checkDifferentSuit(cards: ReadonlyArray<Card>) {

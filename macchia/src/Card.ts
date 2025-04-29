@@ -52,7 +52,7 @@ export class Card {
     };
 
     static suitFromString(desc: string): Suit {
-        switch (desc) {
+        switch (desc.toUpperCase()) {
             case "S":
                 return Suit.Spades;
             case "H":
