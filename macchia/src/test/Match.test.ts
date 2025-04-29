@@ -2,7 +2,7 @@ import { Match } from '../Match';
 import { Player, Players } from '../Players';
 import { Decks } from '../Decks';
 import { Desk } from '../Desk';
-import { Card, Suit } from '../Card';
+import { Card, Cards, Suit } from '../Card';
 import { Combo } from '../Combos';
 
 // Mock dependencies
@@ -150,6 +150,25 @@ describe('Match Class', () => {
             expect(playersInstance.nextPlayer).toHaveBeenCalledTimes(2);
             expect(player2.add).toHaveBeenCalledWith(card2);
         });
+
+        // Test for the infinite loop safeguard
+        it('should break the loop if a player keeps having combos (safeguard)', () => {
+            const match = new Match(playersInstance, 2);
+            const mockCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]);
+            (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
+            const hasComboMock = jest.spyOn(player1, 'hasCombo').mockReturnValue(true); // Player1 has a combo
+            const playComboMock = jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(); // Suppress console output during test
+
+            match.step(); // player1's turn
+
+            // The loop should run maxIterations 10 times before breaking
+            expect(hasComboMock).toHaveBeenCalledTimes(10); // Called 10 times in loop + 1 check before loop
+            expect(playComboMock).toHaveBeenCalledTimes(10); // Called 10 times
+            expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`Potential infinite loop detected for player ${player1.name}`));
+
+            jest.restoreAllMocks();
+        });
     });
 
     describe('checkCards', () => {
@@ -200,4 +219,5 @@ describe('Match Class', () => {
             expect(deskInstance.toJSON).toHaveBeenCalledTimes(1);
         });
     });
+
 });

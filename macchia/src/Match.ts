@@ -35,7 +35,7 @@ export class Match {
             this.desk.addCombo(combo);
 
             iterationCount++;
-            if (iterationCount > maxIterations) {
+            if (iterationCount >= maxIterations) {
                 console.warn(`Potential infinite loop detected for player ${player.name}. Exiting loop.`);
                 break;
             }
