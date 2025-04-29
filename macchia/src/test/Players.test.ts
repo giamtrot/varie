@@ -14,7 +14,7 @@ describe('Player Class', () => {
         const player = new Player("Alice");
         const card = new Card(1, Suit.Clubs);
         player.hand.push(card);
-        expect(player.toString()).toBe("Alice: " + "🃑".black.bold + "1C");
+        expect(player.toString()).toBe("Alice: " + "(1C)".black.bold);
     });
 
     describe('Player.add', () => {
@@ -799,6 +799,23 @@ describe('Player Class', () => {
 
             // Ensure a combo exists (findCombos should have added it)
             expect(player.hasCombo()).toBe(true);
+            expect(player.combos.length).toBe(1);
+
+            const card5 = new Card(9, Suit.Hearts);
+            player.add(card5);
+            expect(player.combos.length).toBe(1);
+
+            const card6 = new Card(9, Suit.Hearts);
+            player.add(card6);
+            expect(player.combos.length).toBe(1);
+
+            const card7 = new Card(9, Suit.Diamonds);
+            player.add(card7);
+            expect(player.combos.length).toBe(2);
+
+            const card8 = new Card(9, Suit.Diamonds);
+            player.add(card8);
+            expect(player.combos.length).toBe(2);
         });
 
         // it('should handle adding a combo with the same suit but different values', () => {

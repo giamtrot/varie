@@ -41,17 +41,18 @@ export class Player {
 
     findCombos() {
         this.combos.reset();
-        this.hand.cards.filter(card => card.horizontals.length >= 3).forEach(card => {
-            let newCards: Card[] = [card, ...card.horizontals.cards]
-            if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
+        this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
+            let newCards: Card[] = []
+            Player.collectHorizontals(card, newCards)
+            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
 
-        this.hand.cards.filter(card => card.verticals.length >= 3).forEach(card => {
-            let newCards: Card[] = [card, ...card.verticals.cards]
-            // Player.collectVerticals(card, newCards)
-            if (Combo.checkValid(Combo.prepareForCheck(newCards))) {
+        this.hand.cards.filter(card => card.verticals.length >= 2).forEach(card => {
+            let newCards: Card[] = []
+            Player.collectVerticals(card, newCards)
+            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
@@ -66,6 +67,14 @@ export class Player {
             name: this.name,
             hand: this.hand.toJSON()
         }
+    }
+
+    private static collectHorizontals(card: Card, cards: Card[]) {
+        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
+            return;
+        }
+        cards.push(card);
+        card.horizontals.cards.forEach(c => Player.collectHorizontals(c, cards));
     }
 
     private static collectVerticals(card: Card, cards: Card[]) {

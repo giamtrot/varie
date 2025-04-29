@@ -60,10 +60,14 @@ export class Combo {
     }
 
     static checkValid(cards: ReadonlyArray<Card>): boolean {
-        assert(cards.length >= 3, "Combo must have at least 3 cards");
+        assert(Combo.minLength(cards), "Combo must have at least 3 cards");
         const verticalOk = this.checkSameSuit(cards) && this.checkStraight(cards);
         const horizontalOk = this.checkDifferentSuit(cards) && this.checkSameValue(cards);
         return verticalOk || horizontalOk;
+    }
+
+    static minLength(cards: readonly Card[]): unknown {
+        return cards.length >= 3;
     }
 
     equals(other: Combo): boolean {
@@ -80,7 +84,7 @@ export class Combo {
 
         // Compare card by card
         for (let i = 0; i < this.cards.length; i++) {
-            if (!this.cards[i].equals(other.cards[i])) {
+            if (!this.cards[i].same(other.cards[i])) {
                 return false;
             }
         }

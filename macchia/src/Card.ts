@@ -159,7 +159,11 @@ export class Card {
     }
 
     equals(other: Card): boolean {
-        return this.value === other.value && this.suit === other.suit && this.id === other.id;
+        return this.id === other.id;
+    }
+
+    same(other: Card): boolean {
+        return this.sameSuit(other) && this.sameValue(other);
     }
 }
 
