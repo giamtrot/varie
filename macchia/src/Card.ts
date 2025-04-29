@@ -1,5 +1,6 @@
 import assert from 'assert';
 import 'colors';
+import { Combo, Combos } from './Combos';
 
 export enum Suit {
 
@@ -33,8 +34,8 @@ export class Card {
     id: number;
     value: number;
     suit: Suit;
-    horizontals = new Cards()
-    verticals = new Cards()
+    horizontals = new CardSet()
+    verticals = new CardSet()
 
     constructor(value: number, suit: Suit) {
         assert(value >= 1 && value <= 13, "Value must be between 1 and 13");
@@ -64,7 +65,6 @@ export class Card {
             default:
                 throw new Error(`Invalid suit description: ${desc}`);
         }
-
     }
 
     static of(desc: string) {
@@ -163,8 +163,7 @@ export class Card {
     }
 
     unrelate(card: Card): void {
-        assert(this.horizontals.contains(card) || this.verticals.contains(card),
-            `Card ${card} not linked to ${this}`)
+        assert(this.horizontals.contains(card) || this.verticals.contains(card), `Card ${card} not linked to ${this}`)
         if (this.horizontals.contains(card)) {
             this.unlinkHorizontal(card)
         }
@@ -196,10 +195,14 @@ export class Card {
     }
 }
 
-export class Cards {
+export class CardSet {
     cards: Card[] = []
 
-    contains(c: Card) {
+    push(card: Card) {
+        this.cards.push(card);
+    }
+
+    contains(c: Card): boolean {
         return this.cards.indexOf(c) >= 0;
     }
 
@@ -213,20 +216,8 @@ export class Cards {
 
     remove(card: Card) {
         const index = this.cards.indexOf(card);
-        if (index > -1) {
-            this.cards.splice(index, 1);
-        }
-    }
-
-    push(card: Card) {
-        this.cards.push(card);
-    }
-
-    pushAndRelate(card: Card) {
-        this.cards.forEach(c => {
-            c.relate(card);
-        });
-        this.push(card)
+        assert(index >= 0, `Card ${card} not found in set`)
+        this.cards.splice(index, 1);
     }
 
     toString() {
@@ -235,6 +226,91 @@ export class Cards {
 
     toJSON() {
         return this.cards.map(card => card.toJSON())
+    }
+
+}
+
+export class Hand {
+    _cards: CardSet = new CardSet()
+    combos = new Combos();
+
+    reset() {
+        this.combos.reset()
+    }
+
+    getCombo() {
+        assert(this.hasCombo(), "No combo available")
+        return this.combos.shift()
+    }
+
+    hasCombo() {
+        return this.combos.length > 0;
+    }
+
+    get cards(): CardSet {
+        return this._cards;
+    }
+
+    remove(card: Card) {
+        this.cards.remove(card)
+        card.horizontals.cards.forEach(h => h.unrelate(card))
+        card.verticals.cards.forEach(v => v.unrelate(card))
+        this.updateCombo()
+    }
+
+    updateCombo() {
+        this.reset()
+        this.cards.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
+            let newCards: Card[] = []
+            Hand.collectHorizontals(card, newCards)
+            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
+                this.combos.add(new Combo(newCards));
+            }
+        });
+
+        this.cards.cards.filter(card => card.verticals.length >= 2).forEach(card => {
+            let newCards: Card[] = []
+            Hand.collectVerticals(card, newCards)
+            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
+                this.combos.add(new Combo(newCards));
+            }
+        });
+    }
+
+    private static collectHorizontals(card: Card, cards: Card[]) {
+        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
+            return;
+        }
+        cards.push(card);
+        card.horizontals.cards.forEach(c => Hand.collectHorizontals(c, cards));
+    }
+
+    private static collectVerticals(card: Card, cards: Card[]) {
+        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
+            return;
+        }
+        cards.push(card);
+        card.verticals.cards.forEach(c => Hand.collectVerticals(c, cards));
+    }
+
+    push(card: Card) {
+        this.cards.push(card);
+    }
+
+    pushAndRelate(card: Card) {
+        this.cards.cards.forEach(c => {
+            c.relate(card);
+        });
+        this.push(card)
+        this.updateCombo()
+    }
+
+    toJSON(): any {
+        return this.cards.toJSON();
+    }
+
+    toString(): string {
+        return this.cards.toString();
     }
 }
 

@@ -1,61 +1,32 @@
 import assert from 'assert';
-import { Card, Cards } from './Card';
-import { Combos, Combo } from './Combos';
+import { Card, Hand } from './Card';
+import { Combo } from './Combos';
 
 
 export class Player {
     name: string;
-    hand = new Cards();
-    combos = new Combos();
+    hand = new Hand();
 
-    playCombo(): Combo {
-        assert(this.hasCombo, "No combo available")
-        const combo = this.combos.shift();
-        combo.cards.forEach(c => this.remove(c));
-        return combo;
+    constructor(name: string) {
+        this.name = name;
     }
 
-    hasCombo() {
-        return this.combos.length > 0;
+    playCombo(): Combo {
+        const combo = this.hand.getCombo();
+        combo.cards.forEach(c => this.remove(c));
+        return combo;
     }
 
     handSort(): void {
         this.hand.sort();
     }
 
-    constructor(name: string) {
-        this.name = name;
-    }
-
     add(card: Card) {
         this.hand.pushAndRelate(card);
-        this.findCombos()
     }
 
     remove(card: Card): void {
-        card.horizontals.cards.forEach(h => h.unrelate(card))
-        card.verticals.cards.forEach(v => v.unrelate(card))
         this.hand.remove(card)
-        this.findCombos()
-    }
-
-    findCombos() {
-        this.combos.reset();
-        this.hand.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
-            let newCards: Card[] = []
-            Player.collectHorizontals(card, newCards)
-            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
-                this.combos.add(new Combo(newCards));
-            }
-        });
-
-        this.hand.cards.filter(card => card.verticals.length >= 2).forEach(card => {
-            let newCards: Card[] = []
-            Player.collectVerticals(card, newCards)
-            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
-                this.combos.add(new Combo(newCards));
-            }
-        });
     }
 
     toString(): string {
@@ -67,22 +38,6 @@ export class Player {
             name: this.name,
             hand: this.hand.toJSON()
         }
-    }
-
-    private static collectHorizontals(card: Card, cards: Card[]) {
-        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
-            return;
-        }
-        cards.push(card);
-        card.horizontals.cards.forEach(c => Player.collectHorizontals(c, cards));
-    }
-
-    private static collectVerticals(card: Card, cards: Card[]) {
-        if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
-            return;
-        }
-        cards.push(card);
-        card.verticals.cards.forEach(c => Player.collectVerticals(c, cards));
     }
 }
 
@@ -118,7 +73,6 @@ export class Players {
             player.handSort();
             return player.toJSON();
         });
-        // console.log(ris)
         return ris
     }
 }

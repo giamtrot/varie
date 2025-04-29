@@ -32,7 +32,7 @@ export class Match {
             const combo: Combo = player.playCombo();
 
             console.log(`${player.name} plays ${combo}`);
-            this.desk.addCombo(combo);
+            this.desk.add(combo);
 
             iterationCount++;
             if (iterationCount >= maxIterations) {
