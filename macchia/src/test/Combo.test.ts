@@ -184,13 +184,14 @@ describe('Combo Class', () => {
 
             // Ensure IDs are different (they should be by default)
             expect(cardInstance1.id).not.toBe(cardInstance2.id);
-            expect(cardInstance1.equals(cardInstance2)).toBe(false); // Card.equals checks ID
+            expect(cardInstance1.equals(cardInstance2)).toBe(false); // Different Card instances
+            expect(cardInstance1.same(cardInstance2)).toBe(true); // Different Card instances but same values
 
             const combo1 = new Combo([cardInstance1, cardInstance3, cardInstance4]);
             const combo2 = new Combo([cardInstance2, cardInstance3, cardInstance4]); // Same values/suits, but first card instance differs
 
-            // Because Combo.equals uses Card.equals, and Card.equals checks ID, this should be false
-            expect(combo1.equals(combo2)).toBe(false);
+            // Because Combo.equals uses Card.same, so this should be true
+            expect(combo1.equals(combo2)).toBe(true);
         });
     });
 });
@@ -281,10 +282,10 @@ describe('Combos Class', () => {
             combos.add(comboSet);
             combos.add(comboSetEquivalentInstance); // Logically same, but different Card instances
 
-            // Based on current Card.equals checking ID, these combos are NOT equal
-            expect(comboSet.equals(comboSetEquivalentInstance)).toBe(false);
+            // Based on current Card.same, these combos are equal
+            expect(comboSet.equals(comboSetEquivalentInstance)).toBe(true);
             // Therefore, adding the "equivalent" instance should succeed
-            expect(combos.combos.length).toBe(2);
+            expect(combos.combos.length).toBe(1);
         });
 
 
@@ -331,8 +332,8 @@ describe('Combos Class', () => {
 
         it('should return false if an "equivalent" combo (different card instances) exists (based on current equals)', () => {
             combos.add(comboSet);
-            // Based on current Card.equals checking ID, these combos are NOT equal
-            expect(combos['contains'](comboSetEquivalentInstance)).toBe(false);
+            // Based on current Card.same, these combos are equal
+            expect(combos['contains'](comboSetEquivalentInstance)).toBe(true);
         });
     });
 
