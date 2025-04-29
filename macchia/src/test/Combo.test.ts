@@ -1,6 +1,7 @@
 import { Suit } from '../Card';
 import { Combo, Combos } from '../Combos';
 import { Card } from '../Card';
+import 'colors'; // Import colors for the string assertion
 
 describe('Combo Class', () => {
     it('should create a valid combo with same suit and straight values', () => {
@@ -44,8 +45,6 @@ describe('Combo Class', () => {
         const cards: Card[] = [];
         expect(() => new Combo(cards)).toThrow();
     });
-
-
 
     describe('Combo.checkValid', () => {
         it('should return true for a valid vertical combo (same suit, consecutive values)', () => {
@@ -194,7 +193,85 @@ describe('Combo Class', () => {
             expect(combo1.equals(combo2)).toBe(true);
         });
     });
+
+    describe('Combo Class - toString and toJSON', () => {
+        let comboVertical: Combo;
+        let comboHorizontal: Combo;
+        let cardsVertical: Card[];
+        let cardsHorizontal: Card[];
+
+        beforeEach(() => {
+            // Create cards for a vertical combo (straight flush)
+            // Note: Combo constructor sorts cards, so the order here doesn't strictly matter for the final combo state
+            cardsVertical = [
+                new Card(3, Suit.Spades), // 3S
+                new Card(1, Suit.Spades), // AS
+                new Card(2, Suit.Spades), // 2S
+            ];
+            comboVertical = new Combo(cardsVertical); // Will be sorted to AS, 2S, 3S
+
+            // Create cards for a horizontal combo (set)
+            cardsHorizontal = [
+                new Card(7, Suit.Hearts),   // 7H
+                new Card(7, Suit.Diamonds), // 7D
+                new Card(7, Suit.Clubs),    // 7C
+            ];
+            comboHorizontal = new Combo(cardsHorizontal); // Will be sorted by suit index: 7H, 7D, 7C
+        });
+
+        describe('toString', () => {
+            it('should return a string representation of a vertical combo', () => {
+                // Expected string based on sorted order (AS, 2S, 3S)
+                const expectedString: string = `${"(1S)".black.bold}${"(2S)".black.bold}${"(3S)".black.bold}`;
+                expect(comboVertical.toString()).toBe(expectedString);
+            });
+
+            it('should return a string representation of a horizontal combo', () => {
+                // Expected string based on sorted order (7H, 7D, 7C)
+                const expectedString = `${"(7H)".red.bold}${"(7D)".red.bold}${"(7C)".black.bold}`;
+                expect(comboHorizontal.toString()).toBe(expectedString);
+            });
+
+            it('should return an empty string if the combo somehow had no cards (though constructor prevents this)', () => {
+                // This case is technically unreachable due to constructor validation,
+                // but tests the core logic of the method itself.
+                const emptyCombo = new Combo([new Card(1, Suit.Spades), new Card(2, Suit.Spades), new Card(3, Suit.Spades)]); // Create valid
+                (emptyCombo as any).cards = []; // Force cards to be empty for test
+                expect(emptyCombo.toString()).toBe('');
+            });
+        });
+
+        describe('toJSON', () => {
+            it('should return a JSON array representation of a vertical combo', () => {
+                // Expected JSON based on sorted order (AS, 2S, 3S)
+                const expectedJSON = [
+                    { char: "🂡", color: "Black" }, // AS
+                    { char: "🂢", color: "Black" }, // 2S
+                    { char: "🂣", color: "Black" }, // 3S
+                ];
+                expect(comboVertical.toJSON()).toEqual(expectedJSON);
+            });
+
+            it('should return a JSON array representation of a horizontal combo', () => {
+                // Expected JSON based on sorted order (7H, 7D, 7C)
+                const expectedJSON = [
+                    { char: "🂷", color: "Red" },   // 7H
+                    { char: "🃇", color: "Red" },   // 7D
+                    { char: "🃗", color: "Black" }, // 7C
+                ];
+                expect(comboHorizontal.toJSON()).toEqual(expectedJSON);
+            });
+
+            it('should return an empty array if the combo somehow had no cards (though constructor prevents this)', () => {
+                // Similar to the toString test case for empty cards
+                const emptyCombo = new Combo([new Card(4, Suit.Hearts), new Card(5, Suit.Hearts), new Card(6, Suit.Hearts)]); // Create valid
+                (emptyCombo as any).cards = []; // Force cards to be empty
+                expect(emptyCombo.toJSON()).toEqual([]);
+            });
+        });
+    });
 });
+
 
 // Helper function to create valid combos for testing
 const createCombo = (cards: Card[]): Combo => {
