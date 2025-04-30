@@ -7,8 +7,13 @@ export class Player {
     name: string;
     hand = new Hand();
 
+
     constructor(name: string) {
         this.name = name;
+    }
+
+    get cards(): Card[] {
+        return this.hand.cards.cards;
     }
 
     hasCards(): boolean {

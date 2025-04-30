@@ -8,6 +8,10 @@ export class Desk {
         console.log("Desk created");
     }
 
+    substitute(found: Combos) {
+        this._combos = found.combos
+    }
+
     get combos(): Combo[] {
         return this._combos;
     }

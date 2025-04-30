@@ -1,6 +1,6 @@
 import assert from "assert";
 import { Decks } from "./Decks";
-import { Desk } from "./Desk";
+import { Desk, WorkingDesk } from "./Desk";
 import { Players } from "./Players";
 import { Combo } from "./Combos";
 
@@ -21,12 +21,12 @@ export class Match {
         assert(this.decks.hasNext(), "No more steps are possible")
         const player = this.players.nextPlayer()
 
-        let comboPlayed = false
+        let somethingPlayed = false
         let iterationCount = 0;
         const maxIterations = 10; // Safeguard to prevent infinite loop
 
         while (player.hasCombo()) {
-            comboPlayed = true;
+            somethingPlayed = true;
             const combo: Combo = player.playCombo();
 
             console.log(`${player.name} plays ${combo}`);
@@ -39,12 +39,25 @@ export class Match {
             }
         }
 
+        // try ot match a card from the desk
+        for (const card of player.cards) {
+            const wd = new WorkingDesk(this.desk);
+            wd.add(card);
+            const found = wd.searchNewCombos();
+            if (found) {
+                console.log(`${player.name} plays ${card}`);
+                this.desk.substitute(found);
+                player.remove(card);
+                somethingPlayed = true;
+            }
+        }
+
         if (!player.hasCards()) {
             console.log(`${player.name} has no cards left! They wins!`);
             return true;
         }
 
-        if (!comboPlayed) {
+        if (!somethingPlayed) {
             const card = this.decks.next()
             console.log(`${player.name} gets ${card}`)
             player.add(card)

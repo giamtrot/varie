@@ -29,6 +29,7 @@ describe('Match Class', () => {
             hand: [],
             hasCombo: jest.fn().mockReturnValue(true),
             hasCards: jest.fn().mockReturnValue(true),
+            cards: [],
             playCombo: jest.fn(),
             add: jest.fn(),
         } as unknown as jest.Mocked<Player>;
@@ -37,6 +38,7 @@ describe('Match Class', () => {
             hand: [],
             hasCombo: jest.fn().mockReturnValue(false),
             hasCards: jest.fn().mockReturnValue(true),
+            cards: [],
             playCombo: jest.fn(),
             add: jest.fn(),
         } as unknown as jest.Mocked<Player>;
