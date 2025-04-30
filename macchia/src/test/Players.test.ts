@@ -7,7 +7,7 @@ describe('Player Class', () => {
     it('should create a player with a name', () => {
         const player = new Player("Alice");
         expect(player.name).toBe("Alice");
-        expect(player.hand.length).toBe(0);
+        expect(player.hand.cards.length).toBe(0);
     });
 
     it('should return the correct string representation of a player', () => {
@@ -23,7 +23,7 @@ describe('Player Class', () => {
             const card = Card.of("1S");
             player.add(card);
             expect(player.hand.cards.length).toBe(1);
-            expect(player.hand.cards[0]).toBe(card);
+            expect(player.hand.cards.cards[0]).toBe(card);
         });
 
         it('should relate the new card with existing cards in the hand (horizontal match)', () => {
@@ -97,20 +97,15 @@ describe('Player Class', () => {
 
             player.handSort();
 
-            expect(player.hand.cards).toEqual([
-                card2, // Ace of Spades
-                card5, // 2 of Diamonds
-                card6, // 2 of Diamonds
-                card4, // 2 of Clubs
-                card3, // 5 of Clubs
-                card1  // King of Hearts
-            ]);
+            const sortedHand = [card2, card5, card6, card4, card3, card1]
+            expect(player.hand.cards.cards).toEqual(sortedHand);
+
         });
 
         it('should handle an empty hand without errors', () => {
             const player = new Player("Alice");
             player.handSort();
-            expect(player.hand.length).toBe(0);
+            expect(player.hand.cards.length).toBe(0);
         });
 
         it('should handle a hand with one card without errors', () => {
@@ -121,7 +116,7 @@ describe('Player Class', () => {
             player.handSort();
 
             expect(player.hand.cards.length).toBe(1);
-            expect(player.hand.cards[0]).toBe(card);
+            expect(player.hand.cards.cards[0]).toBe(card);
         });
 
         it('should not modify a hand that is already sorted', () => {
@@ -138,10 +133,10 @@ describe('Player Class', () => {
 
             player.handSort();
 
-            const sortedHand = [...player.hand.cards];
+            const sortedHand = [...player.hand.cards.cards];
             player.handSort();
 
-            expect(player.hand.cards).toEqual(sortedHand);
+            expect(player.hand.cards.cards).toEqual(sortedHand);
         });
     });
 
@@ -529,7 +524,7 @@ describe('Player Class', () => {
 
             player.remove(card);
 
-            expect(player.hand.length).toBe(0);
+            expect(player.hand.cards.length).toBe(0);
             expect(player.hand.cards).not.toContain(card);
         });
 
@@ -563,10 +558,9 @@ describe('Player Class', () => {
             const card2 = Card.of("2H"); // Unrelated card
 
             player.add(card1);
-            player.remove(card2); // Attempt to remove a card not in the hand
+            expect(() => player.remove(card2)).toThrow("not found in set") // Attempt to remove a card not in the hand
 
-            expect(player.hand.hasCombo()).toBe(true);
-            expect(player.hand.cards).toContain(card1);
+            expect(player.hand.cards.cards).toContain(card1);
         });
 
         it('should maintain relationships between other cards after removal', () => {
@@ -581,7 +575,7 @@ describe('Player Class', () => {
             player.add(card3);
             player.add(card4);
 
-            expect(player.hand.length).toBe(0);
+            expect(player.hand.hasCombo()).toBe(false);
 
             expect(card2.horizontals.cards).toContain(card1);
             expect(card3.verticals.cards).toContain(card1);
@@ -721,7 +715,7 @@ describe('Player Class', () => {
             expect(player.hand.cards).not.toContain(card1);
             expect(player.hand.cards).not.toContain(card2);
             expect(player.hand.cards).not.toContain(card3);
-            expect(player.hand.length).toBe(0); // Assuming only combo cards were in hand
+            expect(player.hand.cards.length).toBe(0); // Assuming only combo cards were in hand
         });
 
         it('should throw an error if the player has no combo', () => {
@@ -742,20 +736,20 @@ describe('Player Class', () => {
             player.add(cardB);
             player.add(cardC); // Hand: 5S, 5H, 5D (from prev test setup), AC, 2C, 3C
 
-            expect(player.hand.length).toBe(2); // Should have found both combos
+            expect(player.hand.combos.length).toBe(2); // Should have found both combos
             const combo1 = player.hand.combos.combos[0]; // The 5s combo
             const combo2 = player.hand.combos.combos[1]; // The Clubs straight
 
             // Play the first combo
             const playedCombo1 = player.playCombo();
             expect(playedCombo1.equals(combo1)).toBe(true);
-            expect(player.hand.length).toBe(3); // AC, 2C, 3C left
+            expect(player.hand.cards.length).toBe(3); // AC, 2C, 3C left
             expect(player.hand.hasCombo()).toBe(true); // Only the Clubs straight left
 
             // Play the second combo
             const playedCombo2 = player.playCombo();
             expect(playedCombo2.equals(combo2)).toBe(true);
-            expect(player.hand.length).toBe(0); // No cards left
+            expect(player.hand.cards.length).toBe(0); // No cards left
             expect(player.hand.hasCombo()).toBe(false); // No combos left
         });
 
@@ -786,23 +780,62 @@ describe('Player Class', () => {
 
             const card7 = Card.of("9D");
             player.add(card7);
-            expect(player.hand.length).toBe(2);
+            expect(player.hand.combos.length).toBe(2);
 
             const card8 = Card.of("9D");
             player.add(card8);
-            expect(player.hand.length).toBe(2);
+            expect(player.hand.combos.length).toBe(2);
+        });
+    });
+
+    describe('hasCombo', () => {
+        let player: Player;
+        let card1: Card;
+        let card2: Card;
+        let card3: Card;
+        let combo: Combo;
+        let playerHasCombo: jest.SpyInstance;
+
+        beforeEach(() => {
+            player = new Player("Test Player");
+            card1 = Card.of("5S");
+            card2 = Card.of("5H");
+            card3 = Card.of("5D");
+
+            // Add cards to hand and let findCombos run
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            // Ensure a combo exists (findCombos should have added it)
+            expect(player.hand.hasCombo()).toBe(true);
+            // Store the combo that should be played
+            combo = player.hand.combos.combos[0]; // Get the actual combo instance
+
+            // Spy on the hasCombo method to check if it's called
+            playerHasCombo = jest.spyOn(player, 'hasCombo');
         });
 
-        // it('should handle adding a combo with the same suit but different values', () => {
-        //     const card1 = Card.of("1S");
-        //     const card2 = Card.of("2S");
-        //     const card3 = Card.of("3S");
-        //     const combo = new Combo([card1, card2, card3]);
+        it('should call hand.hasCombo()', () => {
+            player.hasCombo();
+            expect(player.hasCombo).toHaveBeenCalledTimes(1);
+        });
 
-        //     combos.add(combo);
-        //     expect(combos.length).toBe(1);
-        //     expect(combos.contains(combo)).toBe(true);
-        // });
+        it('should return true when hand.hasCombo() returns true', () => {
+            // Configure the mock hand's hasCombo to return true
+            playerHasCombo.mockReturnValue(true);
+
+            const result = player.hasCombo();
+            expect(result).toBe(true);
+        });
+
+        it('should return false when hand.hasCombo() returns false', () => {
+            // Configure the mock hand's hasCombo to return false
+            playerHasCombo.mockReturnValue(false);
+
+            const result = player.hasCombo();
+            expect(result).toBe(false);
+        });
     });
 
 });

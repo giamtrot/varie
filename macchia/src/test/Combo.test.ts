@@ -285,7 +285,6 @@ describe('Combo Class', () => {
     });
 });
 
-
 describe('Combos Class', () => {
     let combos: Combos;
 
@@ -360,7 +359,6 @@ describe('Combos Class', () => {
             // Therefore, adding the "equivalent" instance should succeed
             expect(combos.combos.length).toBe(1);
         });
-
 
         it('should add multiple different combos correctly', () => {
             combos.add(comboStraightFlush);

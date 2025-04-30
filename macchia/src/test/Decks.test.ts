@@ -25,8 +25,8 @@ describe('Decks Class', () => {
         const players = [new Player("Alice"), new Player("Bob")];
         decks.distribute(players, 5);
 
-        expect(players[0].hand.length).toBe(5);
-        expect(players[1].hand.length).toBe(5);
+        expect(players[0].hand.cards.length).toBe(5);
+        expect(players[1].hand.cards.length).toBe(5);
         expect(decks.length()).toBe(52 - 10);
     });
 
@@ -35,7 +35,7 @@ describe('Decks Class', () => {
         const players = [new Player("Alice"), new Player("Bob")];
         decks.distribute(players, 5);
 
-        const allCards = [...players[0].hand.cards, ...players[1].hand.cards];
+        const allCards = [...players[0].hand.cards.cards, ...players[1].hand.cards.cards];
         const uniqueCards = new Set(allCards.map(card => card.code()));
         expect(allCards.length).toBe(uniqueCards.size);
     });

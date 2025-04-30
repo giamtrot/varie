@@ -11,6 +11,10 @@ export class Player {
         this.name = name;
     }
 
+    hasCombo() {
+        return this.hand.hasCombo();
+    }
+
     playCombo(): Combo {
         const combo = this.hand.getCombo();
         combo.cards.forEach(c => this.remove(c));
@@ -18,7 +22,7 @@ export class Player {
     }
 
     handSort(): void {
-        this.hand.sort();
+        this.hand.cards.sort();
     }
 
     add(card: Card) {
