@@ -26,7 +26,7 @@ export class Player {
     }
 
     add(card: Card) {
-        this.hand.pushAndRelate(card);
+        this.hand.push(card);
     }
 
     remove(card: Card): void {

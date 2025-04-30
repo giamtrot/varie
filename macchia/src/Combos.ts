@@ -5,6 +5,11 @@ import { Card } from './Card';
 export class Combo {
     readonly cards: ReadonlyArray<Card>;
 
+    clone(): Combo {
+        const newCombo = new Combo([... this.cards]);
+        return newCombo;
+    }
+
     constructor(cards: Card[]) {
         this.cards = Combo.prepareForCheck(cards);
         assert(Combo.checkValid(this.cards), `Incorrect Horizontal or Vertical Combo ${this.cards}`);
@@ -112,6 +117,12 @@ export class Combo {
 
 export class Combos {
     combos: Combo[] = [];
+
+    clone(): Combos {
+        const newCombos = new Combos();
+        newCombos.combos = this.combos.map(combo => combo.clone());
+        return newCombos;
+    }
 
     add(combo: Combo) {
         if (!this.contains(combo)) {

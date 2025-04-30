@@ -1,5 +1,4 @@
 import { Player, Players } from '../Players';
-import { Suit } from '../Card';
 import { Card } from '../Card';
 import { Combo } from '../Combos';
 
@@ -33,8 +32,8 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
 
-            expect(card1.horizontals.cards).toContain(card2);
-            expect(card2.horizontals.cards).toContain(card1);
+            expect(player.hand.getHorizontals(card1).contains(card2)).toBe(true);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(true);
         });
 
         it('should relate the new card with existing cards in the hand (vertical match)', () => {
@@ -44,8 +43,8 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
 
-            expect(card1.verticals.cards).toContain(card2);
-            expect(card2.verticals.cards).toContain(card1);
+            expect(player.hand.getVerticals(card1).contains(card2)).toBe(true);
+            expect(player.hand.getVerticals(card2).contains(card1)).toBe(true);
         });
 
         it('should not relate the new card if there is no match', () => {
@@ -55,10 +54,10 @@ describe('Player Class', () => {
             player.add(card1);
             player.add(card2);
 
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card1.verticals.cards).not.toContain(card2);
-            expect(card2.horizontals.cards).not.toContain(card1);
-            expect(card2.verticals.cards).not.toContain(card1);
+            expect(player.hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(player.hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(false);
+            expect(player.hand.getVerticals(card2).contains(card1)).toBe(false);
         });
 
         it('should handle adding multiple cards and maintain relationships', () => {
@@ -70,10 +69,10 @@ describe('Player Class', () => {
             player.add(card2);
             player.add(card3);
 
-            expect(card1.horizontals.cards).toContain(card2);
-            expect(card1.verticals.cards).toContain(card3);
-            expect(card2.horizontals.cards).toContain(card1);
-            expect(card3.verticals.cards).toContain(card1);
+            player.hand.getHorizontals(card1).contains(card2);
+            expect(player.hand.getVerticals(card1).contains(card3)).toBe(true);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(true);
+            expect(player.hand.getVerticals(card3).contains(card1)).toBe(true);
         });
 
     });
@@ -537,7 +536,7 @@ describe('Player Class', () => {
 
             player.remove(card1);
 
-            expect(card2.horizontals.cards).not.toContain(card1);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(false);
         });
 
         it('should unrelate the removed card from vertical relationships', () => {
@@ -549,7 +548,7 @@ describe('Player Class', () => {
 
             player.remove(card1);
 
-            expect(card2.verticals.cards).not.toContain(card1);
+            expect(player.hand.getVerticals(card2).contains(card1)).toBe(false);
         });
 
         it('should handle removing a card that is not in the hand without errors', () => {
@@ -577,21 +576,21 @@ describe('Player Class', () => {
 
             expect(player.hand.hasCombo()).toBe(false);
 
-            expect(card2.horizontals.cards).toContain(card1);
-            expect(card3.verticals.cards).toContain(card1);
-            expect(card2.horizontals.cards).toHaveLength(1);
-            expect(card3.verticals.cards).toHaveLength(1);
-            expect(card3.horizontals.cards).toHaveLength(1);
-            expect(card3.horizontals.cards).toContain(card4);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(true);
+            expect(player.hand.getVerticals(card3).contains(card1)).toBe(true);
+            expect(player.hand.getHorizontals(card2).length).toBe(1);
+            expect(player.hand.getVerticals(card3).length).toBe(1);
+            expect(player.hand.getHorizontals(card3).length).toBe(1);
+            player.hand.getHorizontals(card3).contains(card4);
 
             player.remove(card1);
 
-            expect(card2.horizontals.cards).not.toContain(card1);
-            expect(card3.verticals.cards).not.toContain(card1);
-            expect(card2.horizontals.cards).toHaveLength(0);
-            expect(card3.verticals.cards).toHaveLength(0);
-            expect(card3.horizontals.cards).toHaveLength(1);
-            expect(card3.horizontals.cards).toContain(card4);
+            expect(player.hand.getHorizontals(card2).contains(card1)).toBe(false);
+            expect(player.hand.getVerticals(card3).contains(card1)).toBe(false);
+            expect(player.hand.getHorizontals(card2).length).toBe(0);
+            expect(player.hand.getVerticals(card3).length).toBe(0);
+            expect(player.hand.getHorizontals(card3).length).toBe(1);
+            player.hand.getHorizontals(card3).contains(card4);
         });
     });
 

@@ -34,8 +34,8 @@ export class Card {
     id: number;
     value: number;
     suit: Suit;
-    horizontals = new CardSet()
-    verticals = new CardSet()
+    // horizontals = new CardSet()
+    // verticals = new CardSet()
 
     constructor(value: number, suit: Suit) {
         assert(value >= 1 && value <= 13, "Value must be between 1 and 13");
@@ -81,11 +81,6 @@ export class Card {
         return Card.BASE_CODE + this.value + (this.value <= 11 ? -1 : 0) + SuitInfo[this.suit].index * 0x10;
     }
 
-    linkVertical(card: Card) {
-        this.verticals.push(card);
-        card.verticals.push(this);
-    }
-
     isVerticalMatch(card: Card) {
         if (!this.sameSuit(card)) {
             return false;
@@ -115,11 +110,6 @@ export class Card {
         return false;
     }
 
-    linkHorizontal(card: Card) {
-        this.horizontals.push(card);
-        card.horizontals.push(this);
-    }
-
     isHorizontalMatch(card: Card) {
         return this.sameValue(card) && !this.sameSuit(card);
     }
@@ -146,45 +136,11 @@ export class Card {
         return { char: this.cardChar(), color: color };
     }
 
-    toStringExtra(): string {
-        const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals})`;
-        const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals})`;
-        return `${this.toString()}${horizs}${verts}`;
-    }
-
-    relate(card: Card) {
-        if (this.isHorizontalMatch(card)) {
-            this.linkHorizontal(card);
-        }
-
-        if (this.isVerticalMatch(card)) {
-            this.linkVertical(card);
-        }
-    }
-
-    unrelate(card: Card): void {
-        assert(this.horizontals.contains(card) || this.verticals.contains(card), `Card ${card} not linked to ${this}`)
-        if (this.horizontals.contains(card)) {
-            this.unlinkHorizontal(card)
-        }
-        if (this.verticals.contains(card)) {
-            this.unlinkVertical(card)
-        }
-    }
-
-    unlinkHorizontal(card: Card) {
-        assert(this.horizontals.contains(card) && card.horizontals.contains(this),
-            `Card ${card} not horizontally linked to ${this} or viceversa`)
-        this.horizontals.remove(card)
-        card.horizontals.remove(this)
-    }
-
-    unlinkVertical(card: Card) {
-        assert(this.verticals.contains(card) && card.verticals.contains(this),
-            `Card ${card} not vertically linked to ${this} or viceversa`)
-        this.verticals.remove(card)
-        card.verticals.remove(this)
-    }
+    // toStringExtra(): string {
+    //     const horizs = this.horizontals.length == 0 ? "" : `(H->${this.horizontals})`;
+    //     const verts = this.verticals.length == 0 ? "" : `(V->${this.verticals})`;
+    //     return `${this.toString()}${horizs}${verts}`;
+    // }
 
     equals(other: Card): boolean {
         return this.id === other.id;
@@ -197,6 +153,12 @@ export class Card {
 
 export class CardSet {
     cards: Card[] = []
+
+    clone(): CardSet {
+        const newSet = new CardSet();
+        newSet.cards = [...this.cards]; // Shallow copy of the array
+        return newSet;
+    }
 
     push(card: Card) {
         this.cards.push(card);
@@ -233,6 +195,38 @@ export class CardSet {
 export class Hand {
     _cards: CardSet = new CardSet()
     combos = new Combos();
+    horizontals: Map<Card, CardSet> = new Map()
+    verticals: Map<Card, CardSet> = new Map()
+
+    clone(): Hand {
+        const newHand = new Hand();
+        newHand._cards = this._cards.clone()
+        newHand.combos = this.combos.clone();
+        newHand.horizontals = Hand.cloneMap(this.horizontals);
+        newHand.verticals = Hand.cloneMap(this.verticals);
+        return newHand;
+    }
+
+    static cloneMap(map: Map<Card, CardSet>): Map<Card, CardSet> {
+        const deepClonedMap = new Map<Card, CardSet>();
+
+        for (const key of map.keys()) {
+            const value: CardSet = map.get(key)!;
+            deepClonedMap.set(key, value.clone());
+        }
+
+        return deepClonedMap;
+    }
+
+    addAll(combos: Combo[]) {
+        combos.forEach(combo => {
+            combo.cards.forEach(card => {
+                if (!this.cards.contains(card)) {
+                    this.push(card);
+                }
+            });
+        })
+    }
 
     reset() {
         this.combos.reset()
@@ -251,57 +245,112 @@ export class Hand {
         return this._cards;
     }
 
+    getHorizontals(card: Card): CardSet {
+        if (!this.horizontals.has(card)) {
+            this.horizontals.set(card, new CardSet())
+        }
+        return this.horizontals.get(card)!;
+    }
+
+    getVerticals(card: Card): CardSet {
+        if (!this.verticals.has(card)) {
+            this.verticals.set(card, new CardSet())
+        }
+        return this.verticals.get(card)!;
+    }
+
     remove(card: Card) {
         this.cards.remove(card)
-        card.horizontals.cards.forEach(h => h.unrelate(card))
-        card.verticals.cards.forEach(v => v.unrelate(card))
+        this.getHorizontals(card).cards.forEach(h => this.unrelate(h, card))
+        this.getVerticals(card).cards.forEach(v => this.unrelate(v, card))
         this.updateCombo()
+    }
+
+    relate(card1: Card, card2: Card) {
+        if (card1.isHorizontalMatch(card2)) {
+            this.linkHorizontal(card1, card2);
+        }
+
+        if (card1.isVerticalMatch(card2)) {
+            this.linkVertical(card1, card2);
+        }
+    }
+
+    linkVertical(card1: Card, card2: Card) {
+        this.getVerticals(card1).push(card2);
+        this.getVerticals(card2).push(card1);
+    }
+
+    linkHorizontal(card1: Card, card2: Card) {
+        this.getHorizontals(card1).push(card2);
+        this.getHorizontals(card2).push(card1);
+    }
+
+    unrelate(card1: Card, card2: Card): void {
+        assert(this.getHorizontals(card1).contains(card2) || this.getVerticals(card1).contains(card2), `Card ${card2} not linked to ${card1}`)
+        if (this.getHorizontals(card1).contains(card2)) {
+            this.unlinkHorizontal(card1, card2)
+        }
+        if (this.getVerticals(card1).contains(card2)) {
+            this.unlinkVertical(card1, card2)
+        }
+    }
+
+    unlinkHorizontal(card1: Card, card2: Card) {
+        assert(this.getHorizontals(card1).contains(card2) && this.getHorizontals(card2).contains(card1),
+            `Card ${card2} not horizontally linked to ${card1} or viceversa`)
+        this.getHorizontals(card1).remove(card2)
+        this.getHorizontals(card2).remove(card1)
+    }
+
+    unlinkVertical(card1: Card, card2: Card) {
+        assert(this.getVerticals(card1).contains(card2) && this.getVerticals(card2).contains(card1),
+            `Card ${card2} not vertically linked to ${card1} or viceversa`)
+        this.getVerticals(card1).remove(card2)
+        this.getVerticals(card2).remove(card1)
     }
 
     updateCombo() {
         this.reset()
-        this.cards.cards.filter(card => card.horizontals.length >= 2).forEach(card => {
+        this.cards.cards.filter(card => this.getHorizontals(card).length >= 2).forEach(card => {
             let newCards: Card[] = []
-            Hand.collectHorizontals(card, newCards)
+            this.collectHorizontals(card, newCards)
             if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
 
-        this.cards.cards.filter(card => card.verticals.length >= 2).forEach(card => {
+        this.cards.cards.filter(card => this.getVerticals(card).length >= 2).forEach(card => {
             let newCards: Card[] = []
-            Hand.collectVerticals(card, newCards)
+            this.collectVerticals(card, newCards)
             if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
                 this.combos.add(new Combo(newCards));
             }
         });
     }
 
-    private static collectHorizontals(card: Card, cards: Card[]) {
+    collectHorizontals(card: Card, cards: Card[]) {
         if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
             return;
         }
         cards.push(card);
-        card.horizontals.cards.forEach(c => Hand.collectHorizontals(c, cards));
+        this.getHorizontals(card).cards.forEach(c => this.collectHorizontals(c, cards));
     }
 
-    private static collectVerticals(card: Card, cards: Card[]) {
+    collectVerticals(card: Card, cards: Card[]) {
         if (cards.filter(c => c.sameValue(card) && c.sameSuit(card)).length > 0) {
             return;
         }
         cards.push(card);
-        card.verticals.cards.forEach(c => Hand.collectVerticals(c, cards));
+        this.getVerticals(card).cards.forEach(c => this.collectVerticals(c, cards));
     }
 
     push(card: Card) {
-        this.cards.push(card);
-    }
-
-    pushAndRelate(card: Card) {
+        assert(!this.cards.contains(card), `Card ${card} already in hand`)
         this.cards.cards.forEach(c => {
-            c.relate(card);
+            this.relate(c, card);
         });
-        this.push(card)
+        this.cards.push(card);
         this.updateCombo()
     }
 

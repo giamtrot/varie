@@ -1,5 +1,5 @@
-import { Suit, Card, Hand } from '../Card';
-import { Combo } from '../Combos';
+import { Suit, Card, Hand, CardSet } from '../Card';
+import { Combo, Combos } from '../Combos';
 import 'colors';
 
 describe('Card Class', () => {
@@ -81,22 +81,6 @@ describe('Card Class', () => {
             expect(card1.equals(card3)).toBe(false);
         });
 
-        it('should add a horizontal match correctly', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("5H");
-            card1.linkHorizontal(card2);
-            expect(card1.horizontals.cards).toContain(card2);
-            expect(card2.horizontals.cards).toContain(card1);
-        });
-
-        it('should add a vertical match correctly', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("6S");
-            card1.linkVertical(card2);
-            expect(card1.verticals.cards).toContain(card2);
-            expect(card2.verticals.cards).toContain(card1);
-        });
-
         it('should correctly identify a horizontal match', () => {
             const card1 = Card.of("5S");
             const card2 = Card.of("5H");
@@ -144,123 +128,6 @@ describe('Card Class', () => {
             const card1 = Card.of("5S");
             const card2 = Card.of("8S");
             expect(card1.isVerticalMatch(card2)).toBe(false);
-        });
-    });
-
-    describe('Card.relate', () => {
-        it('should link cards horizontally if they have the same value but different suits', () => {
-            const card1 = Card.of("5H");
-            const card2 = Card.of("5S");
-
-            card1.relate(card2);
-
-            expect(card1.horizontals.cards).toContain(card2);
-            expect(card2.horizontals.cards).toContain(card1);
-        });
-
-        it('should link cards vertically if they have the same suit and consecutive values', () => {
-            const card1 = Card.of("5H");
-            const card2 = Card.of("6H");
-
-            card1.relate(card2);
-
-            expect(card1.verticals.cards).toContain(card2);
-            expect(card2.verticals.cards).toContain(card1);
-        });
-
-        it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
-            const card1 = Card.of("1S"); // Ace of Spades
-            const card2 = Card.of("13S"); // King of Spades
-
-            card1.relate(card2);
-
-            expect(card1.verticals.cards).toContain(card2);
-            expect(card2.verticals.cards).toContain(card1);
-        });
-
-        it('should not link cards horizontally if they have the same suit', () => {
-            const card1 = Card.of("5H");
-            const card2 = Card.of("5H");
-
-            card1.relate(card2);
-
-            expect(card1.horizontals).not.toContain(card2);
-            expect(card2.horizontals).not.toContain(card1);
-        });
-
-        it('should not link cards vertically if they have different suits', () => {
-            const card1 = Card.of("5H");
-            const card2 = Card.of("6S");
-
-            card1.relate(card2);
-
-            expect(card1.verticals).not.toContain(card2);
-            expect(card2.verticals).not.toContain(card1);
-        });
-
-        it('should not link cards horizontally or vertically if they do not match any criteria', () => {
-            const card1 = Card.of("5H");
-            const card2 = Card.of("7S");
-
-            card1.relate(card2);
-
-            expect(card1.horizontals).not.toContain(card2);
-            expect(card2.horizontals).not.toContain(card1);
-            expect(card1.verticals).not.toContain(card2);
-            expect(card2.verticals).not.toContain(card1);
-        });
-    });
-
-    describe('Card.toStringExtra', () => {
-        it('should return the correct string representation with no relationships', () => {
-            const card = Card.of("1S"); // Ace of Spades
-            const expectedString = card.toString();
-            expect(card.toStringExtra()).toBe(expectedString);
-        });
-
-        it('should return the correct string representation with horizontal relationships', () => {
-            const card1 = Card.of("1S"); // Ace of Spades
-            const card2 = Card.of("1H"); // Ace of Hearts
-            card1.linkHorizontal(card2);
-
-            const expectedString = `${card1}(H->${card2})`;
-            expect(card1.toStringExtra()).toBe(expectedString);
-        });
-
-        it('should return the correct string representation with vertical relationships', () => {
-            const card1 = Card.of("1S"); // Ace of Spades
-            const card2 = Card.of("2S"); // 2 of Spades
-            card1.linkVertical(card2);
-
-            const expectedString = `${card1}(V->${card2})`;
-            expect(card1.toStringExtra()).toBe(expectedString);
-        });
-
-        it('should return the correct string representation with both horizontal and vertical relationships', () => {
-            const card1 = Card.of("1S"); // Ace of Spades
-            const card2 = Card.of("1H"); // Ace of Hearts (horizontal)
-            const card3 = Card.of("2S"); // 2 of Spades (vertical)
-            card1.linkHorizontal(card2);
-            card1.linkVertical(card3);
-
-            const expectedString = `${card1}(H->${card2})(V->${card3})`;
-            expect(card1.toStringExtra()).toBe(expectedString);
-        });
-
-        it('should handle multiple horizontal and vertical relationships', () => {
-            const card1 = Card.of("1S"); // Ace of Spades
-            const card2 = Card.of("1H"); // Ace of Hearts (horizontal)
-            const card3 = Card.of("1D"); // Ace of Diamonds (horizontal)
-            const card4 = Card.of("2S"); // 2 of Spades (vertical)
-            const card5 = Card.of("13S"); // King of Spades (vertical)
-
-            card1.linkHorizontal(card2);
-            card1.linkHorizontal(card3);
-            card1.linkVertical(card4);
-            card1.linkVertical(card5);
-
-            const expectedString = `${card1}(H->${card2}${card3})(V->${card4}${card5})`;
-            expect(card1.toStringExtra()).toBe(expectedString);
         });
     });
 
@@ -335,87 +202,6 @@ describe('Card Class', () => {
             const cards = [card1, card2, card3];
             cards.sort(Card.cardSorter);
             expect(cards).toEqual([card1, card2, card3]);
-        });
-    });
-
-    describe('Card.unrelate', () => {
-        it('should unlink a horizontal relationship between two cards', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("5H");
-            card1.relate(card2);
-
-            card1.unrelate(card2);
-
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card2.horizontals.cards).not.toContain(card1);
-            expect(card1.verticals.cards).not.toContain(card2);
-            expect(card2.verticals.cards).not.toContain(card1);
-        });
-
-        it('should unlink a vertical relationship between two cards', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("6S");
-            card1.relate(card2);
-
-            card1.unrelate(card2);
-
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card2.horizontals.cards).not.toContain(card1);
-            expect(card1.verticals.cards).not.toContain(card2);
-            expect(card2.verticals.cards).not.toContain(card1);
-        });
-
-        it('should throw an error if the cards are not linked', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("6H");
-
-            expect(() => card1.unrelate(card2)).toThrow(
-                `Card ${card2} not linked to ${card1}`
-            );
-        });
-    });
-
-    describe('Card.unlinkHorizontal', () => {
-        it('should unlink a horizontal relationship between two cards', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("5H");
-            card1.linkHorizontal(card2);
-
-            card1.unlinkHorizontal(card2);
-
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card2.horizontals.cards).not.toContain(card1);
-        });
-
-        it('should throw an error if the cards are not horizontally linked', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("5H");
-
-            expect(() => card1.unlinkHorizontal(card2)).toThrow(
-                `Card ${card2} not horizontally linked to ${card1} or viceversa`
-            );
-        });
-    });
-
-    describe('Card.unlinkVertical', () => {
-        it('should unlink a vertical relationship between two cards', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("6S");
-            card1.linkVertical(card2);
-
-            card1.unlinkVertical(card2);
-
-            expect(card1.verticals.cards).not.toContain(card2);
-            expect(card2.verticals.cards).not.toContain(card1);
-        });
-
-        it('should throw an error if the cards are not vertically linked', () => {
-            const card1 = Card.of("5S");
-            const card2 = Card.of("6H");
-
-            expect(() => card1.unlinkVertical(card2)).toThrow(
-                `Card ${card2} not vertically linked to ${card1} or viceversa`
-            );
         });
     });
 
@@ -497,7 +283,6 @@ describe('Card Class', () => {
         });
     });
 
-
     describe('Card.same', () => {
         let card5S_1: Card;
         let card5S_2: Card;
@@ -540,23 +325,466 @@ describe('Card Class', () => {
             expect(card7H.same(card5S_1)).toBe(false);
         });
     });
-
 });
 
 describe('Hand Class', () => {
-    describe('Hand.pushAndRelate', () => {
+
+    describe('Hand.relate and unrelate', () => {
+
+        it('should unlink a vertical relationship between two cards', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("6S");
+            const hand = new Hand();
+            hand.linkVertical(card1, card2);
+
+            hand.unlinkVertical(card1, card2);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should throw an error if the cards are not vertically linked', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("6H");
+            const hand = new Hand();
+            expect(() => hand.unlinkVertical(card1, card2)).toThrow(
+                `Card ${card2} not vertically linked to ${card1} or viceversa`
+            );
+        });
+
+        it('should add a horizontal match correctly', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const hand = new Hand();
+            hand.linkHorizontal(card1, card2);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(true);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(true);
+        });
+
+        it('should add a vertical match correctly', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("6S");
+            const hand = new Hand();
+            hand.linkVertical(card1, card2);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(true);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(true);
+        });
+
+        it('should unlink a horizontal relationship between two cards', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const hand = new Hand();
+            hand.linkHorizontal(card1, card2);
+
+            hand.unlinkHorizontal(card1, card2);
+
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should throw an error if the cards are not horizontally linked', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const hand = new Hand();
+            expect(() => hand.unlinkHorizontal(card1, card2)).toThrow(
+                `Card ${card2} not horizontally linked to ${card1} or viceversa`
+            );
+        });
+
+        it('should link cards horizontally if they have the same value but different suits', () => {
+            const card1 = Card.of("5H");
+            const card2 = Card.of("5S");
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(true);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(true);
+        });
+
+        it('should link cards vertically if they have the same suit and consecutive values', () => {
+            const card1 = Card.of("5H");
+            const card2 = Card.of("6H");
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            expect(hand.getVerticals(card1).contains(card2)).toBe(true);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(true);
+        });
+
+        it('should link cards vertically if they have the same suit and wrap-around values (Ace and King)', () => {
+            const card1 = Card.of("1S"); // Ace of Spades
+            const card2 = Card.of("13S"); // King of Spades
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            expect(hand.getVerticals(card1).contains(card2)).toBe(true);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(true);
+        });
+
+        it('should not link cards horizontally if they have the same suit', () => {
+            const card1 = Card.of("5H");
+            const card2 = Card.of("5H");
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should not link cards vertically if they have different suits', () => {
+            const card1 = Card.of("5H");
+            const card2 = Card.of("6S");
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should not link cards horizontally or vertically if they do not match any criteria', () => {
+            const card1 = Card.of("5H");
+            const card2 = Card.of("7S");
+
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(false);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should unlink a horizontal relationship between two cards', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("5H");
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            hand.unrelate(card1, card2);
+
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(false);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should unlink a vertical relationship between two cards', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("6S");
+            const hand = new Hand();
+            hand.relate(card1, card2);
+
+            hand.unrelate(card1, card2);
+
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(false);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card2).contains(card1)).toBe(false);
+        });
+
+        it('should throw an error if the cards are not linked', () => {
+            const card1 = Card.of("5S");
+            const card2 = Card.of("6H");
+            const hand = new Hand();
+
+            expect(() => hand.unrelate(card1, card2)).toThrow(
+                `Card ${card2} not linked to ${card1}`
+            );
+        });
+    });
+
+    describe('Hand.clone', () => {
+        let hand: Hand;
+        let card1: Card, card2: Card, card3: Card, card4: Card, card5: Card;
+        let combo1: Combo, combo2: Combo;
+
+        beforeEach(() => {
+            hand = new Hand();
+            card1 = Card.of("5S");
+            card2 = Card.of("5H");
+            card3 = Card.of("5D");
+            card4 = Card.of("6S");
+            card5 = Card.of("7S");
+
+            // Add cards and establish relationships
+            hand.push(card1); // 5S
+            hand.push(card2); // 5H (H with 5S)
+            hand.push(card3); // 5D (H with 5S, 5H)
+            hand.push(card4); // 6S (V with 5S)
+            hand.push(card5); // 7S (V with 6S)
+
+            // Hand should now have combos: [5S, 5H, 5D] and [5S, 6S, 7S]
+            combo1 = hand.combos.combos.find(c => c.equals(Combo.of("5S 5H 5D")))!;
+            combo2 = hand.combos.combos.find(c => c.equals(Combo.of("5S 6S 7S")))!;
+
+            expect(hand.cards.length).toBe(5);
+            expect(hand.combos.length).toBe(2);
+            expect(hand.getHorizontals(card1).length).toBe(2); // 5H, 5D
+            expect(hand.getVerticals(card1).length).toBe(1);   // 6S
+            expect(hand.getVerticals(card5).length).toBe(1);   // 6S
+        });
+
+        describe('cloneMap (static)', () => {
+            let originalMap: Map<Card, CardSet>;
+            let cardSet1: CardSet;
+            let cardSet2: CardSet;
+
+            beforeEach(() => {
+                originalMap = new Map<Card, CardSet>();
+                cardSet1 = new CardSet();
+                cardSet1.push(card2);
+                cardSet1.push(card3);
+
+                cardSet2 = new CardSet();
+                cardSet2.push(card1);
+
+                originalMap.set(card1, cardSet1); // card1 -> [card2, card3]
+                originalMap.set(card4, cardSet2); // card4 -> [card1]
+            });
+
+            it('should return a new Map instance', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                expect(clonedMap).toBeInstanceOf(Map);
+                expect(clonedMap).not.toBe(originalMap);
+            });
+
+            it('should have the same keys (Card instances) as the original map', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                const originalKeys = Array.from(originalMap.keys());
+                const clonedKeys = Array.from(clonedMap.keys());
+
+                expect(clonedKeys).toHaveLength(originalKeys.length);
+                expect(clonedKeys).toContain(card1);
+                expect(clonedKeys).toContain(card4);
+                // Ensure key instances are the same
+                expect(clonedKeys.find(k => k.id === card1.id)).toBe(card1);
+                expect(clonedKeys.find(k => k.id === card4.id)).toBe(card4);
+            });
+
+            it('should have different CardSet instances as values', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                const originalValue1 = originalMap.get(card1);
+                const clonedValue1 = clonedMap.get(card1);
+                const originalValue2 = originalMap.get(card4);
+                const clonedValue2 = clonedMap.get(card4);
+
+                expect(clonedValue1).toBeInstanceOf(CardSet);
+                expect(clonedValue1).not.toBe(originalValue1);
+                expect(clonedValue2).toBeInstanceOf(CardSet);
+                expect(clonedValue2).not.toBe(originalValue2);
+            });
+
+            it('should have CardSet values with the same card instances', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                const clonedValue1 = clonedMap.get(card1);
+                const clonedValue2 = clonedMap.get(card4);
+
+                expect(clonedValue1?.cards).toHaveLength(2);
+                expect(clonedValue1?.contains(card2)).toBe(true);
+                expect(clonedValue1?.contains(card3)).toBe(true);
+                // Ensure card instances within the set are the same
+                expect(clonedValue1?.cards.find(c => c.id === card2.id)).toBe(card2);
+                expect(clonedValue1?.cards.find(c => c.id === card3.id)).toBe(card3);
+
+                expect(clonedValue2?.cards).toHaveLength(1);
+                expect(clonedValue2?.contains(card1)).toBe(true);
+                expect(clonedValue2?.cards.find(c => c.id === card1.id)).toBe(card1);
+            });
+
+            it('should perform a deep clone (modifying original map value does not affect clone)', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                const extraCard = Card.of("10C");
+
+                // Modify original map's CardSet value AFTER cloning
+                originalMap.get(card1)?.push(extraCard);
+
+                expect(originalMap.get(card1)?.length).toBe(3);
+                expect(clonedMap.get(card1)?.length).toBe(2); // Clone should be unaffected
+                expect(clonedMap.get(card1)?.contains(extraCard)).toBe(false);
+            });
+
+            it('should perform a deep clone (modifying cloned map value does not affect original)', () => {
+                const clonedMap = Hand.cloneMap(originalMap);
+                const extraCard = Card.of("10C");
+
+                // Modify cloned map's CardSet value
+                clonedMap.get(card1)?.push(extraCard);
+
+                expect(clonedMap.get(card1)?.length).toBe(3);
+                expect(originalMap.get(card1)?.length).toBe(2); // Original should be unaffected
+                expect(originalMap.get(card1)?.contains(extraCard)).toBe(false);
+            });
+
+            it('should correctly clone an empty map', () => {
+                const emptyMap = new Map<Card, CardSet>();
+                const clonedEmptyMap = Hand.cloneMap(emptyMap);
+
+                expect(clonedEmptyMap).toBeInstanceOf(Map);
+                expect(clonedEmptyMap).not.toBe(emptyMap);
+                expect(clonedEmptyMap.size).toBe(0);
+            });
+        });
+
+
+        describe('Hand.clone', () => {
+            let clonedHand: Hand;
+
+            beforeEach(() => {
+                // Clone the hand set up in the outer beforeEach
+                clonedHand = hand.clone();
+            });
+
+            it('should return a new Hand instance', () => {
+                expect(clonedHand).toBeInstanceOf(Hand);
+                expect(clonedHand).not.toBe(hand);
+            });
+
+            // --- _cards Tests ---
+            it('should have a different _cards (CardSet) instance', () => {
+                expect(clonedHand.cards).toBeInstanceOf(CardSet);
+                expect(clonedHand.cards).not.toBe(hand.cards);
+            });
+
+            it('should have the same card instances in _cards', () => {
+                expect(clonedHand.cards.length).toBe(hand.cards.length);
+                expect(clonedHand.cards.contains(card1)).toBe(true);
+                expect(clonedHand.cards.contains(card2)).toBe(true);
+                expect(clonedHand.cards.contains(card3)).toBe(true);
+                expect(clonedHand.cards.contains(card4)).toBe(true);
+                expect(clonedHand.cards.contains(card5)).toBe(true);
+                // Check instance equality
+                expect(clonedHand.cards.cards.find(c => c.id === card1.id)).toBe(card1);
+            });
+
+            it('should have independent _cards (modifying original does not affect clone)', () => {
+                const extraCard = Card.of("10C");
+                hand.push(extraCard); // Modify original hand AFTER cloning
+
+                expect(hand.cards.length).toBe(6);
+                expect(clonedHand.cards.length).toBe(5); // Clone unaffected
+                expect(clonedHand.cards.contains(extraCard)).toBe(false);
+            });
+
+            it('should have independent _cards (modifying clone does not affect original)', () => {
+                const extraCard = Card.of("10C");
+                clonedHand.push(extraCard); // Modify clone
+
+                expect(clonedHand.cards.length).toBe(6);
+                expect(hand.cards.length).toBe(5); // Original unaffected
+                expect(hand.cards.contains(extraCard)).toBe(false);
+            });
+
+            // --- combos Tests ---
+            it('should have a different combos (Combos) instance', () => {
+                expect(clonedHand.combos).toBeInstanceOf(Combos);
+                expect(clonedHand.combos).not.toBe(hand.combos);
+            });
+
+            it('should have the same number of combos', () => {
+                expect(clonedHand.combos.length).toBe(hand.combos.length);
+                expect(clonedHand.combos.length).toBe(2);
+            });
+
+            it('should contain clones of the original combos', () => {
+                const clonedCombo1 = clonedHand.combos.combos.find(c => c.equals(combo1));
+                const clonedCombo2 = clonedHand.combos.combos.find(c => c.equals(combo2));
+
+                expect(clonedCombo1).toBeDefined();
+                expect(clonedCombo2).toBeDefined();
+                expect(clonedCombo1).not.toBe(combo1); // Different Combo instance
+                expect(clonedCombo2).not.toBe(combo2); // Different Combo instance
+                expect(clonedCombo1?.equals(combo1)).toBe(true); // Logically equal
+                expect(clonedCombo2?.equals(combo2)).toBe(true); // Logically equal
+            });
+
+            it('should have independent combos (modifying original does not affect clone)', () => {
+                const extraCombo = Combo.of("8H 9H 10H");
+                hand.combos.add(extraCombo); // Modify original AFTER cloning
+
+                expect(hand.combos.length).toBe(3);
+                expect(clonedHand.combos.length).toBe(2); // Clone unaffected
+                expect(clonedHand.combos.contains(extraCombo)).toBe(false);
+            });
+
+            it('should have independent combos (modifying clone does not affect original)', () => {
+                const extraCombo = Combo.of("8H 9H 10H");
+                clonedHand.combos.add(extraCombo); // Modify clone
+
+                expect(clonedHand.combos.length).toBe(3);
+                expect(hand.combos.length).toBe(2); // Original unaffected
+                expect(hand.combos.contains(extraCombo)).toBe(false);
+            });
+
+            // --- horizontals/verticals Tests ---
+            it('should have different horizontals/verticals Map instances', () => {
+                expect(clonedHand.horizontals).toBeInstanceOf(Map);
+                expect(clonedHand.horizontals).not.toBe(hand.horizontals);
+                expect(clonedHand.verticals).toBeInstanceOf(Map);
+                expect(clonedHand.verticals).not.toBe(hand.verticals);
+            });
+
+            it('should have cloned relationship maps (check content and deep clone)', () => {
+                // Check horizontals for card1
+                const originalHCard1 = hand.getHorizontals(card1);
+                const clonedHCard1 = clonedHand.getHorizontals(card1);
+                expect(clonedHCard1).not.toBe(originalHCard1);
+                expect(clonedHCard1.length).toBe(originalHCard1.length);
+                expect(clonedHCard1.contains(card2)).toBe(true);
+                expect(clonedHCard1.contains(card3)).toBe(true);
+
+                // Check verticals for card1
+                const originalVCard1 = hand.getVerticals(card1);
+                const clonedVCard1 = clonedHand.getVerticals(card1);
+                expect(clonedVCard1).not.toBe(originalVCard1);
+                expect(clonedVCard1.length).toBe(originalVCard1.length);
+                expect(clonedVCard1.contains(card4)).toBe(true);
+
+                // Test deep clone by modifying original relationship
+                const extraCard = Card.of("5C");
+                hand.linkHorizontal(card1, extraCard); // Modify original AFTER cloning
+
+                expect(hand.getHorizontals(card1).length).toBe(3);
+                expect(clonedHand.getHorizontals(card1).length).toBe(2); // Clone unaffected
+                expect(clonedHand.getHorizontals(card1).contains(extraCard)).toBe(false);
+
+                // Test deep clone by modifying clone relationship
+                const extraCard2 = Card.of("4S");
+                clonedHand.linkVertical(card1, extraCard2); // Modify clone
+
+                expect(clonedHand.getVerticals(card1).length).toBe(2);
+                expect(hand.getVerticals(card1).length).toBe(1); // Original unaffected
+                expect(hand.getVerticals(card1).contains(extraCard2)).toBe(false);
+            });
+
+            it('should correctly clone an empty hand', () => {
+                const emptyHand = new Hand();
+                const clonedEmptyHand = emptyHand.clone();
+
+                expect(clonedEmptyHand).toBeInstanceOf(Hand);
+                expect(clonedEmptyHand).not.toBe(emptyHand);
+                expect(clonedEmptyHand.cards.length).toBe(0);
+                expect(clonedEmptyHand.combos.length).toBe(0);
+                expect(clonedEmptyHand.horizontals.size).toBe(0);
+                expect(clonedEmptyHand.verticals.size).toBe(0);
+            });
+        });
+    });
+
+    describe('Hand.push', () => {
         it('should add a card to the collection and relate it to existing cards', () => {
             const hand = new Hand();
             const card1 = Card.of("5S");
             const card2 = Card.of("5H");
 
             hand.push(card1);
-            hand.pushAndRelate(card2);
+            hand.push(card2);
 
             expect(hand.cards.contains(card1)).toBe(true);
             expect(hand.cards.contains(card2)).toBe(true);
-            expect(card1.horizontals.cards).toContain(card2);
-            expect(card2.horizontals.cards).toContain(card1);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(true);
+            expect(hand.getHorizontals(card2).contains(card1)).toBe(true);
         });
 
         it('should not relate the new card if no matching criteria are met', () => {
@@ -565,12 +793,12 @@ describe('Hand Class', () => {
             const card2 = Card.of("7H");
 
             hand.push(card1);
-            hand.pushAndRelate(card2);
+            hand.push(card2);
 
             expect(hand.cards.contains(card1)).toBe(true);
             expect(hand.cards.contains(card2)).toBe(true);
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card1.verticals.cards).not.toContain(card2);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(false);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
         });
 
         it('should not relate the new card if no relate is asked', () => {
@@ -583,8 +811,8 @@ describe('Hand Class', () => {
 
             expect(hand.cards.contains(card1)).toBe(true);
             expect(hand.cards.contains(card2)).toBe(true);
-            expect(card1.horizontals.cards).not.toContain(card2);
-            expect(card1.verticals.cards).not.toContain(card2);
+            expect(hand.getHorizontals(card1).contains(card2)).toBe(true);
+            expect(hand.getVerticals(card1).contains(card2)).toBe(false);
         });
     });
 
@@ -675,7 +903,7 @@ describe('Hand Class', () => {
         });
     });
 
-    describe('Hand', () => {
+    describe('Hand.base', () => {
         let hand: Hand;
         let card5S: Card, card5H: Card, card5D: Card;
         let card6S: Card, card7S: Card;
@@ -715,7 +943,7 @@ describe('Hand Class', () => {
 
         // Helper to add cards and establish relationships for tests
         const setupHand = (cards: Card[]) => {
-            cards.forEach(card => hand.pushAndRelate(card));
+            cards.forEach(card => hand.push(card));
         };
 
         describe('hasCombo', () => {
@@ -791,17 +1019,17 @@ describe('Hand Class', () => {
             });
 
             it('should call unrelate on horizontally linked cards', () => {
-                jest.spyOn(card5H, 'unrelate')
+                jest.spyOn(hand, 'unrelate')
                 hand.remove(card5S);
                 // Check if 5H.unrelate(5S) was called
-                expect(card5H.unrelate).toHaveBeenCalledWith(card5S);
+                expect(hand.unrelate).toHaveBeenCalledWith(card5H, card5S);
             });
 
             it('should call unrelate on vertically linked cards', () => {
-                jest.spyOn(card6S, 'unrelate')
+                jest.spyOn(hand, 'unrelate')
                 hand.remove(card5S);
                 // Check if 6S.unrelate(5S) was called
-                expect(card6S.unrelate).toHaveBeenCalledWith(card5S);
+                expect(hand.unrelate).toHaveBeenCalledWith(card6S, card5S);
             });
 
             it('should call updateCombo after removing the card', () => {
@@ -912,15 +1140,13 @@ describe('Hand Class', () => {
             });
         });
 
-        describe('collectHorizontals (static)', () => {
+        describe('collectHorizontals', () => {
             it('should collect all horizontally linked cards starting from one', () => {
-                // Manual setup of links for static method test
-                card5S.linkHorizontal(card5H);
-                card5H.linkHorizontal(card5D);
-                // 5S <-> 5H <-> 5D
+                hand.linkHorizontal(card5S, card5H); // 5S <-> 5H
+                hand.linkHorizontal(card5H, card5D); // 5H <-> 5D
 
                 const collected: Card[] = [];
-                (Hand as any).collectHorizontals(card5H, collected);
+                hand.collectHorizontals(card5H, collected);
 
                 expect(collected).toHaveLength(3);
                 expect(collected).toContain(card5S);
@@ -930,7 +1156,7 @@ describe('Hand Class', () => {
 
             it('should collect only the starting card if no horizontal links', () => {
                 const collected: Card[] = [];
-                (Hand as any).collectHorizontals(cardAS, collected); // AS has no links here
+                hand.collectHorizontals(cardAS, collected); // AS has no links here
 
                 expect(collected).toHaveLength(1);
                 expect(collected).toContain(cardAS);
@@ -938,12 +1164,13 @@ describe('Hand Class', () => {
 
             it('should not add duplicate cards', () => {
                 // Setup links: 5S <-> 5H, 5H <-> 5D, 5D <-> 5S (circular)
-                card5S.linkHorizontal(card5H);
-                card5H.linkHorizontal(card5D);
-                card5D.linkHorizontal(card5S); // Create cycle
+                hand.linkHorizontal(card5S, card5H); // 5S <-> 5H
+                hand.linkHorizontal(card5H, card5D); // 5H <-> 5D
+                hand.linkHorizontal(card5D, card5S); // 5S <-> 5H
+                // Create cycle
 
                 const collected: Card[] = [];
-                (Hand as any).collectHorizontals(card5S, collected);
+                hand.collectHorizontals(card5S, collected);
 
                 expect(collected).toHaveLength(3); // Not more due to cycle
                 expect(collected).toContain(card5S);
@@ -957,11 +1184,11 @@ describe('Hand Class', () => {
         describe('collectVerticals (static)', () => {
             it('should collect all vertically linked cards starting from one', () => {
                 // Manual setup: 5S <-> 6S <-> 7S
-                card5S.linkVertical(card6S);
-                card6S.linkVertical(card7S);
+                hand.linkVertical(card5S, card6S); // 5S <-> 6S
+                hand.linkVertical(card6S, card7S); // 6S <-> 7S
 
                 const collected: Card[] = [];
-                (Hand as any).collectVerticals(card6S, collected);
+                hand.collectVerticals(card6S, collected);
 
                 expect(collected).toHaveLength(3);
                 expect(collected).toContain(card5S);
@@ -971,7 +1198,7 @@ describe('Hand Class', () => {
 
             it('should collect only the starting card if no vertical links', () => {
                 const collected: Card[] = [];
-                (Hand as any).collectVerticals(card5H, collected); // 5H has no links here
+                hand.collectVerticals(card5H, collected); // 5H has no links here
 
                 expect(collected).toHaveLength(1);
                 expect(collected).toContain(card5H);
@@ -981,11 +1208,11 @@ describe('Hand Class', () => {
                 // Manual setup: KS <-> AS <-> 2S
                 const cardKS = Card.of("13S");
                 const card2S = Card.of("2S");
-                cardAS.linkVertical(cardKS);
-                cardAS.linkVertical(card2S);
+                hand.linkVertical(cardAS, cardKS); // AS <-> KS
+                hand.linkVertical(cardAS, card2S); // AS <-> 2S
 
                 const collected: Card[] = [];
-                (Hand as any).collectVerticals(cardAS, collected);
+                hand.collectVerticals(cardAS, collected);
 
                 expect(collected).toHaveLength(3);
                 expect(collected).toContain(cardAS);
@@ -997,12 +1224,12 @@ describe('Hand Class', () => {
                 // Setup links: AS <-> 2S, 2S <-> 3S, 3S <-> AS (hypothetical cycle)
                 const card2S = Card.of("2S");
                 const card3S = Card.of("3S");
-                cardAS.linkVertical(card2S);
-                card2S.linkVertical(card3S);
-                card3S.linkVertical(cardAS); // Create cycle
+                hand.linkVertical(cardAS, card2S); // AS <-> 2S
+                hand.linkVertical(card2S, card3S); // 2S <-> 3S 
+                hand.linkVertical(card3S, cardAS); // 3S <-> AS (hypothetical cycle)
 
                 const collected: Card[] = [];
-                (Hand as any).collectVerticals(card2S, collected);
+                hand.collectVerticals(card2S, collected);
 
                 expect(collected).toHaveLength(3); // Not more due to cycle
                 expect(collected).toContain(cardAS);
@@ -1013,4 +1240,152 @@ describe('Hand Class', () => {
             });
         });
     });
+
+
+    describe('Hand.addAll', () => {
+        let hand: Hand;
+        let card1: Card, card2: Card, card3: Card, card4: Card, card5: Card, card6: Card;
+        let combo1: Combo, combo2: Combo, comboOverlap: Combo;
+        let pushSpy: jest.SpyInstance;
+        let containsSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            hand = new Hand();
+
+            // Create cards
+            card1 = Card.of("1S");
+            card2 = Card.of("2S");
+            card3 = Card.of("3S"); // Forms combo1 with 1S, 2S
+            card4 = Card.of("1H"); // Forms comboOverlap with 1S
+            card5 = Card.of("1D"); // Forms comboOverlap with 1S, 1H
+            card6 = Card.of("1C");
+
+            // Create combos
+            combo1 = new Combo([card1, card2, card3]); // 1S, 2S, 3S
+            combo2 = new Combo([card4, card5, card6]); // 1H, 1D, 1C
+
+            // Combo with overlapping card (1S)
+            comboOverlap = new Combo([card1, card4, card5]); // 1S, 1H, 1D
+
+            // Spy on methods called by addAll
+            // We spy on the actual instance methods
+            pushSpy = jest.spyOn(hand, 'push').mockImplementation(); // Mock implementation to prevent side effects like updateCombo
+            containsSpy = jest.spyOn(hand.cards, 'contains'); // Spy on the real contains
+        });
+
+        afterEach(() => {
+            // Restore spies
+            pushSpy.mockRestore();
+            containsSpy.mockRestore();
+        });
+
+
+        it('should call push for each unique card in a single combo', () => {
+            const combosToAdd = [combo1];
+            hand.addAll(combosToAdd);
+
+            expect(containsSpy).toHaveBeenCalledTimes(3); // Checked 3 cards
+            expect(pushSpy).toHaveBeenCalledTimes(3);
+            expect(pushSpy).toHaveBeenCalledWith(card1);
+            expect(pushSpy).toHaveBeenCalledWith(card2);
+            expect(pushSpy).toHaveBeenCalledWith(card3);
+        });
+
+        it('should call push for each unique card across multiple disjoint combos', () => {
+            const combosToAdd = [combo1, combo2]; // [1S, 2S, 3S], [1H, 1D, 1C]
+            hand.addAll(combosToAdd);
+
+            // contains called for each card = 3 + 3 = 6
+            expect(containsSpy).toHaveBeenCalledTimes(6);
+            // push called for each unique card = 3 + 3 = 6
+            expect(pushSpy).toHaveBeenCalledTimes(6);
+            expect(pushSpy).toHaveBeenCalledWith(card1);
+            expect(pushSpy).toHaveBeenCalledWith(card2);
+            expect(pushSpy).toHaveBeenCalledWith(card3);
+            expect(pushSpy).toHaveBeenCalledWith(card4);
+            expect(pushSpy).toHaveBeenCalledWith(card5);
+            expect(pushSpy).toHaveBeenCalledWith(card6); // card6
+        });
+
+        it('should only call push once for cards present in multiple combos', () => {
+
+            // CHeck if a card has been added already
+            // We need to mock the contains method to simulate the behavior of the CardSet
+            // Explanation:
+            //      pushSpy.mock.calls is an array of arrays, where each sub-array represents the arguments passed in a call.
+            //      So call[0] is the first argument of one invocation of the mocked function.
+            containsSpy = jest.spyOn(hand.cards, 'contains').mockImplementation((card: Card) => {
+                return (pushSpy.mock.calls.some(call => call[0] === card))
+            });
+
+
+            const combosToAdd = [combo1, comboOverlap]; // [1S, 2S, 3S], [1S, 1H, 1D]
+            // Unique cards: 1S, 2S, 3S, 1H, 1D
+            hand.addAll(combosToAdd);
+
+            // contains called for each card = 3 + 3 = 6
+            expect(containsSpy).toHaveBeenCalledTimes(6);
+            // push called only for unique cards = 5
+            expect(pushSpy).toHaveBeenCalledTimes(5);
+            expect(pushSpy).toHaveBeenCalledWith(card1); // Called for 1S
+            expect(pushSpy).toHaveBeenCalledWith(card2); // Called for 2S
+            expect(pushSpy).toHaveBeenCalledWith(card3); // Called for 3S
+            expect(pushSpy).toHaveBeenCalledWith(card4); // Called for 1H
+            expect(pushSpy).toHaveBeenCalledWith(card5); // Called for 1D
+
+            // Verify push was called only once for the overlapping card (card1)
+            const pushCalls = pushSpy.mock.calls;
+            let card1PushCount = 0;
+            pushCalls.forEach(call => {
+                if (call[0] === card1) {
+                    card1PushCount++;
+                }
+            });
+            expect(card1PushCount).toBe(1);
+        });
+
+        it('should not call push if all cards from combos are already in the hand', () => {
+            // Pre-populate hand
+            hand.cards.push(card1);
+            hand.cards.push(card2);
+            hand.cards.push(card3);
+
+            // Reset spies after pre-population
+            pushSpy.mockClear();
+            containsSpy.mockClear();
+
+            const combosToAdd = [combo1]; // Contains cards already in hand
+            hand.addAll(combosToAdd);
+
+            expect(containsSpy).toHaveBeenCalledTimes(3); // contains is still called
+            expect(pushSpy).not.toHaveBeenCalled(); // push should not be called
+        });
+
+        it('should call push only for cards not already in the hand', () => {
+            // Pre-populate hand with one card from combo1
+            hand.cards.push(card1);
+
+            // Reset spies
+            pushSpy.mockClear();
+            containsSpy.mockClear();
+
+            const combosToAdd = [combo1]; // [1S, 2S, 3S]
+            hand.addAll(combosToAdd);
+
+            expect(containsSpy).toHaveBeenCalledTimes(3);
+            expect(pushSpy).toHaveBeenCalledTimes(2); // Only for card2 and card3
+            expect(pushSpy).not.toHaveBeenCalledWith(card1);
+            expect(pushSpy).toHaveBeenCalledWith(card2);
+            expect(pushSpy).toHaveBeenCalledWith(card3);
+        });
+
+        it('should not call push if the input combo array is empty', () => {
+            const combosToAdd: Combo[] = [];
+            hand.addAll(combosToAdd);
+
+            expect(containsSpy).not.toHaveBeenCalled();
+            expect(pushSpy).not.toHaveBeenCalled();
+        });
+    });
+
 });

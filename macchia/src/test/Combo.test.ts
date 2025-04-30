@@ -283,6 +283,61 @@ describe('Combo Class', () => {
             });
         });
     });
+
+    describe('Combo.clone', () => {
+        let originalCombo: Combo;
+        let card1: Card;
+        let card2: Card;
+        let card3: Card;
+
+        beforeEach(() => {
+            // Create some cards and a combo for testing
+            card1 = Card.of("5H");
+            card2 = Card.of("5D");
+            card3 = Card.of("5C");
+            originalCombo = new Combo([card1, card2, card3]);
+        });
+
+        it('should return a new Combo instance', () => {
+            const clonedCombo = originalCombo.clone();
+            expect(clonedCombo).toBeInstanceOf(Combo);
+        });
+
+        it('should return a different instance from the original combo', () => {
+            const clonedCombo = originalCombo.clone();
+            expect(clonedCombo).not.toBe(originalCombo);
+        });
+
+        it('should have a different cards array instance than the original', () => {
+            const clonedCombo = originalCombo.clone();
+            // Access the readonly array for comparison
+            expect(clonedCombo.cards).not.toBe(originalCombo.cards);
+        });
+
+        it('should contain the same card instances in the cards array', () => {
+            const clonedCombo = originalCombo.clone();
+            // Check if the card instances themselves are the same
+            expect(clonedCombo.cards).toHaveLength(originalCombo.cards.length);
+            expect(clonedCombo.cards[0]).toBe(originalCombo.cards[0]); // Should be 5H instance
+            expect(clonedCombo.cards[1]).toBe(originalCombo.cards[1]); // Should be 5D instance
+            expect(clonedCombo.cards[2]).toBe(originalCombo.cards[2]); // Should be 5C instance
+        });
+
+        it('should be considered equal to the original combo using the equals method', () => {
+            const clonedCombo = originalCombo.clone();
+            expect(clonedCombo.equals(originalCombo)).toBe(true);
+            expect(originalCombo.equals(clonedCombo)).toBe(true); // Check commutativity
+        });
+
+        it('should create a valid combo that passes checkValid', () => {
+            // This implicitly tests that the constructor call within clone works
+            const clonedCombo = originalCombo.clone();
+            // No assertion needed here, as the clone() call itself would throw if invalid
+            // But we can explicitly check for clarity
+            expect(() => Combo.checkValid(clonedCombo.cards)).not.toThrow();
+            expect(Combo.checkValid(clonedCombo.cards)).toBe(true);
+        });
+    });
 });
 
 describe('Combos Class', () => {
@@ -316,6 +371,90 @@ describe('Combos Class', () => {
         combos = new Combos();
         // Reset card counter if necessary, depending on how Card IDs affect Combo.equals
         // Card.count = 0; // If Card ID matters and needs resetting between tests
+    });
+
+    describe('Combos.clone', () => {
+        let originalCombos: Combos;
+        let combo1: Combo;
+        let combo2: Combo;
+
+        beforeEach(() => {
+            // Create some real combos for testing
+            combo1 = Combo.of("1S 2S 3S");
+            combo2 = Combo.of("5H 5D 5C");
+
+            originalCombos = new Combos();
+            originalCombos.add(combo1);
+            originalCombos.add(combo2);
+        });
+
+        it('should return a new Combos instance', () => {
+            const clonedCombos = originalCombos.clone();
+            expect(clonedCombos).toBeInstanceOf(Combos);
+        });
+
+        it('should return a different instance from the original Combos', () => {
+            const clonedCombos = originalCombos.clone();
+            expect(clonedCombos).not.toBe(originalCombos);
+        });
+
+        it('should have a different internal combos array instance', () => {
+            const clonedCombos = originalCombos.clone();
+            expect(clonedCombos.combos).not.toBe(originalCombos.combos);
+        });
+
+        it('should have the same number of combos as the original', () => {
+            const clonedCombos = originalCombos.clone();
+            expect(clonedCombos.length).toBe(originalCombos.length);
+            expect(clonedCombos.length).toBe(2);
+        });
+
+        it('should contain clones of the original combos, not the same instances', () => {
+            const clonedCombos = originalCombos.clone();
+
+            // Check that the combo instances are different
+            expect(clonedCombos.combos[0]).not.toBe(originalCombos.combos[0]);
+            expect(clonedCombos.combos[1]).not.toBe(originalCombos.combos[1]);
+
+            // Check that the combos are logically equal using the Combo.equals method
+            expect(clonedCombos.combos[0].equals(originalCombos.combos[0])).toBe(true);
+            expect(clonedCombos.combos[1].equals(originalCombos.combos[1])).toBe(true);
+        });
+
+        it('should create a deep clone (modifying original combos array does not affect clone)', () => {
+            const clonedCombos = originalCombos.clone();
+            const combo3 = Combo.of("7H 8H 9H");
+
+            // Modify the original after cloning
+            originalCombos.add(combo3);
+
+            expect(originalCombos.length).toBe(3);
+            expect(clonedCombos.length).toBe(2); // Clone should remain unchanged
+            expect(clonedCombos.contains(combo3)).toBe(false);
+        });
+
+        it('should create a deep clone (modifying clone combos array does not affect original)', () => {
+            const clonedCombos = originalCombos.clone();
+            const combo3 = Combo.of("7H 8H 9H");
+
+            // Modify the clone after cloning
+            clonedCombos.add(combo3);
+
+            expect(clonedCombos.length).toBe(3);
+            expect(originalCombos.length).toBe(2); // Original should remain unchanged
+            expect(originalCombos.contains(combo3)).toBe(false);
+        });
+
+        it('should correctly clone an empty Combos instance', () => {
+            const emptyCombos = new Combos();
+            const clonedEmpty = emptyCombos.clone();
+
+            expect(clonedEmpty).toBeInstanceOf(Combos);
+            expect(clonedEmpty).not.toBe(emptyCombos);
+            expect(clonedEmpty.length).toBe(0);
+            expect(clonedEmpty.combos).toEqual([]);
+            expect(clonedEmpty.combos).not.toBe(emptyCombos.combos);
+        });
     });
 
     it('should initialize with an empty list of combos', () => {
