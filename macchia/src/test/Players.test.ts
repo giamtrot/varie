@@ -1,5 +1,5 @@
 import { Player, Players } from '../Players';
-import { Card } from '../Card';
+import { Card, CardSet, Hand } from '../Card';
 import { Combo } from '../Combos';
 
 describe('Player Class', () => {
@@ -834,6 +834,58 @@ describe('Player Class', () => {
 
             const result = player.hasCombo();
             expect(result).toBe(false);
+        });
+    });
+
+    describe('Player.hasCards', () => {
+        let player: Player;
+        let mockHandInstance: jest.Mocked<Hand>;
+        let mockCardSet: jest.Mocked<CardSet>;
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+            // Create a new player instance. The Hand constructor mock provides a mocked hand.
+            player = new Player("Test Player");
+            // Get a reference to the mocked hand instance
+            mockHandInstance = (player as any).hand as jest.Mocked<Hand>;
+            // Get a reference to the mocked CardSet within the hand
+            mockCardSet = mockHandInstance.cards as jest.Mocked<CardSet>;
+        });
+
+        // --- Keep other Player tests ---
+
+        it('should return true when hand.cards.length is greater than 0', () => {
+            // Arrange: Configure the mock CardSet's length
+            Object.defineProperty(mockCardSet, 'length', { get: () => 5, configurable: true });
+
+            // Act
+            const result = player.hasCards();
+
+            // Assert
+            expect(result).toBe(true);
+        });
+
+        it('should return false when hand.cards.length is 0', () => {
+            // Arrange: Configure the mock CardSet's length (default is 0, but set explicitly for clarity)
+            Object.defineProperty(mockCardSet, 'length', { get: () => 0, configurable: true });
+
+            // Act
+            const result = player.hasCards();
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should access the length property of hand.cards', () => {
+            // Arrange: Spy on the getter for the length property
+            const lengthGetterSpy = jest.spyOn(mockCardSet, 'length', 'get');
+
+            // Act
+            player.hasCards();
+
+            // Assert
+            expect(lengthGetterSpy).toHaveBeenCalledTimes(1);
+            lengthGetterSpy.mockRestore(); // Clean up the spy
         });
     });
 

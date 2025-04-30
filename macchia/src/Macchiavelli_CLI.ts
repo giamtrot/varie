@@ -51,7 +51,11 @@ export class Macchiavelli_CLI {
             }
 
             if (loop_status == LOOP_STATUS.RUN) {
-                this.match.step()
+                const gameOver = this.match.step()
+                if (gameOver) {
+                    this.write("Game over!")
+                    return
+                }
                 continue
             }
 
@@ -64,7 +68,11 @@ export class Macchiavelli_CLI {
                     case "q":
                         return
                     case "s":
-                        this.match.step()
+                        const gameOver = this.match.step()
+                        if (gameOver) {
+                            this.write("Game over!")
+                            return
+                        }
                         break
                     case "r":
                         loop_status = LOOP_STATUS.RUN

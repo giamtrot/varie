@@ -11,6 +11,10 @@ export class Player {
         this.name = name;
     }
 
+    hasCards(): boolean {
+        return this.hand.cards.length > 0
+    }
+
     hasCombo() {
         return this.hand.hasCombo();
     }

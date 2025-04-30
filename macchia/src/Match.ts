@@ -17,9 +17,7 @@ export class Match {
         this.desk = new Desk();
     }
 
-
-
-    step() {
+    step(): boolean {
         assert(this.decks.hasNext(), "No more steps are possible")
         const player = this.players.nextPlayer()
 
@@ -41,11 +39,18 @@ export class Match {
             }
         }
 
+        if (!player.hasCards()) {
+            console.log(`${player.name} has no cards left! They wins!`);
+            return true;
+        }
+
         if (!comboPlayed) {
             const card = this.decks.next()
             console.log(`${player.name} gets ${card}`)
             player.add(card)
         }
+
+        return false;
     }
 
     checkCards(): boolean {

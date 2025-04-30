@@ -28,6 +28,7 @@ describe('Match Class', () => {
             name: "Alice",
             hand: [],
             hasCombo: jest.fn().mockReturnValue(true),
+            hasCards: jest.fn().mockReturnValue(true),
             playCombo: jest.fn(),
             add: jest.fn(),
         } as unknown as jest.Mocked<Player>;
@@ -35,6 +36,7 @@ describe('Match Class', () => {
             name: "Bob",
             hand: [],
             hasCombo: jest.fn().mockReturnValue(false),
+            hasCards: jest.fn().mockReturnValue(true),
             playCombo: jest.fn(),
             add: jest.fn(),
         } as unknown as jest.Mocked<Player>;
@@ -168,6 +170,17 @@ describe('Match Class', () => {
             expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`Potential infinite loop detected for player ${player1.name}`));
 
             jest.restoreAllMocks();
+        });
+
+        it('should make the game end if a player has no cards', () => {
+            const match = new Match(playersInstance, 2);
+            jest.spyOn(player1, 'hasCards').mockReturnValueOnce(true).mockReturnValueOnce(false); // Ensure player1 has no combo
+
+            expect(match.step()).toBe(false);
+            expect(match.step()).toBe(false);
+            expect(match.step()).toBe(true); // Game over
+            expect(player1.hasCards).toHaveBeenCalledTimes(2); // Called twice: once before drawing a card and once after
+            expect(player2.hasCards).toHaveBeenCalledTimes(1); // Called once
         });
     });
 
