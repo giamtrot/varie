@@ -71,7 +71,7 @@ app.post("/input", (req: Request, res: Response) => {
     const answer = userInput.trim().toLowerCase();
     switch (answer) {
         case "step":
-            match.step()
+            const gameOver = match.step()
             sendStatus(res, match, match.checkCards() ? "step" : "ended");
             break;
         case "run":
@@ -102,5 +102,5 @@ function initMatch(): Match {
     }
     const players = new Players(ps)
 
-    return new Match(players, 2)
+    return new Match(players, { decksNumber: 2 })
 }

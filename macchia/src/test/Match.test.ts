@@ -1,9 +1,9 @@
-import { Match } from '../Match';
+import { Match, STATUS_TYPE } from '../Match';
 import { Player, Players } from '../Players';
 import { Decks } from '../Decks';
-import { Desk } from '../Desk';
-import { Card, Hand, Suit } from '../Card';
-import { Combo } from '../Combos';
+import { Desk, WorkingDesk } from '../Desk';
+import { Card } from '../Card';
+import { Combo, Combos } from '../Combos';
 
 // Mock dependencies
 jest.mock('../Players');
@@ -29,19 +29,31 @@ describe('Match Class', () => {
             hand: [],
             hasCombo: jest.fn().mockReturnValue(true),
             hasCards: jest.fn().mockReturnValue(true),
-            cards: [],
             playCombo: jest.fn(),
             add: jest.fn(),
+            remove: jest.fn(),
         } as unknown as jest.Mocked<Player>;
+
+        Object.defineProperty(player1, 'cards', {
+            configurable: true,
+            get: jest.fn(() => []),
+        });
+
         player2 = {
             name: "Bob",
             hand: [],
             hasCombo: jest.fn().mockReturnValue(false),
             hasCards: jest.fn().mockReturnValue(true),
-            cards: [],
             playCombo: jest.fn(),
             add: jest.fn(),
+            remove: jest.fn(),
         } as unknown as jest.Mocked<Player>;
+
+        Object.defineProperty(player2, 'cards', {
+            configurable: true,
+            get: jest.fn(() => []),
+        });
+
 
         mockPlayersArray = [player1, player2];
 
@@ -71,14 +83,43 @@ describe('Match Class', () => {
             toString: jest.fn().mockReturnValue(""),
             toJSON: jest.fn().mockReturnValue([]),
             add: jest.fn(),
+            replace: jest.fn(),
         } as unknown as jest.Mocked<Desk>;
         (Desk as jest.MockedClass<typeof Desk>).mockImplementation(() => deskInstance);
     });
 
-    it('should initialize players, decks, and desk', () => {
-        const match = new Match(playersInstance, 2);
+    describe('Match.constructor', () => {
+        it('should initialize with provided decks', () => {
+            const mockDecks = new Decks({ decksNumber: 1 });
+            jest.clearAllMocks(); // Clear previous calls to Decks constructor
 
-        expect(Decks).toHaveBeenCalledWith(2);
+            const match = new Match(playersInstance, { decks: mockDecks });
+
+            expect(match['players']).toBe(playersInstance);
+            expect(match['decks']).toBe(mockDecks);
+            expect(Decks).not.toHaveBeenCalled()
+        });
+
+        it('should initialize with a new shuffled deck if decksNumber is provided', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+
+            expect(match['players']).toBe(playersInstance);
+            expect(Decks).toHaveBeenCalledTimes(1);
+            expect(decksInstance.shuffle).toHaveBeenCalledTimes(1);
+            expect(decksInstance.distribute).toHaveBeenCalledWith(playersInstance.players, 13);
+        });
+
+        it('should throw an error if neither decks nor decksNumber is provided', () => {
+            expect(() => new Match(playersInstance, {})).toThrow(
+                "Decks must be provided or number of decks must be greater than 0"
+            );
+        });
+    });
+
+    it('should initialize players, decks, and desk', () => {
+        const match = new Match(playersInstance, { decksNumber: 2 });
+
+        expect(Decks).toHaveBeenCalledWith({ decksNumber: 2 });
         expect(Decks).toHaveBeenCalledTimes(1);
 
         expect(decksInstance.shuffle).toHaveBeenCalledTimes(1);
@@ -91,16 +132,16 @@ describe('Match Class', () => {
         expect(match['desk']).toBe(deskInstance);
     });
 
-    describe('step', () => {
+    describe('Match.step', () => {
         it('should get the next player', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(false); // Player1 has not a combo
             match.step();
             expect(playersInstance.nextPlayer).toHaveBeenCalledTimes(1);
         });
 
         it('should make the player draw a card if they have no combo', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             const drawnCard = Card.of("5C");
             jest.spyOn(decksInstance, 'next').mockReturnValueOnce(drawnCard);
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(false); // Ensure player1 has no combo
@@ -115,7 +156,7 @@ describe('Match Class', () => {
         });
 
         it('should make the player play a combo if they have one', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             const mockCombo = Combo.of("1S 2S 3S");
             (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true).mockReturnValueOnce(false); // Player1 has a combo
@@ -131,14 +172,14 @@ describe('Match Class', () => {
         });
 
         it('should throw an error if step is called when no cards are left in the deck', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(decksInstance, 'hasNext').mockReturnValue(false); // No cards left
 
             expect(() => match.step()).toThrow("No more steps are possible");
         });
 
         it('should alternate players correctly', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             const card1 = Card.of("1D");
             const card2 = Card.of("2D");
             jest.spyOn(decksInstance, 'next').mockReturnValueOnce(card1).mockReturnValueOnce(card2);
@@ -157,7 +198,7 @@ describe('Match Class', () => {
 
         // Test for the infinite loop safeguard
         it('should break the loop if a player keeps having combos (safeguard)', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             const mockCombo = new Combo([Card.of("1S"), Card.of("2S"), Card.of("3S")]);
             (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
             const hasComboMock = jest.spyOn(player1, 'hasCombo').mockReturnValue(true); // Player1 has a combo
@@ -175,36 +216,36 @@ describe('Match Class', () => {
         });
 
         it('should make the game end if a player has no cards', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(player1, 'hasCards').mockReturnValueOnce(true).mockReturnValueOnce(false); // Ensure player1 has no combo
 
-            expect(match.step()).toBe(false);
-            expect(match.step()).toBe(false);
-            expect(match.step()).toBe(true); // Game over
+            expect(match.step().type).toBe(STATUS_TYPE.RUNNING);
+            expect(match.step().type).toBe(STATUS_TYPE.RUNNING);
+            expect(match.step().type).toBe(STATUS_TYPE.GAME_OVER); // Player1 has no cards left
             expect(player1.hasCards).toHaveBeenCalledTimes(2); // Called twice: once before drawing a card and once after
             expect(player2.hasCards).toHaveBeenCalledTimes(1); // Called once
         });
     });
 
-    describe('checkCards', () => {
+    describe('Match.checkCards', () => {
         it('should return true if the deck has cards', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(decksInstance, 'hasNext').mockReturnValue(true);
             expect(match.checkCards()).toBe(true);
             expect(decksInstance.hasNext).toHaveBeenCalledTimes(1);
         });
 
         it('should return false if the deck has no cards', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(decksInstance, 'hasNext').mockReturnValue(false);
             expect(match.checkCards()).toBe(false);
             expect(decksInstance.hasNext).toHaveBeenCalledTimes(1);
         });
     });
 
-    describe('toString', () => {
+    describe('Match.toString', () => {
         it('should return a string representation of the match state', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(decksInstance, 'toString').mockReturnValue("🂾");
             const expectedString = `Match State:
     Players:\nAlice: \nBob: 
@@ -217,9 +258,9 @@ describe('Match Class', () => {
         });
     });
 
-    describe('toJSON', () => {
+    describe('Match.toJSON', () => {
         it('should return a JSON representation of the match state', () => {
-            const match = new Match(playersInstance, 2);
+            const match = new Match(playersInstance, { decksNumber: 2 });
             jest.spyOn(decksInstance, 'toJSON').mockReturnValue([{ char: "🂾", color: "Black" }]);
             const expectedJSON = {
                 match: {
@@ -232,6 +273,98 @@ describe('Match Class', () => {
             expect(playersInstance.toJSON).toHaveBeenCalledTimes(1);
             expect(decksInstance.toJSON).toHaveBeenCalledTimes(1);
             expect(deskInstance.toJSON).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('Match.tryToPlayCards', () => {
+        it('should play a card if it forms a new combo on the desk', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card = Card.of("5H");
+            const mockCombo = Combo.of("5H 6H 7H");
+            const mockCombos = new Combos();
+            mockCombos.add(mockCombo);
+            Object.defineProperty(player1, 'cards', {
+                configurable: true,
+                get: jest.fn(() => [card]),
+            });
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(mockCombos);
+            jest.spyOn(deskInstance, 'replace').mockImplementation();
+            jest.spyOn(player1, 'remove').mockImplementation();
+
+            const messages: string[] = [];
+            const result = match['tryToPlayCards'](player1, messages, false);
+
+            expect(result).toBe(true);
+            expect(messages).toContain(`${player1.name} plays ${card}`);
+            expect(deskInstance.replace).toHaveBeenCalledWith(mockCombos);
+            expect(player1.remove).toHaveBeenCalledWith(card);
+        });
+
+        it('should not play a card if no new combo is found', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card = Card.of("5H");
+            jest.spyOn(player1, 'cards', 'get').mockReturnValue([card]);
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+
+            const messages: string[] = [];
+            const result = match['tryToPlayCards'](player1, messages, false);
+
+            expect(result).toBe(false);
+            expect(messages).not.toContain(`${player1.name} plays ${card}`);
+        });
+
+        it('should iterate through all cards in the player\'s hand', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card1 = Card.of("5H");
+            const card2 = Card.of("6H");
+            jest.spyOn(player1, 'cards', 'get').mockReturnValue([card1, card2]);
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+
+            const messages: string[] = [];
+            match['tryToPlayCards'](player1, messages, false);
+
+            expect(WorkingDesk.prototype.add).toHaveBeenCalledWith(card1);
+            expect(WorkingDesk.prototype.add).toHaveBeenCalledWith(card2);
+        });
+
+        it('should return true if at least one card is played', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card1 = Card.of("5H");
+            const card2 = Card.of("6H");
+            const mockCombo = Combo.of("5H 6H 7H");
+            const mockCombos = new Combos();
+            mockCombos.add(mockCombo);
+            jest.spyOn(player1, 'cards', 'get').mockReturnValue([card1, card2]);
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos')
+                .mockReturnValueOnce(mockCombos)
+                .mockReturnValueOnce(undefined);
+            jest.spyOn(deskInstance, 'replace').mockImplementation();
+            jest.spyOn(player1, 'remove').mockImplementation();
+
+            const messages: string[] = [];
+            const result = match['tryToPlayCards'](player1, messages, false);
+
+            expect(result).toBe(true);
+            expect(messages).toContain(`${player1.name} plays ${card1}`);
+            expect(deskInstance.replace).toHaveBeenCalledWith(mockCombos);
+            expect(player1.remove).toHaveBeenCalledWith(card1);
+        });
+
+        it('should return the initial value of somethingPlayed if no cards are played', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card = Card.of("5H");
+            jest.spyOn(player1, 'cards', 'get').mockReturnValue([card]);
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+
+            const messages: string[] = [];
+            const result = match['tryToPlayCards'](player1, messages, true);
+
+            expect(result).toBe(true);
         });
     });
 

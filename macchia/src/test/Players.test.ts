@@ -1035,4 +1035,51 @@ describe('Players Class', () => {
         });
     });
 
+    describe('Player.cards', () => {
+        it('should return an empty array if the player has no cards', () => {
+            const player = new Player("Alice");
+            expect(player.cards).toEqual([]);
+        });
+
+        it('should return all cards in the player\'s hand', () => {
+            const player = new Player("Alice");
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2H");
+            const card3 = Card.of("3D");
+
+            player.add(card1);
+            player.add(card2);
+            player.add(card3);
+
+            expect(player.cards).toEqual([card1, card2, card3]);
+        });
+
+        it('should reflect changes when cards are added to the hand', () => {
+            const player = new Player("Alice");
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2H");
+
+            player.add(card1);
+            expect(player.cards).toEqual([card1]);
+
+            player.add(card2);
+            expect(player.cards).toEqual([card1, card2]);
+        });
+
+        it('should reflect changes when cards are removed from the hand', () => {
+            const player = new Player("Alice");
+            const card1 = Card.of("1S");
+            const card2 = Card.of("2H");
+
+            player.add(card1);
+            player.add(card2);
+
+            player.remove(card1);
+            expect(player.cards).toEqual([card2]);
+
+            player.remove(card2);
+            expect(player.cards).toEqual([]);
+        });
+    });
+
 });

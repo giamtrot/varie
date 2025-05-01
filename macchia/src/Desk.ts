@@ -8,7 +8,7 @@ export class Desk {
         console.log("Desk created");
     }
 
-    substitute(found: Combos) {
+    replace(found: Combos) {
         this._combos = found.combos
     }
 

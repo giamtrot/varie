@@ -1,9 +1,7 @@
 import { Player, Players } from './Players';
-import { Decks } from './Decks';
-import { Desk } from './Desk';
-import { Match } from './Match';
+import { Status, Match, STATUS_TYPE } from './Match';
 import * as fs from "fs";
-
+import { STATUS_CODES } from 'http';
 
 enum LOOP_STATUS {
     STEP,
@@ -22,7 +20,7 @@ export class Macchiavelli_CLI {
         }
         const players = new Players(ps)
 
-        this.match = new Match(players, 2)
+        this.match = new Match(players, { decksNumber: 2 })
     }
 
     main() {
@@ -46,20 +44,11 @@ export class Macchiavelli_CLI {
     loop() {
         let loop_status = LOOP_STATUS.STEP
         while (true) {
-            if (!this.match.checkCards()) {
-                return
-            }
+            let stepStatus: Status
 
             if (loop_status == LOOP_STATUS.RUN) {
-                const gameOver = this.match.step()
-                if (gameOver) {
-                    this.write("Game over!")
-                    return
-                }
-                continue
-            }
-
-            if (loop_status == LOOP_STATUS.STEP) {
+                stepStatus = this.match.step()
+            } else if (loop_status == LOOP_STATUS.STEP) {
                 console.log(this.match.toString())
                 let answer = this.read("S: step, Q: quit or R: run to end?")
                 console.log(`answer: ${answer}`)
@@ -68,18 +57,26 @@ export class Macchiavelli_CLI {
                     case "q":
                         return
                     case "s":
-                        const gameOver = this.match.step()
-                        if (gameOver) {
-                            this.write("Game over!")
-                            return
-                        }
+                        stepStatus = this.match.step()
                         break
                     case "r":
                         loop_status = LOOP_STATUS.RUN
-                        break;
+                        continue;
                     default:
                         this.write("Invalid input. Please enter 's', 'q', or 'r'.");
+                        continue
                 }
+            } else {
+                throw Error(`Invalid loop status ${loop_status}`)
+            }
+
+            stepStatus.messages.forEach(msg => {
+                this.write(msg)
+                this.write(this.match.toString())
+            });
+
+            if (stepStatus.type == STATUS_TYPE.GAME_OVER) {
+                return
             }
         }
     }

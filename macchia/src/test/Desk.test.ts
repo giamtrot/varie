@@ -1,5 +1,5 @@
 import { Desk, WorkingDesk } from '../Desk';
-import { Combo } from '../Combos';
+import { Combo, Combos } from '../Combos';
 import { Card, Hand } from '../Card';
 
 
@@ -15,14 +15,14 @@ describe('Desk', () => {
         } as unknown as Combo;
     });
 
-    describe('addCombo', () => {
+    describe('Desk.addCombo', () => {
         it('should add a combo to the desk', () => {
             desk.add(mockCombo);
             expect(desk.toString()).toContain('Mock Combo');
         });
     });
 
-    describe('toString', () => {
+    describe('Desk.toString', () => {
         it('should return a string representation of all combos', () => {
             desk.add(mockCombo);
             desk.add(mockCombo);
@@ -34,7 +34,7 @@ describe('Desk', () => {
         });
     });
 
-    describe('toJSON', () => {
+    describe('Desk.toJSON', () => {
         it('should return a JSON representation of all combos', () => {
             desk.add(mockCombo);
             desk.add(mockCombo);
@@ -43,6 +43,49 @@ describe('Desk', () => {
 
         it('should return an empty array if no combos are added', () => {
             expect(desk.toJSON()).toEqual([]);
+        });
+    });
+
+    describe('Desk.replace', () => {
+        let desk: Desk;
+        let combo1: Combo;
+        let combo2: Combo;
+        let newCombos: Combos;
+
+        beforeEach(() => {
+            desk = new Desk();
+            combo1 = new Combo([Card.of("1C"), Card.of("2C"), Card.of("3C")]);
+            combo2 = new Combo([Card.of("4D"), Card.of("5D"), Card.of("6D")]);
+            newCombos = new Combos();
+            newCombos.add(combo1);
+            newCombos.add(combo2);
+        });
+
+        it('should replace the existing combos with the provided combos', () => {
+            desk.add(combo1);
+            expect(desk.combos.length).toBe(1);
+
+            desk.replace(newCombos);
+            expect(desk.combos.length).toBe(2);
+            expect(desk.combos).toContain(combo1);
+            expect(desk.combos).toContain(combo2);
+        });
+
+        it('should clear existing combos if the provided combos are empty', () => {
+            desk.add(combo1);
+            desk.add(combo2);
+            expect(desk.combos.length).toBe(2);
+
+            const emptyCombos = new Combos();
+            desk.replace(emptyCombos);
+            expect(desk.combos.length).toBe(0);
+        });
+
+        it('should not modify the original Combos object', () => {
+            desk.replace(newCombos);
+            expect(newCombos.combos.length).toBe(2);
+            expect(newCombos.combos).toContain(combo1);
+            expect(newCombos.combos).toContain(combo2);
         });
     });
 });
@@ -192,5 +235,6 @@ describe('WorkingDesk', () => {
             expect(foundCombos?.combos[2].cards).toContain(combo3.cards[2]);
             expect(foundCombos?.combos[2].cards).toContain(combo4.cards[2]);
         });
+
     });
 });
