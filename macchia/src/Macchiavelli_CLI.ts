@@ -67,6 +67,8 @@ export class Macchiavelli_CLI {
                         continue
                 }
             } else {
+                // Not possible to reach here
+                /* istanbul ignore next */
                 throw Error(`Invalid loop status ${loop_status}`)
             }
 

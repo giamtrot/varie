@@ -167,6 +167,71 @@ describe('Macchiavelli_CLI Class', () => {
         });
     });
 
+    describe('loop Method 3', () => {
+        let cli: Macchiavelli_CLI;
+        let mockMatchInstance: jest.Mocked<Match>;
+        let readSpy: jest.SpyInstance;
+        let writeSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+            cli = new Macchiavelli_CLI();
+            mockMatchInstance = (Match as jest.MockedClass<typeof Match>).mock.instances[0] as jest.Mocked<Match>;
+            mockMatchInstance.checkCards.mockReturnValue(true);
+            mockMatchInstance.step.mockImplementation(() => { return { type: STATUS_TYPE.RUNNING, messages: ["one"] } });
+            mockMatchInstance.toString.mockReturnValue("Mock Match State");
+            readSpy = jest.spyOn(cli, 'read');
+            writeSpy = jest.spyOn(cli, 'write').mockImplementation(() => { });
+        });
+
+        afterEach(() => {
+            readSpy?.mockRestore();
+            writeSpy?.mockRestore();
+        });
+
+        it('should quit the loop when "q" is entered', () => {
+            readSpy.mockReturnValueOnce("q");
+            cli.loop();
+            expect(mockMatchInstance.step).not.toHaveBeenCalled();
+            expect(readSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('should step through the match when "s" is entered', () => {
+            readSpy.mockReturnValueOnce("s").mockReturnValueOnce("q");
+            cli.loop();
+            expect(mockMatchInstance.step).toHaveBeenCalledTimes(1);
+            expect(writeSpy).toHaveBeenCalledWith("Mock Match State");
+            expect(readSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('should run to the end when "r" is entered', () => {
+            readSpy.mockReturnValueOnce("r");
+            mockMatchInstance.step
+                .mockReturnValueOnce({ type: STATUS_TYPE.RUNNING, messages: ["one"] })
+                .mockReturnValueOnce({ type: STATUS_TYPE.GAME_OVER, messages: ["two"] });
+            cli.loop();
+            expect(mockMatchInstance.step).toHaveBeenCalledTimes(2);
+            expect(writeSpy).toHaveBeenCalledWith("Mock Match State");
+            expect(readSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('should handle invalid input and prompt again', () => {
+            readSpy.mockReturnValueOnce("invalid").mockReturnValueOnce("q");
+            cli.loop();
+            expect(writeSpy).toHaveBeenCalledWith("Invalid input. Please enter 's', 'q', or 'r'.");
+            expect(readSpy).toHaveBeenCalledTimes(2);
+            expect(mockMatchInstance.step).not.toHaveBeenCalled();
+        });
+
+        it('should display game over message when the game ends', () => {
+            readSpy.mockReturnValueOnce("s");
+            mockMatchInstance.step.mockReturnValueOnce({ type: STATUS_TYPE.GAME_OVER, messages: ["Game over!"] });
+            cli.loop();
+            expect(mockMatchInstance.step).toHaveBeenCalledTimes(1);
+            expect(writeSpy).toHaveBeenCalledWith("Game over!");
+        });
+    });
+
     describe('main Method', () => {
         it('should call loop and print the match state', () => {
             const loopSpy = jest.spyOn(cli, 'loop').mockImplementation(() => { });
@@ -180,4 +245,5 @@ describe('Macchiavelli_CLI Class', () => {
             expect(writeSpy).toHaveBeenCalledWith("Match State");
         });
     });
+
 });

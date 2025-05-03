@@ -368,4 +368,114 @@ describe('Match Class', () => {
         });
     });
 
+    describe('Match.step', () => {
+        it('should handle a player playing multiple combos in a single turn', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const mockCombo1 = Combo.of("1S 2S 3S");
+            const mockCombo2 = Combo.of("4S 5S 6S");
+            jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(false);
+            jest.spyOn(player1, 'playCombo')
+                .mockReturnValueOnce(mockCombo1)
+                .mockReturnValueOnce(mockCombo2);
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(status.messages).toContain(`${player1.name} plays ${mockCombo1}`);
+            expect(status.messages).toContain(`${player1.name} plays ${mockCombo2}`);
+            expect(deskInstance.add).toHaveBeenCalledWith(mockCombo1);
+            expect(deskInstance.add).toHaveBeenCalledWith(mockCombo2);
+        });
+
+        it('should handle a player drawing a card if no combos are available', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const drawnCard = Card.of("7H");
+            jest.spyOn(player1, 'hasCombo').mockReturnValue(false);
+            jest.spyOn(decksInstance, 'next').mockReturnValue(drawnCard);
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(status.messages).toContain(`${player1.name} gets ${drawnCard}`);
+            expect(player1.add).toHaveBeenCalledWith(drawnCard);
+        });
+
+        it('should end the game if a player has no cards left', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            jest.spyOn(player1, 'hasCards').mockReturnValueOnce(false);
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.GAME_OVER);
+            expect(status.messages).toContain(`${player1.name} has no cards left! They wins!`);
+        });
+
+        it('should end the game if the deck has no cards left', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            jest.spyOn(decksInstance, 'hasNext').mockReturnValueOnce(true).mockReturnValueOnce(false);
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.GAME_OVER);
+            expect(status.messages).toContain("No more cards to play!");
+        });
+
+        it('should handle a player playing a card that forms a new combo', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card = Card.of("8H");
+            const mockCombo = Combo.of("8H 9H 10H");
+            const mockCombos = new Combos();
+            mockCombos.add(mockCombo);
+            Object.defineProperty(player1, 'cards', {
+                configurable: true,
+                get: jest.fn(() => [card]),
+            });
+            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(mockCombos);
+            jest.spyOn(deskInstance, 'replace').mockImplementation();
+            jest.spyOn(player1, 'remove').mockImplementation();
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(status.messages).toContain(`${player1.name} plays ${card}`);
+            expect(deskInstance.replace).toHaveBeenCalledWith(mockCombos);
+            expect(player1.remove).toHaveBeenCalledWith(card);
+        });
+
+        it('should alternate turns between players', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const card1 = Card.of("3D");
+            const card2 = Card.of("4D");
+            jest.spyOn(decksInstance, 'next').mockReturnValueOnce(card1).mockReturnValueOnce(card2);
+            jest.spyOn(player1, 'hasCombo').mockReturnValue(false);
+            jest.spyOn(player2, 'hasCombo').mockReturnValue(false);
+
+            let status = match.step(); // player1's turn
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(status.messages).toContain(`${player1.name} gets ${card1}`);
+            expect(player1.add).toHaveBeenCalledWith(card1);
+
+            status = match.step(); // player2's turn
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(status.messages).toContain(`${player2.name} gets ${card2}`);
+            expect(player2.add).toHaveBeenCalledWith(card2);
+        });
+
+        it('should handle a safeguard for infinite loops when a player keeps playing combos', () => {
+            const match = new Match(playersInstance, { decksNumber: 2 });
+            const mockCombo = Combo.of("1S 2S 3S");
+            jest.spyOn(player1, 'hasCombo').mockReturnValue(true);
+            jest.spyOn(player1, 'playCombo').mockReturnValue(mockCombo);
+            const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+            const status = match.step();
+
+            expect(status.type).toBe(STATUS_TYPE.RUNNING);
+            expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`Potential infinite loop detected for player ${player1.name}`));
+            expect(player1.playCombo).toHaveBeenCalledTimes(10); // Safeguard limit
+            consoleWarnSpy.mockRestore();
+        });
+    });
+
 });
