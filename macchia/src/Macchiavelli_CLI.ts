@@ -1,7 +1,6 @@
 import { Player, Players } from './Players';
 import { Status, Match, STATUS_TYPE } from './Match';
 import * as fs from "fs";
-import { STATUS_CODES } from 'http';
 
 enum LOOP_STATUS {
     STEP,
@@ -21,11 +20,6 @@ export class Macchiavelli_CLI {
         const players = new Players(ps)
 
         this.match = new Match(players, { decksNumber: 2 })
-    }
-
-    main() {
-        this.loop()
-        console.log(this.match.toString())
     }
 
     read(msg: string) {
@@ -49,9 +43,9 @@ export class Macchiavelli_CLI {
             if (loop_status == LOOP_STATUS.RUN) {
                 stepStatus = this.match.step()
             } else if (loop_status == LOOP_STATUS.STEP) {
-                console.log(this.match.toString())
+                // console.log(this.match.toString())
                 let answer = this.read("S: step, Q: quit or R: run to end?")
-                console.log(`answer: ${answer}`)
+                // console.log(`answer: ${answer}`)
 
                 switch (answer.trim().toLowerCase()) {
                     case "q":
@@ -74,8 +68,8 @@ export class Macchiavelli_CLI {
 
             stepStatus.messages.forEach(msg => {
                 this.write(msg)
-                this.write(this.match.toString())
             });
+            this.write(this.match.toString())
 
             if (stepStatus.type == STATUS_TYPE.GAME_OVER) {
                 return
@@ -87,5 +81,5 @@ export class Macchiavelli_CLI {
 
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'test') {
-    new Macchiavelli_CLI().main()
+    new Macchiavelli_CLI().loop()
 }

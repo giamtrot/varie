@@ -231,19 +231,4 @@ describe('Macchiavelli_CLI Class', () => {
             expect(writeSpy).toHaveBeenCalledWith("Game over!");
         });
     });
-
-    describe('main Method', () => {
-        it('should call loop and print the match state', () => {
-            const loopSpy = jest.spyOn(cli, 'loop').mockImplementation(() => { });
-            const toStringSpy = jest.spyOn(cli.match, 'toString').mockReturnValue("Match State");
-            const writeSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
-
-            cli.main();
-
-            expect(loopSpy).toHaveBeenCalled();
-            expect(toStringSpy).toHaveBeenCalled();
-            expect(writeSpy).toHaveBeenCalledWith("Match State");
-        });
-    });
-
 });

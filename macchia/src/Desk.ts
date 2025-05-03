@@ -4,6 +4,13 @@ import { Combo, Combos } from './Combos';
 export class Desk {
     private _combos: Combo[] = [];
 
+    static fromString(desc: string): Desk {
+        const desk = new Desk();
+        const combos = Combos.fromString(desc)
+        desk.replace(combos);
+        return desk
+    }
+
     constructor() {
         console.log("Desk created");
     }
@@ -41,6 +48,7 @@ export class WorkingDesk {
     }
 
     searchNewCombos(): Combos | undefined {
+        // console.log("Searching for new combos\n", this.hand.toString());
         return WorkingDesk.search(this.hand, new Combos());
     }
 
@@ -59,6 +67,7 @@ export class WorkingDesk {
         let foundCombos: Combos | undefined
         for (let i = 0; i < hand.combos.combos.length; i++) {
             const combo = hand.combos.combos[i];
+            // console.log("Searching for combo", combo.toString(), "in hand", hand.toString());
             const newHand = hand.clone();
             combo.cards.forEach(card => {
                 newHand.remove(card);

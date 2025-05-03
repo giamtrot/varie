@@ -5,6 +5,11 @@ import { Card } from './Card';
 export class Combo {
     readonly cards: ReadonlyArray<Card>;
 
+    static fromString(desc: string): Combo {
+        const cards = Card.fromStringToArray(desc);
+        return new Combo(cards);
+    }
+
     clone(): Combo {
         const newCombo = new Combo([... this.cards]);
         return newCombo;
@@ -117,6 +122,15 @@ export class Combo {
 
 export class Combos {
     combos: Combo[] = [];
+
+    static fromString(desc: string): Combos {
+        const combos = new Combos();
+        desc.split(' ').forEach(c => {
+            const combo = Combo.fromString(c);
+            combos.add(combo)
+        })
+        return combos
+    }
 
     clone(): Combos {
         const newCombos = new Combos();

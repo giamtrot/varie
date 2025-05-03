@@ -1,6 +1,7 @@
 import { Desk, WorkingDesk } from '../Desk';
 import { Combo, Combos } from '../Combos';
 import { Card, Hand } from '../Card';
+import { Decks } from '../Decks';
 
 
 describe('Desk', () => {
@@ -236,5 +237,28 @@ describe('WorkingDesk', () => {
             expect(foundCombos?.combos[2].cards).toContain(combo4.cards[2]);
         });
 
+    });
+});
+
+describe('WorkingDesk Bugs', () => {
+
+    it('should not crash when searching combos', () => {
+        const deskDesc = "(7S)(7H)(7D)(7C)(6S)(6H)(6D)(5H)"
+        const hand = new Hand();
+        Card.fromStringToArray(deskDesc).forEach(c => hand.push(c));
+
+        const combo = new Combo([hand.cards.cards[1], hand.cards.cards[5], hand.cards.cards[7]]);
+        combo.cards.forEach(c => hand.remove(c));
+        expect(hand.cards.length).toBe(5);
+        expect(hand.cards.cards).not.toContain(Card.of("5H"));
+    })
+
+    it('should rearrange cards', () => {
+        const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
+        const cardDesc = "5H"
+        const desk = Desk.fromString(deskDesc);
+        const wd = new WorkingDesk(desk)
+        wd.add(Card.of(cardDesc));
+        wd.searchNewCombos();
     });
 });

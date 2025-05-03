@@ -1241,7 +1241,6 @@ describe('Hand Class', () => {
         });
     });
 
-
     describe('Hand.addAll', () => {
         let hand: Hand;
         let card1: Card, card2: Card, card3: Card, card4: Card, card5: Card, card6: Card;
@@ -1388,4 +1387,25 @@ describe('Hand Class', () => {
         });
     });
 
+    describe('Hand.Bugs', () => {
+
+        it('should remove card and relations', () => {
+            const hand = new Hand();
+            const cardH = Card.of("7H");
+            hand.push(cardH);
+            const cardS = Card.of("7S");
+            hand.push(cardS);
+            const cardD = Card.of("7D");
+            hand.push(cardD);
+            const cardC = Card.of("7C");
+            hand.push(cardC);
+            hand.remove(cardH);
+            expect(hand.getHorizontals(cardH).length).toBe(0);
+            expect(hand.getHorizontals(cardS).length).toBe(2);
+            expect(hand.getHorizontals(cardD).length).toBe(2);
+            expect(hand.getHorizontals(cardC).length).toBe(2);
+        });
+
+    });
 });
+

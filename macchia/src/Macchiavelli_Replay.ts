@@ -3,37 +3,45 @@ import { Match, STATUS_TYPE } from './Match';
 import { Decks } from './Decks';
 import assert from 'assert';
 
-export class Macchiavelli_Replay {
+class Macchiavelli_Replay {
 
+    private match: Match;
+    private breakStep;
 
-    match: Match[] = [];
-
-    init(playersNumber: number, desc: string) {
+    constructor(playersNumber: number, desc: string, breakStep: number) {
         let ps: Player[] = [];
         for (let p = 1; p <= playersNumber; p++) {
             ps.push(new Player("Player " + p))
         }
         const players = new Players(ps)
         const decks = Decks.fromString(desc)
-        this.match.push(new Match(players, { decks: decks }))
+        this.match = new Match(players, { decks: decks })
+        this.breakStep = breakStep
         return this
     }
 
     replay() {
-        assert(this.match.length > 0, "Match not initialized")
-        const match = this.match[0]
-        while (true) {
-            const stepStatus = match.step()
+        try {
+            while (true) {
+                const stepStatus = this.match.step()
 
-            stepStatus.messages.forEach(msg => {
-                console.log(msg)
-                console.log(match.toString())
-            });
+                stepStatus.messages.forEach(msg => {
+                    console.log(msg)
+                });
+                console.log(this.match.toString())
 
-            if (stepStatus.type == STATUS_TYPE.GAME_OVER) {
-                break
+                if (stepStatus.type == STATUS_TYPE.GAME_OVER) {
+                    break
+                }
             }
+        } catch (e) {
+            console.log(e)
+            console.log(this.match.toString())
         }
-        console.log(this.match.toString())
     }
 }
+
+const desc = "(11C)(11D)(12C)(7C)(13D)(9S)(6C)(6S)(12H)(1C)(3D)(3C)(13C)(13C)(12S)(11S)(12H)(12S)(7C)(10D)(11C)(7S)(8C)(5S)(9H)(11H)(2H)(4S)(2C)(1H)(4D)(12D)(2C)(2H)(2S)(12C)(6H)(1C)(4H)(3S)(5S)(11H)(8H)(3C)(9C)(3D)(8D)(5C)(7H)(1S)(7S)(8D)(11S)(9D)(13S)(9D)(5C)(5D)(10C)(5D)(7D)(6S)(6H)(3S)(8H)(7D)(10H)(6C)(2D)(3H)(13H)(10H)(9C)(4H)(6D)(10C)(11D)(4C)(13D)(13S)(9H)(4S)(10S)(10S)(3H)(4C)(8C)(10D)(8S)(1D)(2D)(7H)(1S)(13H)(8S)(5H)(9S)(5H)(1D)(2S)(1H)(4D)(6D)(12D)"
+const playersNumber = 5
+const breakStep = 100
+new Macchiavelli_Replay(playersNumber, desc, breakStep).replay()

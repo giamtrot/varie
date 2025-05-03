@@ -44,6 +44,17 @@ export class Card {
         this.suit = suit;
     }
 
+    static fromStringToArray(desc: string): Card[] {
+        const cards: Card[] = [];
+        desc.split(")(").forEach((cardDesc) => {
+            cardDesc = cardDesc.replace("(", "").replace(")", "");
+            const card = Card.of(cardDesc);
+            cards.push(card);
+        });
+        return cards;
+    }
+
+
     static cardSorter = (a: Card, b: Card): number => {
         if (a.value === b.value) {
             return SuitInfo[a.suit].index - SuitInfo[b.suit].index;
@@ -260,9 +271,13 @@ export class Hand {
     }
 
     remove(card: Card) {
+        // console.log("Removing card", card.toString(), this.getHorizontals(card))
         this.cards.remove(card)
-        this.getHorizontals(card).cards.forEach(h => this.unrelate(h, card))
-        this.getVerticals(card).cards.forEach(v => this.unrelate(v, card))
+        const nh = [...this.getHorizontals(card).cards]
+        nh.forEach(h => this.unrelate(h, card))
+        const nv = [...this.getVerticals(card).cards]
+        nv.forEach(v => this.unrelate(v, card))
+        // console.log("Removed card", card.toString(), this.getHorizontals(card))
         this.updateCombo()
     }
 
@@ -299,8 +314,10 @@ export class Hand {
     unlinkHorizontal(card1: Card, card2: Card) {
         assert(this.getHorizontals(card1).contains(card2) && this.getHorizontals(card2).contains(card1),
             `Card ${card2} not horizontally linked to ${card1} or viceversa`)
+        // console.log("Unlinking", card1.toString(), card2.toString())
         this.getHorizontals(card1).remove(card2)
         this.getHorizontals(card2).remove(card1)
+        // console.log("Unlinking", card1.toString(), card2.toString())
     }
 
     unlinkVertical(card1: Card, card2: Card) {

@@ -32,12 +32,7 @@ export class Decks {
     }
 
     static fromString(desc: string): Decks {
-        const cards: Card[] = [];
-        desc.split(")(").forEach((cardDesc) => {
-            cardDesc = cardDesc.replace("(", "").replace(")", "");
-            const card = Card.of(cardDesc);
-            cards.push(card);
-        });
+        const cards: Card[] = Card.fromStringToArray(desc);
         return new Decks({ cards: cards });
     }
 
@@ -83,3 +78,4 @@ export class Decks {
 
 
 }
+

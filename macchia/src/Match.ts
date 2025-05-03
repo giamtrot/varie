@@ -21,6 +21,7 @@ export class Match {
     private players: Players;
     private decks: Decks;
     private desk: Desk;
+    private steps: number = 0;
 
     constructor(players: Players, { decks = undefined, decksNumber = 0 }: { decks?: Decks | undefined, decksNumber?: number }) {
         this.players = players;
@@ -40,14 +41,23 @@ export class Match {
 
 
 
-    step(): Status {
+    step(breakStep: number = -1): Status {
         assert(this.decks.hasNext(), "No more steps are possible")
-        const player = this.players.nextPlayer()
+        this.steps++
+        if (this.steps === breakStep) {
+            console.log(`Break step ${breakStep} reached`)
+        }
+
+        let messages = []
+        messages.push(`Step ${this.steps}`)
 
         let somethingPlayed = false
+
+        const player = this.players.nextPlayer()
+
         let iterationCount = 0;
         const maxIterations = 10; // Safeguard to prevent infinite loop
-        let messages = []
+
         while (player.hasCombo()) {
             somethingPlayed = true;
             const combo: Combo = player.playCombo();
