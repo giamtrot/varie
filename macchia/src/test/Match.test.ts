@@ -1,9 +1,12 @@
 import { Match, STATUS_TYPE } from '../Match';
-import { Player, Players } from '../Players';
+import { Players } from '../Players';
+import { Player } from '../Player';
 import { Decks } from '../Decks';
-import { Desk, WorkingDesk } from '../Desk';
+import { Desk } from '../Desk';
+import { WorkingDesk } from '../WorkingDesk';
 import { Card } from '../Card';
-import { Combo, Combos } from '../Combos';
+import { Combo } from '../Combo';
+import { Combos } from '../Combos';
 
 // Mock dependencies
 jest.mock('../Players');

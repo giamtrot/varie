@@ -1,8 +1,10 @@
 import assert from "assert";
 import { Decks } from "./Decks";
-import { Desk, WorkingDesk } from "./Desk";
-import { Player, Players } from "./Players";
-import { Combo } from "./Combos";
+import { Desk } from "./Desk";
+import { WorkingDesk } from './WorkingDesk';
+import { Players } from "./Players";
+import { Player } from './Player';
+import { Combo } from "./Combo";
 
 
 

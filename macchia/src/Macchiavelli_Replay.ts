@@ -1,8 +1,10 @@
-import { Player, Players } from './Players';
+import { Players } from './Players';
+import { Player } from './Player';
 import { Match, STATUS_TYPE } from './Match';
 import { Decks } from './Decks';
 import assert from 'assert';
-import { Desk, WorkingDesk } from './Desk';
+import { Desk } from './Desk';
+import { WorkingDesk } from './WorkingDesk';
 import { Card } from './Card';
 
 class Macchiavelli_Replay {

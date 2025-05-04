@@ -1,4 +1,4 @@
-import { Player } from '../Players';
+import { Player } from '../Player';
 import { Decks } from '../Decks';
 import { Card, Suit } from '../Card';
 

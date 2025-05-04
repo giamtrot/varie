@@ -3,7 +3,8 @@ import session from 'express-session';
 import path from "path";
 import bodyParser from "body-parser";
 import { Decks } from "./Decks";
-import { Player, Players } from "./Players";
+import { Players } from "./Players";
+import { Player } from './Player';
 import { Desk } from "./Desk";
 import { Match } from "./Match";
 

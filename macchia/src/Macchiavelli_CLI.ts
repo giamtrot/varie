@@ -1,4 +1,5 @@
-import { Player, Players } from './Players';
+import { Players } from './Players';
+import { Player } from './Player';
 import { Status, Match, STATUS_TYPE } from './Match';
 import * as fs from "fs";
 
