@@ -327,22 +327,41 @@ export class Hand {
         this.getVerticals(card2).remove(card1)
     }
 
+    findSubCombos(cards: Card[]): Combo[] {
+        const subCombos: Combo[] = [];
+        if (cards.length < 3) {
+            return subCombos;
+        }
+        if (Combo.checkValid(Combo.prepareForCheck(cards))) {
+            subCombos.push(new Combo(cards));
+        }
+        if (cards.length === 3) {
+            return subCombos;
+        }
+
+        for (let i = 0; i < cards.length; i++) {
+            const subCards = [...cards.slice(0, i), ...cards.slice(i + 1)];
+            const subSubCombos = this.findSubCombos(subCards);
+            subCombos.push(...subSubCombos);
+        }
+
+        return subCombos;
+    }
+
     updateCombo() {
         this.reset()
+        let newCards: Card[] = []
         this.cards.cards.filter(card => this.getHorizontals(card).length >= 2).forEach(card => {
-            let newCards: Card[] = []
             this.collectHorizontals(card, newCards)
-            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
-                this.combos.add(new Combo(newCards));
-            }
         });
 
         this.cards.cards.filter(card => this.getVerticals(card).length >= 2).forEach(card => {
-            let newCards: Card[] = []
             this.collectVerticals(card, newCards)
-            if (Combo.minLength(newCards) && Combo.checkValid(Combo.prepareForCheck(newCards))) {
-                this.combos.add(new Combo(newCards));
-            }
+        });
+
+        const subCombos: Combo[] = this.findSubCombos(newCards)
+        subCombos.forEach(combo => {
+            this.combos.add(combo);
         });
     }
 

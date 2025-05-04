@@ -253,12 +253,23 @@ describe('WorkingDesk Bugs', () => {
         expect(hand.cards.cards).not.toContain(Card.of("5H"));
     })
 
-    it('should rearrange cards', () => {
+    it('should rearrange cards 1', () => {
         const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
         const cardDesc = "5H"
         const desk = Desk.fromString(deskDesc);
         const wd = new WorkingDesk(desk)
         wd.add(Card.of(cardDesc));
-        wd.searchNewCombos();
+        const ris = wd.searchNewCombos();
+        expect(ris).toBeUndefined()
+    });
+
+    it('should rearrange cards 2', () => {
+        const deskDesc = "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H) (8S)(8D)(8C) (2S)(3S)(4S) (7S)(7H)(7C)"
+        const cardDesc = "7D"
+        const desk = Desk.fromString(deskDesc);
+        const wd = new WorkingDesk(desk)
+        wd.add(Card.of(cardDesc));
+        const ris = wd.searchNewCombos();
+        expect(ris).toBeDefined()
     });
 });

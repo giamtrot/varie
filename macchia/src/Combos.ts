@@ -59,7 +59,6 @@ export class Combo {
             }
         }
 
-
         return false;
     }
 
@@ -159,5 +158,9 @@ export class Combos {
 
     contains(combo: Combo) {
         return this.combos.filter(c => c.equals(combo)).length > 0;
+    }
+
+    toString(): string {
+        return this.combos.map(combo => combo.toString()).join(' ');
     }
 }
