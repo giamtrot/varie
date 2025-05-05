@@ -3,59 +3,62 @@ import { Card } from '../Card';
 import 'colors'; // Import colors for the string assertion
 
 describe('Combo Class', () => {
-    it('should create a valid combo with same suit and straight values', () => {
-        const cards = [Card.of("1S"), Card.of("2S"), Card.of("3S")];
-        const combo = new Combo(cards);
-        expect(combo.cards).toEqual(cards);
-    });
 
-    it('should create a valid combo with same value and different suits', () => {
-        const cards = [Card.of("5S"), Card.of("5H"), Card.of("5D")];
-        const combo = new Combo(cards);
-        expect(combo.cards).toEqual(cards);
-    });
+    describe('Cambo.base', () => {
+        it('should create a valid combo with same suit and straight values', () => {
+            const cards = [Card.of("1S"), Card.of("2S"), Card.of("3S")];
+            const combo = new Combo(cards);
+            expect(combo.cards).toEqual(cards);
+        });
 
-    it('should throw an error for invalid combo', () => {
-        const cards = [Card.of("1S"), Card.of("3S"), Card.of("5S")];
-        expect(() => new Combo(cards)).toThrow();
-    });
+        it('should create a valid combo with same value and different suits', () => {
+            const cards = [Card.of("5S"), Card.of("5H"), Card.of("5D")];
+            const combo = new Combo(cards);
+            expect(combo.cards).toEqual(cards);
+        });
 
-    it('should create a valid combo with same suit and straight values - by string', () => {
-        expect(() => Combo.fromString("(1S)(2S)(3S)")).not.toThrow();
-    });
+        it('should throw an error for invalid combo', () => {
+            const cards = [Card.of("1S"), Card.of("3S"), Card.of("5S")];
+            expect(() => new Combo(cards)).toThrow();
+        });
 
-    it('should create a valid combo with same value and different suits - by string', () => {
-        expect(() => Combo.fromString("(5S)(5H)(5D)")).not.toThrow();
-    });
+        it('should create a valid combo with same suit and straight values - by string', () => {
+            expect(() => Combo.fromString("(1S)(2S)(3S)")).not.toThrow();
+        });
 
-    it('should throw an error for invalid combo - by string', () => {
-        expect(() => Combo.fromString("(1S)(3S)(5S)")).toThrow();
-    });
+        it('should create a valid combo with same value and different suits - by string', () => {
+            expect(() => Combo.fromString("(5S)(5H)(5D)")).not.toThrow();
+        });
+
+        it('should throw an error for invalid combo - by string', () => {
+            expect(() => Combo.fromString("(1S)(3S)(5S)")).toThrow();
+        });
 
 
-    it('should throw an error if cards have different suits and are not consecutive', () => {
-        const cards = [Card.of("1S"), Card.of("2H"), Card.of("3D")];
-        expect(() => new Combo(cards)).toThrow();
-    });
+        it('should throw an error if cards have different suits and are not consecutive', () => {
+            const cards = [Card.of("1S"), Card.of("2H"), Card.of("3D")];
+            expect(() => new Combo(cards)).toThrow();
+        });
 
-    it('should throw an error if cards have the same suit but are not consecutive', () => {
-        const cards = [Card.of("1S"), Card.of("3S"), Card.of("4S")];
-        expect(() => new Combo(cards)).toThrow();
-    });
+        it('should throw an error if cards have the same suit but are not consecutive', () => {
+            const cards = [Card.of("1S"), Card.of("3S"), Card.of("4S")];
+            expect(() => new Combo(cards)).toThrow();
+        });
 
-    it('should throw an error if cards have the same value but duplicate suits', () => {
-        const cards = [Card.of("5S"), Card.of("5S"), Card.of("5H")];
-        expect(() => new Combo(cards)).toThrow();
-    });
+        it('should throw an error if cards have the same value but duplicate suits', () => {
+            const cards = [Card.of("5S"), Card.of("5S"), Card.of("5H")];
+            expect(() => new Combo(cards)).toThrow();
+        });
 
-    it('should throw an error with a single card', () => {
-        const cards = [Card.of("7C")];
-        expect(() => new Combo(cards)).toThrow();
-    });
+        it('should throw an error with a single card', () => {
+            const cards = [Card.of("7C")];
+            expect(() => new Combo(cards)).toThrow();
+        });
 
-    it('should throw an error if no cards are provided', () => {
-        const cards: Card[] = [];
-        expect(() => new Combo(cards)).toThrow();
+        it('should throw an error if no cards are provided', () => {
+            const cards: Card[] = [];
+            expect(() => new Combo(cards)).toThrow();
+        });
     });
 
     describe('Combo.checkValid', () => {
@@ -206,7 +209,7 @@ describe('Combo Class', () => {
         });
     });
 
-    describe('Combo Class - toString and toJSON', () => {
+    describe('Combo.toString and Combo.toJSON', () => {
         let comboVertical: Combo;
         let comboHorizontal: Combo;
         let cardsVertical: Card[];
@@ -390,5 +393,143 @@ describe('Combo Class', () => {
             expect(() => Combo.fromString("1S 2X 3S")).toThrow();
         });
     });
+
+
+    describe('Combo.comboSorter (static)', () => {
+        let combo1S2S3S: Combo;
+        let combo1S2S3S_copy: Combo;
+        let combo2S3S4S: Combo;
+        let combo4S5S6S: Combo;
+        let combo1H2H3H: Combo;
+        let combo1S2S3S4S: Combo;
+
+        beforeAll(() => {
+            // Create combos used across tests
+            combo1S2S3S = Combo.fromString("(1S)(2S)(3S)");
+            combo1S2S3S_copy = Combo.fromString("(1S)(2S)(3S)");
+            combo2S3S4S = Combo.fromString("(2S)(3S)(4S)");
+            combo4S5S6S = Combo.fromString("(4S)(5S)(6S)");
+            combo1H2H3H = Combo.fromString("(1H)(2H)(3H)");
+            combo1S2S3S4S = Combo.fromString("(1S)(2S)(3S)(4S)");
+        });
+
+        it('should return 0 for identical combos', () => {
+            expect(Combo.comboSorter(combo1S2S3S, combo1S2S3S_copy)).toBe(0);
+        });
+
+        it('should return 0 when comparing a combo to itself', () => {
+            expect(Combo.comboSorter(combo1S2S3S, combo1S2S3S)).toBe(0);
+        });
+
+        it('should return a negative value when the first combo is smaller based on the first differing card value', () => {
+            // (1S 2S 3S) vs (4S 5S 6S) -> compares 1S and 4S
+            expect(Combo.comboSorter(combo1S2S3S, combo4S5S6S)).toBeLessThan(0);
+        });
+
+        it('should return a positive value when the first combo is larger based on the first differing card value', () => {
+            // (4S 5S 6S) vs (1S 2S 3S) -> compares 4S and 1S
+            expect(Combo.comboSorter(combo4S5S6S, combo1S2S3S)).toBeGreaterThan(0);
+        });
+
+        it('should return a negative value when the first combo is smaller based on a later differing card value', () => {
+            // (1S 2S 3S) vs (1S 2S 4S) -> compares 3S and 4S
+            expect(Combo.comboSorter(combo1S2S3S, combo2S3S4S)).toBeLessThan(0);
+        });
+
+        it('should return a positive value when the first combo is larger based on a later differing card value', () => {
+            // (1S 2S 4S) vs (1S 2S 3S) -> compares 4S and 3S
+            expect(Combo.comboSorter(combo2S3S4S, combo1S2S3S)).toBeGreaterThan(0);
+        });
+
+        it('should return a negative value when the first combo is smaller based on the first differing card suit', () => {
+            // (1S 2S 3S) vs (1H 2H 3H) -> compares 1S and 1H (Spades index 0, Hearts index 1)
+            expect(Combo.comboSorter(combo1S2S3S, combo1H2H3H)).toBeLessThan(0);
+        });
+
+        it('should return a positive value when the first combo is larger based on the first differing card suit', () => {
+            // (1H 2H 3H) vs (1S 2S 3S) -> compares 1H and 1S
+            expect(Combo.comboSorter(combo1H2H3H, combo1S2S3S)).toBeGreaterThan(0);
+        });
+
+        it('should return 1 when the first combo is a prefix of the second (shorter comes after)', () => {
+            // (1S 2S 3S) vs (1S 2S 3S 4S)
+            expect(Combo.comboSorter(combo1S2S3S, combo1S2S3S4S)).toBe(-1);
+        });
+
+        it('should return -1 when the second combo is a prefix of the first (shorter comes after)', () => {
+            // (1S 2S 3S 4S) vs (1S 2S 3S)
+            expect(Combo.comboSorter(combo1S2S3S4S, combo1S2S3S)).toBe(1);
+        });
+
+        // Example using sort
+        it('should correctly sort an array of combos', () => {
+            const combosToSort = [
+                combo1S2S3S4S, // (1S 2S 3S 4S)
+                combo1H2H3H,   // (1H 2H 3H)
+                combo1S2S3S,   // (1S 2S 3S)
+                combo4S5S6S,   // (4S 5S 6S)
+                combo2S3S4S,   // (1S 2S 4S)
+            ];
+
+            combosToSort.sort(Combo.comboSorter);
+
+            // Expected order based on logic (shorter comes after prefix):
+            // 1. (1S 2S 3S)
+            // 2. (1S 2S 3S 4S)
+            // 3. (1H 2H 3H)
+            // 4. (2S 3S 4S)
+            // 5. (4S 5S 6S)
+            expect(combosToSort[0]).toBe(combo1S2S3S);
+            expect(combosToSort[1]).toBe(combo1S2S3S4S);
+            expect(combosToSort[2]).toBe(combo1H2H3H);
+            expect(combosToSort[3]).toBe(combo2S3S4S);
+            expect(combosToSort[4]).toBe(combo4S5S6S);
+        });
+    });
+
+    describe('Combo.contains', () => {
+        let combo: Combo;
+        let card1: Card, card2: Card, card3: Card;
+        let cardNotInCombo: Card;
+        let card1_diffInstance: Card; // Different instance, same value/suit
+
+        beforeEach(() => {
+            // Create cards and combo. Note: Combo constructor sorts cards.
+            card1 = Card.of("1S");
+            card2 = Card.of("2S");
+            card3 = Card.of("3S");
+            combo = new Combo([card1, card2, card3]); // Internal cards: [card1, card2, card3] after sorting
+
+            cardNotInCombo = Card.of("4S");
+            card1_diffInstance = Card.of("1S"); // Logically same as card1, but different object instance
+        });
+
+        it('should return true if the exact card instance is present (including at index 0)', () => {
+            expect(combo.containsSame(card1)).toBe(true); // Card at index 0
+            expect(combo.containsSame(card2)).toBe(true); // Card at index 1
+            expect(combo.containsSame(card3)).toBe(true); // Card at index 2
+        });
+
+        it('should return false if the card instance is not present', () => {
+            expect(combo.containsSame(cardNotInCombo)).toBe(false);
+        });
+
+        it('should return false if a different instance of a card with the same value/suit is passed', () => {
+            // indexOf uses strict equality (===), different instances won't match.
+            expect(card1.id).not.toBe(card1_diffInstance.id); // Verify instances are different
+            expect(combo.containsSame(card1_diffInstance)).toBe(true);
+        });
+
+        it('should return false when checking against null', () => {
+            // Need to cast null to Card type or use ts-ignore for type checking
+            expect(combo.containsSame(null as any)).toBe(false);
+        });
+
+        it('should return false when checking against undefined', () => {
+            // Need to cast undefined to Card type or use ts-ignore for type checking
+            expect(combo.containsSame(undefined as any)).toBe(false);
+        });
+    });
+
 });
 

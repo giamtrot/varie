@@ -12,7 +12,7 @@ export class Desk {
     }
 
     constructor() {
-        console.log("Desk created");
+        // console.log("Desk created");
     }
 
     replace(found: Combos) {

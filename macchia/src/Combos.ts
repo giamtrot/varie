@@ -44,6 +44,7 @@ export class Combos {
     }
 
     toString(): string {
+        this.combos.sort(Combo.comboSorter)
         return this.combos.map(combo => combo.toString()).join(' ');
     }
 }

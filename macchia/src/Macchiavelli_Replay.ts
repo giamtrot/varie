@@ -50,16 +50,57 @@ const playersNumber = 5
 const breakStep = 100
 // new Macchiavelli_Replay(playersNumber, desc, breakStep).replay()
 
-// const deskDesc = "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H) (8S)(8D)(8C) (2S)(3S)(4S) (7S)(7H)(7C)"
-// const deskDesc = "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (7S)(7H)(7C)"
+const deskDescs = [
+    // "(1D)(10D)(11D)(12D)(13D)",
+    // "(6S)(6H)(6D)(6C) (1D)(10D)(11D)(12D)(13D)",
+    // "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(+10D)(11D)(12D)(13D)",
+    // "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D)",
+    "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H)",
+    // "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H) (8S)(8D)(8C)",
+    // "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H) (8S)(8D)(8C) (7S)(7H)(7C)",
+    // "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D) (1D)(10D)(11D)(12D)(13D) (3H)(4H)(5H)(6H) (8S)(8D)(8C) (2S)(3S)(4S) (7S)(7H)(7C)",
+]
+const cardDesc = "2D"
+// const deskDesc = "(1D)(10D)(11D)(12D)(13D) (6S)(6H)(6D)(6C)"
+// const deskDesc = "(7S)(8S)(9S) (7H)(8H)(9H) (7C)(8C)(9C) (10H)(10D)(10C)"
 // const deskDesc = "(1D)(2D)(3D)(4D)(10D)(11D)(12D)(13D)"
-const deskDesc = "(1D)(10D)(11D)(12D)(13D)"
+// const deskDesc = "(10D)(11D)(12D)(13D)"
 // const deskDesc = "(6S)(6H)(6D)(6C)"
-const cardDesc = "1D"
-const desk = Desk.fromString(deskDesc);
-const wd = new WorkingDesk(desk)
-wd.add(Card.of(cardDesc));
-console.log(wd.hand.combos.toString())
+// const cardDesc = "7D"
+// const cardDesc = "10S"
 
-// const ris = wd.searchNewCombos();
-// console.log(ris ? ris.toString() : "No new combos found")
+deskDescs.forEach(deskDesc => {
+
+    // base 
+    console.log("BASE ----------")
+    reply(deskDesc, false, false);
+    console.log("BASE ----------")
+
+    // cache 
+    console.log("CACHE----------")
+    reply(deskDesc, false, true);
+    console.log("CACHE----------")
+
+    // pivot 
+    console.log("PIVOT----------")
+    reply(deskDesc, true, true);
+    console.log("PIVOT----------")
+
+})
+
+function reply(deskDesc: string, pivotCard: boolean, cachePath: boolean) {
+    const desk = Desk.fromString(deskDesc);
+    const wd = new WorkingDesk(desk);
+
+    // console.log("before hand", wd.hand.toString());
+    console.log("before desk", desk.toString());
+    let addedCard: Card | undefined = Card.of(cardDesc);
+    if (!pivotCard) {
+        wd.add(addedCard);
+        addedCard = undefined
+    }
+    const ris = wd.searchNewCombos(addedCard, cachePath);
+    // console.log("after hand", wd.hand.toString());
+    console.log("after desk", ris.length);
+    ris.forEach(c => console.log(c.toString()));
+}

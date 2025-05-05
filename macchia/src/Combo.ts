@@ -10,6 +10,13 @@ export class Combo {
         return new Combo(cards);
     }
 
+    containsSame(card: Card): boolean {
+        if (!card) {
+            return false;
+        }
+        return this.cards.filter(c => c.same(card)).length > 0;
+    }
+
     clone(): Combo {
         const newCombo = new Combo([... this.cards]);
         return newCombo;
@@ -52,6 +59,33 @@ export class Combo {
 
         return false;
     }
+
+    static comboSorter = (a: Combo, b: Combo, pos: number = 0): number => {
+
+        if (pos >= a.cards.length && pos < b.cards.length) {
+            return -1;
+        }
+        // Cards endend on second combo, second combo is minor
+        if (pos < a.cards.length && pos >= b.cards.length) {
+            return 1;
+        }
+        // Cards endend on first and second combo, they are equal
+        if (pos >= a.cards.length && pos >= b.cards.length) {
+            return 0;
+        }
+
+        const ca = a.cards[pos];
+        const cb = b.cards[pos];
+
+        if (ca.same(cb)) {
+            return Combo.comboSorter(a, b, pos + 1);
+        }
+
+        return Card.cardSorter(ca, cb);
+
+    };
+
+
 
     private static checkFollowing(cards: ReadonlyArray<Card>): boolean {
         for (let i = 0; i <= cards.length - 2; i++) {

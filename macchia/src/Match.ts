@@ -99,11 +99,10 @@ export class Match {
     private tryToPlayCards(player: Player, messages: any[], somethingPlayed: boolean) {
         for (const card of player.cards) {
             const wd = new WorkingDesk(this.desk);
-            wd.add(card);
-            const found = wd.searchNewCombos();
-            if (found) {
+            const found = wd.searchNewCombos(card);
+            if (found.length > 0) {
                 messages.push(`${player.name} plays ${card}`);
-                this.desk.replace(found);
+                this.desk.replace(found[0]);
                 player.remove(card);
                 somethingPlayed = true;
             }
