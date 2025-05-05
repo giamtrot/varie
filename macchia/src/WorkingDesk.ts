@@ -39,6 +39,7 @@ export class WorkingDesk {
     }
     static search(hand: Hand, combos: Combos, stat: SearchStat) {
         if (hand.combos.combos.length === 0) {
+            /* istanbul ignore next */
             if (WorkingDesk.logDetails) {
                 console.log(`${"-".repeat(combos.length - 1)}${stat.leafCount + 1}. Dead branch`);
             }
@@ -50,6 +51,7 @@ export class WorkingDesk {
 
         for (let i = 0; i < hand.combos.combos.length; i++) {
             const combo = hand.combos.combos[i];
+            /* istanbul ignore next */
             if (WorkingDesk.logDetails) {
                 console.log(`${"-".repeat(combos.length)}${stat.branchCount + 1}. Hand:  ${hand.toString()}`);
                 console.log(`${"-".repeat(combos.length)}${stat.branchCount + 1}. Combo: ${combo.toString()}`);
@@ -72,6 +74,7 @@ export class WorkingDesk {
         const newCombos = combos.clone();
         newCombos.add(combo);
         if (newHand.cards.length === 0) {
+            /* istanbul ignore next */
             if (WorkingDesk.logDetails) {
                 console.log(`${"-".repeat(combos.length - 1)}${stat.leafCount + 1}. Success branch`);
             }

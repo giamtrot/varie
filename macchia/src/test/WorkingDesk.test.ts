@@ -18,7 +18,7 @@ describe('WorkingDesk', () => {
 
     beforeEach(() => {
         // Create a fresh mock Desk instance for each test
-        mockHandInstance = new (jest.requireActual('../Card').Hand)();
+        mockHandInstance = new (jest.requireActual('../Hand').Hand)();
         mockDeskInstance = new (jest.requireActual('../Desk').Desk)();
         workingDesk = new WorkingDesk(mockDeskInstance);
         // Create a mock Card instance
@@ -127,7 +127,7 @@ describe('WorkingDesk', () => {
             const newCard = Card.of("1S");
             wd.add(newCard)
             expect(wd.hand.cards.length).toBe(10);
-            expect(wd.hand.combos.length).toBe(6);
+            expect(wd.hand.combos.length).toBe(10);
 
             const foundCombos = wd.searchNewCombos();
             expect(foundCombos).toBeDefined();

@@ -170,8 +170,6 @@ export class Hand {
                 this.combos.add(combo);
             });
         });
-
-
     }
 
     collectHorizontals(card: Card, cards: Card[]) {
