@@ -350,12 +350,8 @@ describe('Card Class', () => {
             expect(() => Card.fromStringToArray("(1X)(2H)")).toThrow("Invalid suit description: X");
         });
 
-        it('should handle an empty string and return an empty array', () => {
-            const cards = Card.fromStringToArray("");
-            expect(cards.length).toBe(0);
-        });
-
         it('should throw an error for improperly formatted card descriptions', () => {
+            expect(() => Card.fromStringToArray("")).toThrow();
             expect(() => Card.fromStringToArray("1S)(2H")).toThrow();
             expect(() => Card.fromStringToArray("(1S(2H)")).toThrow();
         });

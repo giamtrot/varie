@@ -152,19 +152,26 @@ export class Hand {
 
     updateCombo() {
         this.reset();
-        let newCards: Card[] = [];
+
         this.cards.cards.filter(card => this.getHorizontals(card).length >= 2).forEach(card => {
+            let newCards: Card[] = [];
             this.collectHorizontals(card, newCards);
+            const subCombos: Combo[] = this.findSubCombos(newCards);
+            subCombos.forEach(combo => {
+                this.combos.add(combo);
+            });
         });
 
         this.cards.cards.filter(card => this.getVerticals(card).length >= 2).forEach(card => {
+            let newCards: Card[] = [];
             this.collectVerticals(card, newCards);
+            const subCombos: Combo[] = this.findSubCombos(newCards);
+            subCombos.forEach(combo => {
+                this.combos.add(combo);
+            });
         });
 
-        const subCombos: Combo[] = this.findSubCombos(newCards);
-        subCombos.forEach(combo => {
-            this.combos.add(combo);
-        });
+
     }
 
     collectHorizontals(card: Card, cards: Card[]) {

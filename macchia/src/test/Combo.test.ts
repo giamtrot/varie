@@ -21,15 +21,15 @@ describe('Combo Class', () => {
     });
 
     it('should create a valid combo with same suit and straight values - by string', () => {
-        expect(() => Combo.of("1S 2S 3S")).not.toThrow();
+        expect(() => Combo.fromString("(1S)(2S)(3S)")).not.toThrow();
     });
 
     it('should create a valid combo with same value and different suits - by string', () => {
-        expect(() => Combo.of("5S 5H 5D")).not.toThrow();
+        expect(() => Combo.fromString("(5S)(5H)(5D)")).not.toThrow();
     });
 
     it('should throw an error for invalid combo - by string', () => {
-        expect(() => Combo.of("1S 3S 5S")).toThrow();
+        expect(() => Combo.fromString("(1S)(3S)(5S)")).toThrow();
     });
 
 

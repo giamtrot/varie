@@ -193,8 +193,8 @@ describe('Hand Class', () => {
             hand.push(card5); // 7S (V with 6S)
 
             // Hand should now have combos: [5S, 5H, 5D] and [5S, 6S, 7S]
-            combo1 = hand.combos.combos.find(c => c.equals(Combo.of("5S 5H 5D")))!;
-            combo2 = hand.combos.combos.find(c => c.equals(Combo.of("5S 6S 7S")))!;
+            combo1 = hand.combos.combos.find(c => c.equals(Combo.fromString("(5S)(5H)(5D)")))!;
+            combo2 = hand.combos.combos.find(c => c.equals(Combo.fromString("(5S)(6S)(7S)")))!;
 
             expect(hand.cards.length).toBe(5);
             expect(hand.combos.length).toBe(2);
@@ -377,7 +377,7 @@ describe('Hand Class', () => {
             });
 
             it('should have independent combos (modifying original does not affect clone)', () => {
-                const extraCombo = Combo.of("8H 9H 10H");
+                const extraCombo = Combo.fromString("(8H)(9H)(10H)");
                 hand.combos.add(extraCombo); // Modify original AFTER cloning
 
                 expect(hand.combos.length).toBe(3);
@@ -386,7 +386,7 @@ describe('Hand Class', () => {
             });
 
             it('should have independent combos (modifying clone does not affect original)', () => {
-                const extraCombo = Combo.of("8H 9H 10H");
+                const extraCombo = Combo.fromString("(8H)(9H)(10H)");
                 clonedHand.combos.add(extraCombo); // Modify clone
 
                 expect(clonedHand.combos.length).toBe(3);

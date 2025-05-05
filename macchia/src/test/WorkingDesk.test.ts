@@ -27,8 +27,8 @@ describe('WorkingDesk', () => {
         matchingCard1 = Card.of("4C"); // Use the mocked Card.of
         nonMatchingCard1 = Card.of("5C"); // Use the mocked Card.of
         combo2 = new Combo([mockCard, Card.of("1d"), Card.of("1h")]);
-        combo3 = Combo.of("1D 2d 3d");
-        combo4 = Combo.of("1H 2H 3H");
+        combo3 = Combo.fromString("(1D)(2d)(3d)");
+        combo4 = Combo.fromString("(1H)(2H)(3H)");
 
     });
 

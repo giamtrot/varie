@@ -44,9 +44,11 @@ export class Card {
     }
 
     static fromStringToArray(desc: string): Card[] {
+        assert(desc.startsWith("(") && desc.endsWith(")"), "Card description must start with '(' and end with ')'");
+        desc = desc.substring(1, desc.length - 1);
         const cards: Card[] = [];
         desc.split(")(").forEach((cardDesc) => {
-            cardDesc = cardDesc.replace("(", "").replace(")", "");
+            // cardDesc = cardDesc.replace("(", "").replace(")", "");
             const card = Card.of(cardDesc);
             cards.push(card);
         });

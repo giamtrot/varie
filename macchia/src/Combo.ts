@@ -31,15 +31,6 @@ export class Combo {
         return cards.filter(card => !card.sameValue(first)).length == 0;
     }
 
-    static of(cardDesc: string) {
-        const cards: Card[] = [];
-        cardDesc.split(' ').forEach(c => {
-            const card = Card.of(c);
-            cards.push(card);
-        })
-        return new Combo(cards);
-    }
-
     static checkDifferentSuit(cards: ReadonlyArray<Card>) {
         for (let i = 0; i <= cards.length - 2; i++) {
             if (cards[i].sameSuit(cards[i + 1])) {

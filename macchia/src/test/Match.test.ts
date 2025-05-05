@@ -21,6 +21,7 @@ describe('Match Class', () => {
     let player1: Player;
     let player2: Player;
     let mockPlayersArray: Player[];
+    let consoleLogSpy: jest.SpyInstance; // Spy for console.log
 
     beforeEach(() => {
         // Reset mocks before each test
@@ -89,7 +90,19 @@ describe('Match Class', () => {
             replace: jest.fn(),
         } as unknown as jest.Mocked<Desk>;
         (Desk as jest.MockedClass<typeof Desk>).mockImplementation(() => deskInstance);
+        Object.defineProperty(deskInstance, 'combos', {
+            configurable: true,
+            get: jest.fn().mockReturnValue([]),
+        });
+
+        consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { }); // Suppress actual log output
+
     });
+
+    afterEach(() => {
+        // Restore console spy
+        consoleLogSpy.mockRestore();
+    })
 
     describe('Match.constructor', () => {
         it('should initialize with provided decks', () => {
@@ -160,8 +173,7 @@ describe('Match Class', () => {
 
         it('should make the player play a combo if they have one', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
-            const mockCombo = Combo.of("1S 2S 3S");
-            (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
+            const mockCombo = Combo.fromString("(1S)(2S)(3S)");
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true).mockReturnValueOnce(false); // Player1 has a combo
             jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value
 
@@ -202,8 +214,7 @@ describe('Match Class', () => {
         // Test for the infinite loop safeguard
         it('should break the loop if a player keeps having combos (safeguard)', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
-            const mockCombo = new Combo([Card.of("1S"), Card.of("2S"), Card.of("3S")]);
-            (Combo as unknown as jest.Mock).mockImplementation(() => mockCombo); // Ensure Combo constructor mock returns something
+            const mockCombo = Combo.fromString("(1S)(2S)(3S)");
             const hasComboMock = jest.spyOn(player1, 'hasCombo').mockReturnValue(true); // Player1 has a combo
             const playComboMock = jest.spyOn(player1, 'playCombo').mockReturnValueOnce(mockCombo); // Mock playCombo return value
             const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(); // Suppress console output during test
@@ -227,6 +238,59 @@ describe('Match Class', () => {
             expect(match.step().type).toBe(STATUS_TYPE.GAME_OVER); // Player1 has no cards left
             expect(player1.hasCards).toHaveBeenCalledTimes(2); // Called twice: once before drawing a card and once after
             expect(player2.hasCards).toHaveBeenCalledTimes(1); // Called once
+        });
+
+        it('should NOT log break step message if breakStep is not reached', () => {
+            const match = new Match(playersInstance, { decksNumber: 1 });
+            const breakStepValue = 5;
+
+            match.step(breakStepValue); // steps = 1
+            match.step(breakStepValue); // steps = 2
+            match.step(breakStepValue); // steps = 3
+
+            expect(consoleLogSpy).not.toHaveBeenCalledWith(`Break step ${breakStepValue} reached`);
+        });
+
+        it('should log break step message when steps equals breakStep', () => {
+            const match = new Match(playersInstance, { decksNumber: 1 });
+            const breakStepValue = 3;
+
+            match.step(breakStepValue); // steps = 1
+            match.step(breakStepValue); // steps = 2
+            match.step(breakStepValue); // steps = 3 -> condition met
+
+            expect(consoleLogSpy).toHaveBeenCalledTimes(1); // Called only once
+            expect(consoleLogSpy).toHaveBeenCalledWith(`Break step ${breakStepValue} reached`);
+        });
+
+        it('should NOT log break step message if breakStep is default (-1)', () => {
+            const match = new Match(playersInstance, { decksNumber: 1 });
+
+            match.step(); // steps = 1, breakStep = -1
+            match.step(); // steps = 2, breakStep = -1
+
+            expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining("Break step"));
+        });
+
+        it('should NOT log break step message if breakStep is 0', () => {
+            const match = new Match(playersInstance, { decksNumber: 1 });
+
+            match.step(0); // steps = 1, breakStep = 0
+            match.step(0); // steps = 2, breakStep = 0
+
+            expect(consoleLogSpy).not.toHaveBeenCalledWith(expect.stringContaining("Break step"));
+        });
+
+        it('should log break step message only on the specific step', () => {
+            const match = new Match(playersInstance, { decksNumber: 1 });
+            const breakStepValue = 2;
+
+            match.step(breakStepValue); // steps = 1
+            match.step(breakStepValue); // steps = 2 -> LOG
+            match.step(breakStepValue); // steps = 3
+
+            expect(consoleLogSpy).toHaveBeenCalledTimes(1); // Called only once
+            expect(consoleLogSpy).toHaveBeenCalledWith(`Break step ${breakStepValue} reached`);
         });
     });
 
@@ -283,7 +347,7 @@ describe('Match Class', () => {
         it('should play a card if it forms a new combo on the desk', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
             const card = Card.of("5H");
-            const mockCombo = Combo.of("5H 6H 7H");
+            const mockCombo = Combo.fromString("(5H)(6H)(7H)");
             const mockCombos = new Combos();
             mockCombos.add(mockCombo);
             Object.defineProperty(player1, 'cards', {
@@ -337,7 +401,7 @@ describe('Match Class', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
             const card1 = Card.of("5H");
             const card2 = Card.of("6H");
-            const mockCombo = Combo.of("5H 6H 7H");
+            const mockCombo = Combo.fromString("(5H)(6H)(7H)");
             const mockCombos = new Combos();
             mockCombos.add(mockCombo);
             jest.spyOn(player1, 'cards', 'get').mockReturnValue([card1, card2]);
@@ -374,8 +438,8 @@ describe('Match Class', () => {
     describe('Match.step', () => {
         it('should handle a player playing multiple combos in a single turn', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
-            const mockCombo1 = Combo.of("1S 2S 3S");
-            const mockCombo2 = Combo.of("4S 5S 6S");
+            const mockCombo1 = Combo.fromString("(1S)(2S)(3S)");
+            const mockCombo2 = Combo.fromString("(4S)(5S)(6S)");
             jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(false);
             jest.spyOn(player1, 'playCombo')
                 .mockReturnValueOnce(mockCombo1)
@@ -426,17 +490,22 @@ describe('Match Class', () => {
         it('should handle a player playing a card that forms a new combo', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
             const card = Card.of("8H");
-            const mockCombo = Combo.of("8H 9H 10H");
+            const mockCombo = Combo.fromString("(8H)(9H)(10H)");
             const mockCombos = new Combos();
             mockCombos.add(mockCombo);
             Object.defineProperty(player1, 'cards', {
                 configurable: true,
                 get: jest.fn(() => [card]),
             });
+
+            // (WorkingDesk as jest.MockedClass<typeof WorkingDesk>).mockImplementation(() => playersInstance);
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
             jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(mockCombos);
+
             jest.spyOn(deskInstance, 'replace').mockImplementation();
+
             jest.spyOn(player1, 'remove').mockImplementation();
+            jest.spyOn(player1, 'hasCombo').mockReturnValueOnce(false);
 
             const status = match.step();
 
@@ -467,7 +536,7 @@ describe('Match Class', () => {
 
         it('should handle a safeguard for infinite loops when a player keeps playing combos', () => {
             const match = new Match(playersInstance, { decksNumber: 2 });
-            const mockCombo = Combo.of("1S 2S 3S");
+            const mockCombo = Combo.fromString("(1S)(2S)(3S)");
             jest.spyOn(player1, 'hasCombo').mockReturnValue(true);
             jest.spyOn(player1, 'playCombo').mockReturnValue(mockCombo);
             const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();

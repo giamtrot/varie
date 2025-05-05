@@ -333,11 +333,19 @@ describe('Player Class', () => {
             player.add(card6S);
 
             const expectedComboH = new Combo([card5H, card5D, card5C, card5S]);
+            const expectedComboH1 = new Combo([card5H, card5D, card5C]);
+            const expectedComboH2 = new Combo([card5H, card5D, card5S]);
+            const expectedComboH3 = new Combo([card5H, card5C, card5S]);
+            const expectedComboH4 = new Combo([card5D, card5C, card5S]);
             const expectedComboV = new Combo([card4S, card5S, card6S]);
 
             // Should find *both* combos
-            expect(player.hand.combos.length).toBe(2);
+            expect(player.hand.combos.length).toBe(6);
             expect(player.hand.combos.contains(expectedComboH)).toBe(true);
+            expect(player.hand.combos.contains(expectedComboH1)).toBe(true);
+            expect(player.hand.combos.contains(expectedComboH2)).toBe(true);
+            expect(player.hand.combos.contains(expectedComboH3)).toBe(true);
+            expect(player.hand.combos.contains(expectedComboH4)).toBe(true);
             expect(player.hand.combos.contains(expectedComboV)).toBe(true);
         });
 

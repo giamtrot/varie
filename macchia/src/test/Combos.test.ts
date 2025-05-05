@@ -43,8 +43,8 @@ describe('Combos Class', () => {
 
         beforeEach(() => {
             // Create some real combos for testing
-            combo1 = Combo.of("1S 2S 3S");
-            combo2 = Combo.of("5H 5D 5C");
+            combo1 = Combo.fromString("(1S)(2S)(3S)");
+            combo2 = Combo.fromString("(5H)(5D)(5C)");
 
             originalCombos = new Combos();
             originalCombos.add(combo1);
@@ -86,7 +86,7 @@ describe('Combos Class', () => {
 
         it('should create a deep clone (modifying original combos array does not affect clone)', () => {
             const clonedCombos = originalCombos.clone();
-            const combo3 = Combo.of("7H 8H 9H");
+            const combo3 = Combo.fromString("(7H)(8H)(9H)");
 
             // Modify the original after cloning
             originalCombos.add(combo3);
@@ -98,7 +98,7 @@ describe('Combos Class', () => {
 
         it('should create a deep clone (modifying clone combos array does not affect original)', () => {
             const clonedCombos = originalCombos.clone();
-            const combo3 = Combo.of("7H 8H 9H");
+            const combo3 = Combo.fromString("(7H)(8H)(9H)");
 
             // Modify the clone after cloning
             clonedCombos.add(combo3);
@@ -298,29 +298,29 @@ describe('Combos Class', () => {
         });
 
         it('should return a string representation of a single combo', () => {
-            const combo = Combo.of("1S 2S 3S");
+            const combo = Combo.fromString("(1S)(2S)(3S)");
             combos.add(combo);
             expect(combos.toString()).toBe(combo.toString());
         });
 
         it('should return a space-separated string representation of multiple combos', () => {
-            const combo1 = Combo.of("1S 2S 3S");
-            const combo2 = Combo.of("5H 5D 5C");
+            const combo1 = Combo.fromString("(1S)(2S)(3S)");
+            const combo2 = Combo.fromString("(5H)(5D)(5C)");
             combos.add(combo1);
             combos.add(combo2);
             expect(combos.toString()).toBe(`${combo1.toString()} ${combo2.toString()}`);
         });
 
         it('should not include duplicate combos in the string representation', () => {
-            const combo = Combo.of("1S 2S 3S");
+            const combo = Combo.fromString("(1S)(2S)(3S)");
             combos.add(combo);
             combos.add(combo); // Add the same combo again
             expect(combos.toString()).toBe(combo.toString());
         });
 
         it('should return a string representation after resetting and adding new combos', () => {
-            const combo1 = Combo.of("1S 2S 3S");
-            const combo2 = Combo.of("5H 5D 5C");
+            const combo1 = Combo.fromString("(1S)(2S)(3S)");
+            const combo2 = Combo.fromString("(5H)(5D)(5C)");
             combos.add(combo1);
             combos.reset();
             combos.add(combo2);
@@ -342,12 +342,9 @@ describe('Combos Class', () => {
             expect(combos.contains(expectedCombo2)).toBe(true);
         });
 
-        it('should handle an empty string and create an empty Combos instance', () => {
+        it('should handle an empty string and throw', () => {
             const desc = "";
-            const combos = Combos.fromString(desc);
-
-            expect(combos).toBeInstanceOf(Combos);
-            expect(combos.length).toBe(0);
+            expect(() => Combos.fromString(desc)).toThrow();
         });
 
         it('should throw an error for invalid combo strings', () => {
@@ -356,7 +353,7 @@ describe('Combos Class', () => {
         });
 
         it('should ignore duplicate combos in the string description', () => {
-            const desc = "(1S)(2S)(3S)(1S)(2S)(3S)";
+            const desc = "(1S)(2S)(3S) (1S)(2S)(3S)";
             const combos = Combos.fromString(desc);
 
             expect(combos).toBeInstanceOf(Combos);
@@ -367,7 +364,7 @@ describe('Combos Class', () => {
         });
 
         it('should handle a string with multiple valid combos', () => {
-            const desc = "1S 2S 3S 5H 5D 5C 7H 7D 7C";
+            const desc = "(1S)(2S)(3S) (5H)(5D)(5C) (7H)(7D)(7C)";
             const combos = Combos.fromString(desc);
 
             expect(combos).toBeInstanceOf(Combos);
