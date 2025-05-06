@@ -355,7 +355,7 @@ describe('Match Class', () => {
                 get: jest.fn(() => [card]),
             });
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
-            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(mockCombos);
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue([mockCombos]);
             jest.spyOn(deskInstance, 'replace').mockImplementation();
             jest.spyOn(player1, 'remove').mockImplementation();
 
@@ -373,7 +373,7 @@ describe('Match Class', () => {
             const card = Card.of("5H");
             jest.spyOn(player1, 'cards', 'get').mockReturnValue([card]);
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
-            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue([]);
 
             const messages: string[] = [];
             const result = match['tryToPlayCards'](player1, messages, false);
@@ -387,14 +387,13 @@ describe('Match Class', () => {
             const card1 = Card.of("5H");
             const card2 = Card.of("6H");
             jest.spyOn(player1, 'cards', 'get').mockReturnValue([card1, card2]);
-            jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
-            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue([]);
 
             const messages: string[] = [];
             match['tryToPlayCards'](player1, messages, false);
 
-            expect(WorkingDesk.prototype.add).toHaveBeenCalledWith(card1);
-            expect(WorkingDesk.prototype.add).toHaveBeenCalledWith(card2);
+            expect(WorkingDesk.prototype.searchNewCombos).toHaveBeenCalledWith(card1);
+            expect(WorkingDesk.prototype.searchNewCombos).toHaveBeenCalledWith(card2);
         });
 
         it('should return true if at least one card is played', () => {
@@ -407,8 +406,8 @@ describe('Match Class', () => {
             jest.spyOn(player1, 'cards', 'get').mockReturnValue([card1, card2]);
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
             jest.spyOn(WorkingDesk.prototype, 'searchNewCombos')
-                .mockReturnValueOnce(mockCombos)
-                .mockReturnValueOnce(undefined);
+                .mockReturnValueOnce([mockCombos])
+                .mockReturnValueOnce([]);
             jest.spyOn(deskInstance, 'replace').mockImplementation();
             jest.spyOn(player1, 'remove').mockImplementation();
 
@@ -426,7 +425,7 @@ describe('Match Class', () => {
             const card = Card.of("5H");
             jest.spyOn(player1, 'cards', 'get').mockReturnValue([card]);
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
-            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(undefined);
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue([]);
 
             const messages: string[] = [];
             const result = match['tryToPlayCards'](player1, messages, true);
@@ -500,7 +499,7 @@ describe('Match Class', () => {
 
             // (WorkingDesk as jest.MockedClass<typeof WorkingDesk>).mockImplementation(() => playersInstance);
             jest.spyOn(WorkingDesk.prototype, 'add').mockImplementation();
-            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue(mockCombos);
+            jest.spyOn(WorkingDesk.prototype, 'searchNewCombos').mockReturnValue([mockCombos]);
 
             jest.spyOn(deskInstance, 'replace').mockImplementation();
 

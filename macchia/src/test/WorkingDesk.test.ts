@@ -80,7 +80,7 @@ describe('WorkingDesk', () => {
             expect(wd.hand.cards.length).toBe(0);
             expect(wd.hand.combos.length).toBe(0);
             const foundCombos = wd.searchNewCombos();
-            expect(foundCombos).toBeUndefined();
+            expect(foundCombos.length).toBe(0);
         })
 
         it('should found the same combination if nothing added', () => {
@@ -88,22 +88,24 @@ describe('WorkingDesk', () => {
             const wd = new WorkingDesk(mockDeskInstance);
             expect(wd.hand.cards.length).toBe(3);
             expect(wd.hand.combos.length).toBe(1);
-            const foundCombos = wd.searchNewCombos();
-            expect(foundCombos).toBeDefined();
-            expect(foundCombos?.combos.length).toBe(1);
-            expect(foundCombos?.combos).toEqual(mockDeskInstance.combos);
-            expect(foundCombos?.combos).toEqual([combo1]);
+            const foundCombosArr = wd.searchNewCombos();
+            expect(foundCombosArr.length).toBe(1);
+            const foundCombos = foundCombosArr[0];
+            expect(foundCombos.length).toBe(1);
+            expect(foundCombos.combos[0]).toEqual(combo1);
         })
 
         it('should found a new combination if a matching card is added', () => {
             mockDeskInstance.add(combo1);
             const wd = new WorkingDesk(mockDeskInstance);
             wd.add(matchingCard1);
-            const foundCombos = wd.searchNewCombos();
-            expect(foundCombos).toBeDefined();
-            expect(foundCombos?.combos.length).toBe(1);
-            expect(foundCombos?.combos[0].cards.length).toBe(4);
-            expect(foundCombos?.combos[0].cards).toContain(matchingCard1);
+            const foundCombosArr = wd.searchNewCombos();
+            expect(foundCombosArr.length).toBe(1);
+            const foundCombos = foundCombosArr[0];
+            expect(foundCombos.length).toBe(1);
+            const foundCombo = foundCombos.combos[0];
+            expect(foundCombo.cards.length).toBe(4);
+            expect(foundCombo.cards).toContain(matchingCard1);
         })
 
         it('should not found a new combination if a not matching card is added', () => {
@@ -111,7 +113,7 @@ describe('WorkingDesk', () => {
             const wd = new WorkingDesk(mockDeskInstance);
             wd.add(nonMatchingCard1);
             const foundCombos = wd.searchNewCombos();
-            expect(foundCombos).toBeUndefined();
+            expect(foundCombos.length).toBe(0);
         })
 
 
@@ -129,27 +131,30 @@ describe('WorkingDesk', () => {
             expect(wd.hand.cards.length).toBe(10);
             expect(wd.hand.combos.length).toBe(10);
 
-            const foundCombos = wd.searchNewCombos();
-            expect(foundCombos).toBeDefined();
-            expect(foundCombos?.combos.length).toBe(3);
+            const foundCombosArr = wd.searchNewCombos();
+            expect(foundCombosArr.length).toBe(1);
+            const foundCombos = foundCombosArr[0];
+            expect(foundCombos.length).toBe(3);
 
-            expect(foundCombos?.combos[0].cards.length).toBe(4);
-            expect(foundCombos?.combos[0].cards).toContain(newCard);
-            expect(foundCombos?.combos[0].cards).toContain(combo1.cards[0]);
-            expect(foundCombos?.combos[0].cards).toContain(combo3.cards[0]);
-            expect(foundCombos?.combos[0].cards).toContain(combo4.cards[0]);
+            const foundCombo1 = foundCombos.combos[0];
+            expect(foundCombo1.cards.length).toBe(4);
+            expect(foundCombo1.cards).toContain(newCard);
+            expect(foundCombo1.cards).toContain(combo1.cards[0]);
+            expect(foundCombo1.cards).toContain(combo3.cards[0]);
+            expect(foundCombo1.cards).toContain(combo4.cards[0]);
 
-            expect(foundCombos?.combos[1].cards.length).toBe(3);
-            expect(foundCombos?.combos[1].cards).toContain(combo1.cards[1]);
-            expect(foundCombos?.combos[1].cards).toContain(combo3.cards[1]);
-            expect(foundCombos?.combos[1].cards).toContain(combo4.cards[1]);
+            const foundCombo2 = foundCombos.combos[1];
+            expect(foundCombo2.cards.length).toBe(3);
+            expect(foundCombo2.cards).toContain(combo1.cards[1]);
+            expect(foundCombo2.cards).toContain(combo3.cards[1]);
+            expect(foundCombo2.cards).toContain(combo4.cards[1]);
 
-            expect(foundCombos?.combos[2].cards.length).toBe(3);
-            expect(foundCombos?.combos[2].cards).toContain(combo1.cards[2]);
-            expect(foundCombos?.combos[2].cards).toContain(combo3.cards[2]);
-            expect(foundCombos?.combos[2].cards).toContain(combo4.cards[2]);
+            const foundCombo3 = foundCombos.combos[2];
+            expect(foundCombo3.cards.length).toBe(3);
+            expect(foundCombo3.cards).toContain(combo1.cards[2]);
+            expect(foundCombo3.cards).toContain(combo3.cards[2]);
+            expect(foundCombo3.cards).toContain(combo4.cards[2]);
         });
-
     });
 });
 
@@ -173,7 +178,7 @@ describe('WorkingDesk Bugs', () => {
         const wd = new WorkingDesk(desk)
         wd.add(Card.of(cardDesc));
         const ris = wd.searchNewCombos();
-        expect(ris).toBeUndefined()
+        expect(ris.length).toBe(0);
     });
 
     it('should rearrange cards 2', () => {
