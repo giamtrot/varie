@@ -44,6 +44,7 @@ export class WorkingDesk {
         return found;
     }
 
+    /* istanbul ignore next */
     private static logStat(helper: SearchHelper) {
         helper.elapsedTime = performance.now() - helper.startTime;
         console.log(`Search completed in ${helper.elapsedTime.toFixed(2)} ms: leaves ${helper.leafCount}, branches ${helper.branchCount}`);
@@ -56,6 +57,7 @@ export class WorkingDesk {
                 console.log(`${"-".repeat(combos.length - 1)}${helper.leafCount + 1}. Dead branch`);
             }
             helper.leafCount++;
+            /* istanbul ignore next */
             if (WorkingDesk.logDetails) {
                 WorkingDesk.logStat(helper);
             }
@@ -111,6 +113,7 @@ export class WorkingDesk {
                 console.log(`${"-".repeat(combos.length - 1)}${helper.leafCount + 1}. Completed branch`);
             }
             helper.leafCount++;
+            /* istanbul ignore next */
             if (WorkingDesk.logDetails) {
                 WorkingDesk.logStat(helper);
             }

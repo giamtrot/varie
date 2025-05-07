@@ -313,6 +313,90 @@ describe('WorkingDesk', () => {
         });
     });
 
+    // New describe block for WorkingDesk.innerSearch static method tests
+    describe('WorkingDesk.innerSearch (static method tests)', () => {
+        let currentTestLogStatSpy: jest.SpyInstance; // For WorkingDesk.logStat
+        let consoleLogSpy: jest.SpyInstance;      // For console.log
+        const originalLogDetails = WorkingDesk.logDetails; // Store original value of WorkingDesk.logDetails
+
+        beforeEach(() => {
+            // 1. Restore spies from the outer scope to ensure we're working with original methods
+            //    before applying spies specific to this test suite.
+            if (outerStaticSearchSpy) outerStaticSearchSpy.mockRestore(); // Makes WorkingDesk.search its original implementation
+            if (outerLogStatSpy) outerLogStatSpy.mockRestore();    // Makes WorkingDesk.logStat its original implementation
+
+            // 2. For tests within *this suite*:
+            //    - Mock `WorkingDesk.logStat` to prevent its actual console output during tests.
+            currentTestLogStatSpy = jest.spyOn(WorkingDesk as any, 'logStat').mockImplementation(() => { });
+            //    - Mock `console.log` to control and assert logging from `WorkingDesk.logDetails`.
+            consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+            //    - Reset `WorkingDesk.logDetails` to its default (false) for each test.
+            WorkingDesk.logDetails = false;
+        });
+
+        afterEach(() => {
+            // 1. Restore spies created specifically for this suite's tests.
+            currentTestLogStatSpy.mockRestore();
+            consoleLogSpy.mockRestore();
+            WorkingDesk.logDetails = originalLogDetails; // Restore original static property value
+
+            // 2. Re-establish the outer spies for subsequent test suites or tests
+            //    in the parent describe block.
+            outerStaticSearchSpy = jest.spyOn(WorkingDesk, 'search').mockReturnValue([]);
+            outerLogStatSpy = jest.spyOn(WorkingDesk as any, 'logStat').mockImplementation(() => { });
+        });
+
+        it('should return an empty array if the path is already in helper.paths (cycle detected)', () => {
+            // Arrange
+            const handForInnerSearch = new Hand(); // This is the 'newHand' parameter for innerSearch
+            const combosForInnerSearch = new Combos(); // This is the 'combos' parameter for innerSearch
+            const currentCombo = Combo.fromString("(1S)(2S)(3S)");
+
+            // Simulate how 'newCombos.toString()' would generate the path
+            const tempNewCombos = combosForInnerSearch.clone();
+            tempNewCombos.add(currentCombo);
+            const pathKey = tempNewCombos.toString();
+
+            const helper = getEmptyHelper(); // Use the existing helper function from the test file
+            helper.paths.add(pathKey);       // Pre-populate paths to simulate a cycle
+            helper.cachePath = true;         // cachePath being true/false affects adding current path, not checking existing
+
+            // Act
+            const result = WorkingDesk.innerSearch(currentCombo, handForInnerSearch, combosForInnerSearch, helper);
+
+            // Assert
+            expect(result).toEqual([]);
+            expect(consoleLogSpy).not.toHaveBeenCalled(); // WorkingDesk.logDetails is false by default
+        });
+
+        it('should log cycle detection message and return empty array if logDetails is true and path is in helper.paths', () => {
+            // Arrange
+            WorkingDesk.logDetails = true; // Enable detailed logging for this specific test
+
+            const handForInnerSearch = new Hand();
+            const combosForInnerSearch = new Combos();
+            // Add a dummy combo to make combosForInnerSearch.length = 1, so `combos.length - 1` in log is 0
+            combosForInnerSearch.add(Combo.fromString("(7H)(8H)(9H)"));
+
+            const currentCombo = Combo.fromString("(1S)(2S)(3S)");
+
+            const tempNewCombos = combosForInnerSearch.clone();
+            tempNewCombos.add(currentCombo);
+            const pathKey = tempNewCombos.toString();
+
+            const helper = getEmptyHelper();
+            helper.paths.add(pathKey);
+            helper.cachePath = true;
+            helper.leafCount = 5; // Arbitrary leafCount for the log message
+            const expectedLogMessage = `${"-".repeat(combosForInnerSearch.length - 1)}${helper.leafCount + 1}. Cycle branch. Skipping`;
+            // Act
+            const result = WorkingDesk.innerSearch(currentCombo, handForInnerSearch, combosForInnerSearch, helper);
+            // Assert
+            expect(result).toEqual([]);
+            expect(consoleLogSpy).toHaveBeenCalledWith(expectedLogMessage);
+        });
+    });
+
     describe('WorkingDesk Bugs', () => {
 
         it('should not crash when searching combos', () => {
