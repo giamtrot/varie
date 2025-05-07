@@ -317,7 +317,7 @@ describe('WorkingDesk', () => {
     describe('WorkingDesk.innerSearch (static method tests)', () => {
         let currentTestLogStatSpy: jest.SpyInstance; // For WorkingDesk.logStat
         let consoleLogSpy: jest.SpyInstance;      // For console.log
-        const originalLogDetails = WorkingDesk.logDetails; // Store original value of WorkingDesk.logDetails
+        const originalLogDetails = WorkingDesk["activaLogDetails"]; // Store original value of WorkingDesk.logDetails
 
         beforeEach(() => {
             // 1. Restore spies from the outer scope to ensure we're working with original methods
@@ -331,14 +331,14 @@ describe('WorkingDesk', () => {
             //    - Mock `console.log` to control and assert logging from `WorkingDesk.logDetails`.
             consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
             //    - Reset `WorkingDesk.logDetails` to its default (false) for each test.
-            WorkingDesk.logDetails = false;
+            WorkingDesk["activaLogDetails"] = false;
         });
 
         afterEach(() => {
             // 1. Restore spies created specifically for this suite's tests.
             currentTestLogStatSpy.mockRestore();
             consoleLogSpy.mockRestore();
-            WorkingDesk.logDetails = originalLogDetails; // Restore original static property value
+            WorkingDesk["activaLogDetails"] = originalLogDetails; // Restore original static property value
 
             // 2. Re-establish the outer spies for subsequent test suites or tests
             //    in the parent describe block.
@@ -371,7 +371,7 @@ describe('WorkingDesk', () => {
 
         it('should log cycle detection message and return empty array if logDetails is true and path is in helper.paths', () => {
             // Arrange
-            WorkingDesk.logDetails = true; // Enable detailed logging for this specific test
+            WorkingDesk["activaLogDetails"] = true; // Enable detailed logging for this specific test
 
             const handForInnerSearch = new Hand();
             const combosForInnerSearch = new Combos();
@@ -397,8 +397,12 @@ describe('WorkingDesk', () => {
         });
     });
 
-    describe('WorkingDesk Bugs', () => {
+    describe('WorkingDesk Use Cases', () => {
 
+        function logElapsed(start: number) {
+            const elapsed = performance.now() - start;
+            console.log(`Elapsed time: ${(elapsed / 1000.).toFixed(2)} s`);
+        }
         it('should not crash when searching combos', () => {
             const deskDesc = "(7S)(7H)(7D)(7C)(6S)(6H)(6D)(5H)"
             const hand = new Hand();
@@ -410,15 +414,17 @@ describe('WorkingDesk', () => {
             expect(hand.cards.cards).not.toContain(Card.of("5H"));
         })
 
-        it('should rearrange cards 1', () => {
+        it('should rearrange cards 1', async () => {
             const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
             const cardDesc = "5H"
             const desk = Desk.fromString(deskDesc);
             const wd = new WorkingDesk(desk)
             wd.add(Card.of(cardDesc));
+            const start = performance.now();
             const ris = wd.searchNewCombos();
+            logElapsed(start);
             expect(ris.length).toBe(0);
-        });
+        }, 5000);
 
         it('should rearrange cards 2', () => {
             const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"

@@ -15,7 +15,7 @@ type SearchHelper = {
 
 export class WorkingDesk {
     hand = new Hand();
-    static logDetails: boolean = false;
+    private static activaLogDetails = false;
 
     constructor(desk: Desk) {
         this.hand.addAll(desk.combos);
@@ -46,6 +46,7 @@ export class WorkingDesk {
 
     /* istanbul ignore next */
     private static logStat(helper: SearchHelper) {
+        if (!this.activaLogDetails) return;
         helper.elapsedTime = performance.now() - helper.startTime;
         console.log(`Search completed in ${helper.elapsedTime.toFixed(2)} ms: leaves ${helper.leafCount}, branches ${helper.branchCount}`);
     }
@@ -53,14 +54,10 @@ export class WorkingDesk {
     static search(hand: Hand, combos: Combos, helper: SearchHelper, addedCard: Card | undefined = undefined): Combos[] {
         if (hand.combos.combos.length === 0) {
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                console.log(`${"-".repeat(combos.length - 1)}${helper.leafCount + 1}. Dead branch`);
-            }
+            WorkingDesk.logDetails(combos, helper.leafCount + 1, "Dead branch");
             helper.leafCount++;
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                WorkingDesk.logStat(helper);
-            }
+            WorkingDesk.logStat(helper);
             return [];
         }
 
@@ -73,10 +70,8 @@ export class WorkingDesk {
                 continue;
             }
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                console.log(`${"-".repeat(combos.length)}${helper.branchCount + 1}. Hand:  ${hand.toString()}`);
-                console.log(`${"-".repeat(combos.length)}${helper.branchCount + 1}. Combo: ${combo.toString()}`);
-            }
+            WorkingDesk.logDetails(combos, helper.branchCount, `Hand:  ${hand.toString()}`);
+            WorkingDesk.logDetails(combos, helper.branchCount, `Combo: ${combo.toString()}`);
             const newHand = hand.clone();
             combo.cards.forEach(card => {
                 newHand.remove(card);
@@ -91,6 +86,12 @@ export class WorkingDesk {
         return foundCombos;
     }
 
+    private static logDetails(combos: Combos, stat: number, msg: string) {
+        if (!this.activaLogDetails) return;
+        const prefix = Math.max(0, combos.length - 1);
+        console.log(`${"-".repeat(prefix)}${stat}. ${msg}`);
+    }
+
     static innerSearch(combo: Combo, newHand: Hand, combos: Combos, helper: SearchHelper): Combos[] {
         helper.branchCount++;
         const newCombos = combos.clone();
@@ -98,9 +99,7 @@ export class WorkingDesk {
         const path = newCombos.toString();
         if (helper.paths.has(path)) {
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                console.log(`${"-".repeat(combos.length - 1)}${helper.leafCount + 1}. Cycle branch. Skipping`);
-            }
+            WorkingDesk.logDetails(combos, helper.leafCount + 1, "Cycle branch. Skipping");
             return []
         }
         if (helper.cachePath) {
@@ -109,14 +108,10 @@ export class WorkingDesk {
 
         if (newHand.cards.length === 0) {
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                console.log(`${"-".repeat(combos.length - 1)}${helper.leafCount + 1}. Completed branch`);
-            }
+            WorkingDesk.logDetails(combos, helper.leafCount + 1, "Completed branch");
             helper.leafCount++;
             /* istanbul ignore next */
-            if (WorkingDesk.logDetails) {
-                WorkingDesk.logStat(helper);
-            }
+            WorkingDesk.logStat(helper);
             return [newCombos];
         }
 
