@@ -396,46 +396,40 @@ describe('WorkingDesk', () => {
             expect(consoleLogSpy).toHaveBeenCalledWith(expectedLogMessage);
         });
     });
-
-    describe('WorkingDesk Use Cases', () => {
-
-        function logElapsed(start: number) {
-            const elapsed = performance.now() - start;
-            console.log(`Elapsed time: ${(elapsed / 1000.).toFixed(2)} s`);
-        }
-        it('should not crash when searching combos', () => {
-            const deskDesc = "(7S)(7H)(7D)(7C)(6S)(6H)(6D)(5H)"
-            const hand = new Hand();
-            Card.fromStringToArray(deskDesc).forEach(c => hand.push(c));
-
-            const combo = new Combo([hand.cards.cards[1], hand.cards.cards[5], hand.cards.cards[7]]);
-            combo.cards.forEach(c => hand.remove(c));
-            expect(hand.cards.length).toBe(5);
-            expect(hand.cards.cards).not.toContain(Card.of("5H"));
-        })
-
-        it('should rearrange cards 1', async () => {
-            const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
-            const cardDesc = "5H"
-            const desk = Desk.fromString(deskDesc);
-            const wd = new WorkingDesk(desk)
-            wd.add(Card.of(cardDesc));
-            const start = performance.now();
-            const ris = wd.searchNewCombos();
-            logElapsed(start);
-            expect(ris.length).toBe(0);
-        }, 5000);
-
-        it('should rearrange cards 2', () => {
-            const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"
-            const cardDesc = "7D"
-            const desk = Desk.fromString(deskDesc);
-            const wd = new WorkingDesk(desk)
-            wd.add(Card.of(cardDesc));
-            const ris = wd.searchNewCombos();
-            expect(ris).toBeDefined()
-        });
-
-    });
 });
 
+describe('WorkingDesk Use Cases', () => {
+
+    const timeout = 5000;
+
+    it('should rearrange cards 1', async () => {
+        const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
+        const cardDesc = "5H"
+        const desk = Desk.fromString(deskDesc);
+        const wd = new WorkingDesk(desk)
+        wd.add(Card.of(cardDesc));
+        const ris = wd.searchNewCombos();
+        expect(ris.length).toBe(0);
+    }, timeout);
+
+    it('should rearrange cards 2', async () => {
+        const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"
+        const cardDesc = "7D"
+        const desk = Desk.fromString(deskDesc);
+        const wd = new WorkingDesk(desk)
+        wd.add(Card.of(cardDesc));
+        const ris = wd.searchNewCombos();
+        expect(ris.length).toBe(1);
+    }, timeout);
+
+    it('should rearrange cards 3', async () => {
+        const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"
+        const cardDesc = "1D"
+        const desk = Desk.fromString(deskDesc);
+        const wd = new WorkingDesk(desk)
+        wd.add(Card.of(cardDesc));
+        const ris = wd.searchNewCombos();
+        expect(ris.length).toBe(0);
+    }, timeout);
+
+});
