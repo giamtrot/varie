@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Desk } from '../Desk';
 import { WorkingDesk } from '../WorkingDesk';
 import { Combo } from '../Combo';
@@ -399,37 +402,60 @@ describe('WorkingDesk', () => {
 });
 
 describe('WorkingDesk Use Cases', () => {
-
     const timeout = 5000;
+    const logFilePath = path.join(__dirname, 'WorkingDesk-performance.log');
 
-    it('should rearrange cards 1', async () => {
-        const deskDesc = "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)"
-        const cardDesc = "5H"
-        const desk = Desk.fromString(deskDesc);
-        const wd = new WorkingDesk(desk)
-        wd.add(Card.of(cardDesc));
-        const ris = wd.searchNewCombos();
-        expect(ris.length).toBe(0);
-    }, timeout);
+    function logElapsed(description: string, start: number) {
+        const elapsed = performance.now() - start
+        console.log(`${description} - ${elapsed.toFixed(2)} ms elapsed`)
 
-    it('should rearrange cards 2', async () => {
-        const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"
-        const cardDesc = "7D"
-        const desk = Desk.fromString(deskDesc);
-        const wd = new WorkingDesk(desk)
-        wd.add(Card.of(cardDesc));
-        const ris = wd.searchNewCombos();
-        expect(ris.length).toBe(1);
-    }, timeout);
+        const message = `${description} - ${elapsed.toFixed(2)} ms elapsed\n`; // Added newline for file
+        console.log(message.trim()); // Keep console log for immediate feedback, trim newline
+        try {
+            fs.appendFileSync(logFilePath, message); // Append to file
+        } catch (err) {
+            console.error('Failed to write to performance log:', err); // Basic error handling
+        }
+    }
 
-    it('should rearrange cards 3', async () => {
-        const deskDesc = "(6S)(6H)(6D)(6C) (7S)(7H)(7C)"
-        const cardDesc = "1D"
-        const desk = Desk.fromString(deskDesc);
-        const wd = new WorkingDesk(desk)
-        wd.add(Card.of(cardDesc));
-        const ris = wd.searchNewCombos();
-        expect(ris.length).toBe(0);
-    }, timeout);
+    const testCases = [
+        {
+            description: 'should rearrange cards 1',
+            deskDesc: "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)",
+            cardDesc: "5H",
+            expectedLength: 0,
+        },
+        {
+            description: 'should rearrange cards 2',
+            deskDesc: "(6S)(6H)(6D)(6C) (7S)(7H)(7C)",
+            cardDesc: "7D",
+            expectedLength: 1,
+        },
+        {
+            description: 'should rearrange cards 3',
+            deskDesc: "(6S)(6H)(6D)(6C) (7S)(7H)(7C)",
+            cardDesc: "1D",
+            expectedLength: 0,
+        },
+        {
+            description: 'should rearrange cards 4',
+            deskDesc: "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D)",
+            cardDesc: "1D",
+            expectedLength: 0,
+        },
+    ];
 
+    it.each(testCases)(
+        '$description',
+        async ({ description, deskDesc, cardDesc, expectedLength }) => {
+            const desk = Desk.fromString(deskDesc);
+            const wd = new WorkingDesk(desk);
+            wd.add(Card.of(cardDesc));
+            const start = performance.now();
+            const ris = wd.searchNewCombos();
+            logElapsed(description, start)
+            expect(ris.length).toBe(expectedLength);
+        },
+        timeout
+    );
 });
