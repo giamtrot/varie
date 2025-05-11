@@ -86,6 +86,7 @@ export class WorkingDesk {
         return foundCombos;
     }
 
+    /* istanbul ignore next */
     private static logDetails(combos: Combos, stat: number, msg: string) {
         if (!this.activaLogDetails) return;
         const prefix = Math.max(0, combos.length - 1);

@@ -11,3 +11,4 @@ tb/dist/*
 rss/AdAltaVoce.CommitStatus.txt
 **/coverage/*
 macchia/dist/*
+macchia/src/test/WorkingDesk-performance.log
