@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Desk } from '../Desk';
-import { WorkingDesk } from '../WorkingDesk';
+import { SearchHelper, WorkingDesk } from '../WorkingDesk';
 import { Combo } from '../Combo';
 import { Card } from '../Card';
 import { Hand } from '../Hand';
@@ -405,11 +405,10 @@ describe('WorkingDesk Use Cases', () => {
     const timeout = 5000;
     const logFilePath = path.join(__dirname, 'WorkingDesk-performance.log');
 
-    function logElapsed(description: string, start: number) {
-        const elapsed = performance.now() - start
-        console.log(`${description} - ${elapsed.toFixed(2)} ms elapsed`)
+    function logElapsed(description: string, helper: SearchHelper) {
 
-        const message = `${description} - ${elapsed.toFixed(2)} ms elapsed\n`; // Added newline for file
+        const elapsed = performance.now() - helper.startTime
+        const message = `${description} - ${elapsed.toFixed(2)} ms elapsed - ${helper.branchCount} branches, ${helper.leafCount} leaves\n`; // Added newline for file
         console.log(message.trim()); // Keep console log for immediate feedback, trim newline
         try {
             fs.appendFileSync(logFilePath, message); // Append to file
@@ -418,44 +417,52 @@ describe('WorkingDesk Use Cases', () => {
         }
     }
 
-    const testCases = [
-        {
-            description: 'should rearrange cards 1',
-            deskDesc: "(7S)(7H)(7D)(7C) (12S)(12H)(12D)(12C) (6S)(6H)(6D)",
-            cardDesc: "5H",
-            expectedLength: 0,
-        },
-        {
-            description: 'should rearrange cards 2',
-            deskDesc: "(6S)(6H)(6D)(6C) (7S)(7H)(7C)",
-            cardDesc: "7D",
-            expectedLength: 1,
-        },
-        {
-            description: 'should rearrange cards 3',
-            deskDesc: "(6S)(6H)(6D)(6C) (7S)(7H)(7C)",
-            cardDesc: "1D",
-            expectedLength: 0,
-        },
-        {
-            description: 'should rearrange cards 4',
-            deskDesc: "(6S)(6H)(6D)(6C) (7H)(8H)(9H) (1D)(2D)(3D)(4D)",
-            cardDesc: "1D",
-            expectedLength: 0,
-        },
-    ];
+    const types = ["pivot", "standard"]
+    const cards = ["5H", "6H"]
+    const combos = ["(6S)(6H)(6D)(6C)"] //, "(7H)(8H)(9H)", "(1D)(2D)(3D)(4D)", "(1D)(10D)(11D)(12D)(13D)", "(3H)(4H)(5H)(6H)", "(8S)(8D)(8C)", "(2S)(3S)(4S)", "(7S)(7H)(7C)"]
+    const matches = {
+        "(6S)(6H)(6D)(6C) vs 5H": 0,
+        "(6S)(6H)(6D)(6C) vs 6H": 0
+    }
 
-    it.each(testCases)(
-        '$description',
-        async ({ description, deskDesc, cardDesc, expectedLength }) => {
-            const desk = Desk.fromString(deskDesc);
-            const wd = new WorkingDesk(desk);
-            wd.add(Card.of(cardDesc));
-            const start = performance.now();
-            const ris = wd.searchNewCombos();
-            logElapsed(description, start)
-            expect(ris.length).toBe(expectedLength);
-        },
-        timeout
-    );
+    let desk = ""
+    combos.forEach(combo => {
+        desk += " " + combo
+        desk = desk.trim()
+        types.forEach(type => {
+            cards.forEach(card => {
+                const desc = `${desk} vs ${card}`;
+                const match = (matches as any)[desc]
+                const description = `${type} - ${desk.length / 4} - ${desc} = ${match}`
+                it(description, async () => {
+                    testUseCase(desk, card, description, match, type)
+                })
+            })
+        }, timeout)
+    })
+
+    function testUseCase(deskDesc: string, cardDesc: string, description: string, expectedLength: number, type: string) {
+        const desk = Desk.fromString(deskDesc);
+        const hand = new Hand();
+        hand.addAll(desk.combos);
+
+        const addedCard = Card.of(cardDesc)
+        if (type !== "pivot") {
+            hand.push(addedCard);
+        }
+
+        const helper: SearchHelper = {
+            startTime: performance.now(),
+            elapsedTime: 0,
+            branchCount: 0,
+            leafCount: 0,
+            paths: new Set<string>(),
+            cachePath: true
+        };
+
+        const found = WorkingDesk.search(hand, new Combos(), helper, addedCard);
+        logElapsed(description, helper);
+        expect(found.length).toBe(expectedLength);
+    }
+
 });

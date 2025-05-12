@@ -4,7 +4,7 @@ import { Combos } from './Combos';
 import { Desk } from './Desk';
 import { Hand } from './Hand';
 
-type SearchHelper = {
+export type SearchHelper = {
     startTime: number;
     elapsedTime: number;
     branchCount: number;
@@ -47,6 +47,10 @@ export class WorkingDesk {
     /* istanbul ignore next */
     private static logStat(helper: SearchHelper) {
         if (!this.activaLogDetails) return;
+        WorkingDesk.dumpHelper(helper);
+    }
+
+    static dumpHelper(helper: SearchHelper) {
         helper.elapsedTime = performance.now() - helper.startTime;
         console.log(`Search completed in ${helper.elapsedTime.toFixed(2)} ms: leaves ${helper.leafCount}, branches ${helper.branchCount}`);
     }
@@ -121,3 +125,5 @@ export class WorkingDesk {
 
 
 }
+
+
