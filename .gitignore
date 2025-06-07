@@ -12,4 +12,3 @@ rss/AdAltaVoce.CommitStatus.txt
 **/coverage/*
 macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
-**/node_modules/.bin/tsc
