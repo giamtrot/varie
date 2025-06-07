@@ -1,4 +1,5 @@
-const EXT_ID = "CIV - 2024.10.31-1"
+
+const EXT_ID = "CIV - 2025.06.07-1"
 const WAIT = 2000
 const MOVE_AREA = "rg-civ-move"
 
@@ -19,12 +20,131 @@ function start() {
 	loadUI()
 	document.addEventListener('keyup', doc_keyUp, false);
 
-};
+}
 
 function loadUI() {
 
 	log("loadUI")
 
+	if (location.href.indexOf("protocollo.civilianext.it") >= 0) {
+		UIProtocollo()
+	} else {
+		UICommissioni()
+	}
+
+	log("loadUI done")
+}
+
+function UIProtocollo() {
+	log("UIProtocollo")
+	
+	const targetNode = document.querySelector("div.menu-extras > ul")
+	if (!targetNode || !targetNode.parentNode) {
+		log("targetNode or parentNode not found", targetNode)
+		return
+	}
+	
+	const currentYear = new Date().getFullYear();
+	
+	var downloadloadButtonThisYear = document.createElement("INPUT") as HTMLInputElement;
+	downloadloadButtonThisYear.type = "button"
+	downloadloadButtonThisYear.id = "rg-civ-download-thisYear"
+	downloadloadButtonThisYear.value = `Download ${currentYear}`;
+	
+	downloadloadButtonThisYear.addEventListener("click", () => downloadYear(currentYear))
+	targetNode.parentNode.insertBefore(downloadloadButtonThisYear, targetNode.nextSibling);
+	
+	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+	
+	var downloadloadButtonLastYear = document.createElement("INPUT") as HTMLInputElement;
+	downloadloadButtonLastYear.type = "button"
+	downloadloadButtonLastYear.id = "rg-civ-download-thisYear"
+	downloadloadButtonLastYear.value = `Download ${currentYear-1}`;
+	downloadloadButtonLastYear.addEventListener("click", () => downloadYear(currentYear-1))
+	targetNode.parentNode.insertBefore(downloadloadButtonLastYear, targetNode.nextSibling);
+
+	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+}
+
+async function downloadYear(year: number) {
+
+	log(`downloadYear: ${year}`)
+	
+	const pageSize = 50; // Numero di pratiche per pagina
+	let page = 1; // Pagina da scaricare
+	let pageCount = 1; // Numero di pagine da scaricare (puoi modificarlo in base alle tue esigenze)
+	const elements: any[] = []; // Array per memorizzare gli elementi scaricati
+	do {
+		const ris = await downloadPage(year, page, pageSize);
+		const { pageCount: newPageCount, elements: pageElements } = ris;
+		pageCount = newPageCount;
+		elements.push(...pageElements);
+		log(`downloadPage: ${year} - page: ${page} - pageCount: ${pageCount} - elements: ${pageElements.length} - total: ${elements.length}`);
+		if (page == 2) {
+			break;
+		}
+		page++;
+	} while (page <= pageCount);
+	
+	downloadCSV(elements, year)
+	log(`downloadYear: ${year} done`)
+}
+
+function downloadCSV(elements: any[], year: number) {
+	const csvRows: string[] = []
+	if (elements.length > 0) {
+		// Get headers from object keys
+		const headers = Object.keys(elements[0])
+		const separator = ";"
+		csvRows.push(headers.join(separator))
+		for (const el of elements) {
+			const row = headers.map(h => {
+				let val = el[h]
+				if (val === null || val === undefined) return ""
+				val = val.toString().replace(/"/g, '""')
+				if (val.includes(separator) || val.includes('"') || val.includes("\n")) {
+					val = `"${val}"`
+				}
+				return val
+			}).join(separator)
+			csvRows.push(row)
+		}
+		const csvContent = csvRows.join("\r\n")
+		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+		const url = URL.createObjectURL(blob)
+		const a = document.createElement("a")
+		a.href = url
+		a.download = `pratiche_${year}.csv`
+		document.body.appendChild(a)
+		a.click()
+		document.body.removeChild(a)
+		URL.revokeObjectURL(url)
+	}
+}
+
+async function downloadPage(year: number, page: number, pageSize: number) {
+	log(`downloadPage: ${year} - page: ${page} - pageSize: ${pageSize}`)
+
+	// The API response is expected to contain total pages and items.
+	
+	let response = await fetch("/Protocollo/Pratica/CercaPratica", {
+		"method": "POST",
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		"body": `v=&pageSize=${pageSize}&IdCodiceAOO=355&IdRegistroCorrispondenza=146&ANno=${year}&page=${page}&SortNames=NumeroProtocollo&SortDirections=desc`,
+	})
+	
+	
+	const json = await response.json();
+	const pageCount = json.PageCount;
+	const elements = json.Data.Items
+	return { pageCount, elements };		
+}
+
+
+function UICommissioni() {
+	log("UICommissioni")
 	const targetNode = document.querySelector("div.menu-extras > ul")
 	if (!targetNode || !targetNode.parentNode) {
 		log("targetNode or parentNode not found", targetNode)

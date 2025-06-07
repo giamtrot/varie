@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var EXT_ID = "CIV - 2024.10.31-1";
+var EXT_ID = "CIV - 2025.06.07-1";
 var WAIT = 2000;
 var MOVE_AREA = "rg-civ-move";
 log("before start", document.readyState);
@@ -52,9 +52,138 @@ function start() {
     loadUI();
     document.addEventListener('keyup', doc_keyUp, false);
 }
-;
 function loadUI() {
     log("loadUI");
+    if (location.href.indexOf("protocollo.civilianext.it") >= 0) {
+        UIProtocollo();
+    }
+    else {
+        UICommissioni();
+    }
+    log("loadUI done");
+}
+function UIProtocollo() {
+    log("UIProtocollo");
+    var targetNode = document.querySelector("div.menu-extras > ul");
+    if (!targetNode || !targetNode.parentNode) {
+        log("targetNode or parentNode not found", targetNode);
+        return;
+    }
+    var currentYear = new Date().getFullYear();
+    var downloadloadButtonThisYear = document.createElement("INPUT");
+    downloadloadButtonThisYear.type = "button";
+    downloadloadButtonThisYear.id = "rg-civ-download-thisYear";
+    downloadloadButtonThisYear.value = "Download ".concat(currentYear);
+    downloadloadButtonThisYear.addEventListener("click", function () { return downloadYear(currentYear); });
+    targetNode.parentNode.insertBefore(downloadloadButtonThisYear, targetNode.nextSibling);
+    targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+    var downloadloadButtonLastYear = document.createElement("INPUT");
+    downloadloadButtonLastYear.type = "button";
+    downloadloadButtonLastYear.id = "rg-civ-download-thisYear";
+    downloadloadButtonLastYear.value = "Download ".concat(currentYear - 1);
+    downloadloadButtonLastYear.addEventListener("click", function () { return downloadYear(currentYear - 1); });
+    targetNode.parentNode.insertBefore(downloadloadButtonLastYear, targetNode.nextSibling);
+    targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+}
+function downloadYear(year) {
+    return __awaiter(this, void 0, void 0, function () {
+        var pageSize, page, pageCount, elements, ris, newPageCount, pageElements;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    log("downloadYear: ".concat(year));
+                    pageSize = 50;
+                    page = 1;
+                    pageCount = 1;
+                    elements = [];
+                    _a.label = 1;
+                case 1: return [4 /*yield*/, downloadPage(year, page, pageSize)];
+                case 2:
+                    ris = _a.sent();
+                    newPageCount = ris.pageCount, pageElements = ris.elements;
+                    pageCount = newPageCount;
+                    elements.push.apply(elements, pageElements);
+                    log("downloadPage: ".concat(year, " - page: ").concat(page, " - pageCount: ").concat(pageCount, " - elements: ").concat(pageElements.length, " - total: ").concat(elements.length));
+                    if (page == 2) {
+                        return [3 /*break*/, 4];
+                    }
+                    page++;
+                    _a.label = 3;
+                case 3:
+                    if (page <= pageCount) return [3 /*break*/, 1];
+                    _a.label = 4;
+                case 4:
+                    downloadCSV(elements, year);
+                    log("downloadYear: ".concat(year, " done"));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function downloadCSV(elements, year) {
+    var csvRows = [];
+    if (elements.length > 0) {
+        // Get headers from object keys
+        var headers = Object.keys(elements[0]);
+        var separator_1 = ";";
+        csvRows.push(headers.join(separator_1));
+        var _loop_1 = function (el) {
+            var row = headers.map(function (h) {
+                var val = el[h];
+                if (val === null || val === undefined)
+                    return "";
+                val = val.toString().replace(/"/g, '""');
+                if (val.includes(separator_1) || val.includes('"') || val.includes("\n")) {
+                    val = "\"".concat(val, "\"");
+                }
+                return val;
+            }).join(separator_1);
+            csvRows.push(row);
+        };
+        for (var _i = 0, elements_1 = elements; _i < elements_1.length; _i++) {
+            var el = elements_1[_i];
+            _loop_1(el);
+        }
+        var csvContent = csvRows.join("\r\n");
+        var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "pratiche_".concat(year, ".csv");
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+function downloadPage(year, page, pageSize) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, json, pageCount, elements;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    log("downloadPage: ".concat(year, " - page: ").concat(page, " - pageSize: ").concat(pageSize));
+                    return [4 /*yield*/, fetch("/Protocollo/Pratica/CercaPratica", {
+                            "method": "POST",
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            },
+                            "body": "v=&pageSize=".concat(pageSize, "&IdCodiceAOO=355&IdRegistroCorrispondenza=146&ANno=").concat(year, "&page=").concat(page, "&SortNames=NumeroProtocollo&SortDirections=desc"),
+                        })];
+                case 1:
+                    response = _a.sent();
+                    return [4 /*yield*/, response.json()];
+                case 2:
+                    json = _a.sent();
+                    pageCount = json.PageCount;
+                    elements = json.Data.Items;
+                    return [2 /*return*/, { pageCount: pageCount, elements: elements }];
+            }
+        });
+    });
+}
+function UICommissioni() {
+    log("UICommissioni");
     var targetNode = document.querySelector("div.menu-extras > ul");
     if (!targetNode || !targetNode.parentNode) {
         log("targetNode or parentNode not found", targetNode);

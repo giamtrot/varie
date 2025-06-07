@@ -4,7 +4,8 @@
 	"manifest_version": 3,
 	"content_scripts": [{
 		"matches": [
-			"https://segreteria.civilianext.it/*"
+			"https://segreteria.civilianext.it/*",
+			"https://protocollo.civilianext.it/*"
 		],
 		"js": ["loader.js"]
 	}],
@@ -13,7 +14,8 @@
 		"type": "module"
 	},
 	"host_permissions": [
-		"https://segreteria.civilianext.it/*"
+		"https://segreteria.civilianext.it/*",
+		"https://protocollo.civilianext.it/*"
 	],
 	"permissions": [
 		"tabs",
