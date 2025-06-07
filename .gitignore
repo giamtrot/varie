@@ -7,8 +7,8 @@ rss/IlPostGit.cmd
 /rss/AdAltaVoceGit.cmd
 *.bak
 tb/dist/*
-**/node_modules/**/*
 rss/AdAltaVoce.CommitStatus.txt
 **/coverage/*
 macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
+**/node_modules/**/*
