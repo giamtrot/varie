@@ -22,16 +22,16 @@ final TO_EXCLUDE = ["alicenelpaesedellemeraviglie", "alpinisticiabattoni", "amul
 "fiabedeifratelligrimm", "flushunabiografia", "gioventusenzadio", "imalavoglia", "idoloridelgiovanewerther", "imilledagenovaacapua", "ipromessisposi", "iragazzidellaviapal",
 "iviaggidigulliver", "ilmilione", "ilcappellodelprete", "ilfumattiapascal", "ilgiardinodeifinzicontini", "ilgiornalinodigianburrasca", "ilgrandegatsby", "illibrodellagiungla",
 "ilmagodioz", "ilritrattodidoriangray", "ilsistemaperiodico", "lacoscienzadizeno", "lametamorfosi", "leavventuredipinocchio", "leavventureditomsawyer", "lostadiodiwimbledon",
-"magliandroidisognanopecoreelettriche", "peterpan", "sorellematerassi", "sostienepereira", "ventimilaleghesottoimari", ]
+"magliandroidisognanopecoreelettriche", "peterpan", "sorellematerassi", "sostienepereira", "ventimilaleghesottoimari", "raccontidialbertomoravia", "raccontidiantoncechov", "raccontidiernesthemingway", 
+"raccontidifranzkafka", "raccontidiitalocalvino", "raccontidiryunosukeakutagawa",]
 
 final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "amoreeginnastica", "andaidentrolanotteilluminata", "aranciameccanica", 
 "bartlebyloscrivano", "belami", "cameraconvista", "cannealvento", "casadaltri", "cattedrale", "cattivonatale", "cenere", "chissadoveroquel25aprile", "ciaulascoprelaluna",
 "collettori-limonata", "congliocchichiusi", "conservazione", "cristosiefermatoaeboli", "cuoredicane", "daquartoalvolturno", "decamerone", "dialledonnecheusciamo",
 "diario1941-1943", "diariodiunpazzo", "dieciindianiecampoindiano", "distanza", "doppiosogno", "dracula", "emma", "fame", "fosca", "frankenstein", "girodivite",
 "gliindifferenti", "gliocchialidoro", "gliultimiannidicleliatrotti", "grandefiumedaiduecuori", "grandisperanze", "grishaeilraccontodelgiardinierecapo",
-"hoservitoilredinghilterra", "idiecigiornichesconvolseroilmondo", "imieipremi", "ipadrilontani", "iraccontidialbertomoravia", "iraccontidiantoncechov",
-"iraccontidiernesthemingway", "iraccontidifranzkafka", "iraccontidigracepaley", "iraccontidiitalocalvino", "iraccontidijacklondon", "iraccontidikatherinemansfield",
-"iraccontidilevtolstoj", "iraccontidiluigipirandello", "iraccontidiraymondcarver", "iraccontidiryunosukeakutagawa", "itremoschettieri", "ivecchieigiovani",
+"hoservitoilredinghilterra", "idiecigiornichesconvolseroilmondo", "imieipremi", "ipadrilontani", 
+"itremoschettieri", "ivecchieigiovani",
 "ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo", "ildiavolosullecolline",
 "ildisperso", "ilfondodellabottiglia", "ilgiocodeiregni", "ilgiornodelgiudizio", "ilgiuocodelleperledivetro", "ilgrandebob", "ilmaestroemargherita", 
 "iquarantagiornidelmussadagh", "ilmantello", "ilmisterodiedwindrood", "ilmonaco", "ilnaso", "ilnomedellarosa", "ilpaesedicuccagna", "ilpiacere", "ilpranzodibabette", 
@@ -45,7 +45,10 @@ final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "
 "panchinecomeusciredalmondosenzauscirne", "panorama", "passaggioinindia", "pennywirtonesuamadre", "prospettivanevskij", "raccontiromani", "ragazzidivita", "resurrezione",
 "revolutionaryroad", "riflessiinunocchiodoro", "ritrattodisarahmalcolm", "sequestoeunuomo", "senilita", "sottoilvulcano", "spiaperscommessa", "tradonnesole", "ultimovieneilcorvo",
 "unannosullaltipiano", "unuomochedorme", "unacosadivertentechenonfaromaipiu", "unanottedel43", "unastoriadilettevoledellamusica", "unavitaviolenta", "unostudioinrosso",
-"unonessunoecentomila", "uovafatali", "utz", "ventannidopo", "vitadigalileo", "vitaprecariaeamoreeterno", ]
+"unonessunoecentomila", "uovafatali", "utz", "ventannidopo", "vitadigalileo", "vitaprecariaeamoreeterno",
+"raccontidigracepaley", "raccontidijacklondon", "raccontidikatherinemansfield", "raccontidilevtolstoj", "raccontidiluigipirandello", "raccontidiraymondcarver", 
+"raccontidisilviodarzo", 
+]
 
 def lastDate = new GregorianCalendar()
 lastDate.setTime(Date.parse("dd/MM/yyyy", "15/02/2025"))
