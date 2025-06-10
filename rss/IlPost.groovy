@@ -25,6 +25,11 @@ def urls = [
     "https://www.ilpost.it/podcasts/sonar/",
     "https://www.ilpost.it/podcasts/tienimi-bordone/",
     "https://www.ilpost.it/podcasts/strade-blu/",
+
+]
+
+def apis = [
+    "https://api-prod.ilpost.it/podcast/v1/podcast/strade-blu?&pg=2&hits=20"
 ]
 
 def outFile = RSS_DIR + "IlPost.xml"
@@ -87,6 +92,22 @@ urls.each{ inUrl->
         // System.exit(0)
     }
 
+}
+
+apis.each{ inUrl->
+    println "podcast: $inUrl"
+    def json = jsonSlurper.parseText(new URL(inUrl).text)
+    
+    json.data.each { episode ->
+        def element = [
+            src: episode.episode_raw_url,
+            title: episode.title,
+            date: episode.date,
+            podcast: episode.parent.title
+        ]
+        list << element
+        println "$element"
+    }
 }
 
 list.sort { a, b -> dateFormatter.parse(a.date) <=> dateFormatter.parse(b.date) }
