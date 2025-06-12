@@ -105,7 +105,7 @@ apis.each{ inUrl->
             podcast: episode.parent.title
         ]
 
-        if (list.find { it.src == episode.episode_raw_url[0] }) {
+        if (list.find { it.src == episode.episode_raw_url }) {
             println "Already in list"
             return
         }
