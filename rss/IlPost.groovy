@@ -68,7 +68,7 @@ urls.each{ inUrl->
         if (list.find { it.src == episode.episode_raw_url[0] }) {
             println "Already in list"
             return
-    }
+        }
 
         // println "${episode.date[0]}"
         // println "${dateReader.parse(episode.date[0])}"
@@ -98,6 +98,12 @@ apis.each{ inUrl->
     def json = jsonSlurper.parseText(new URL(inUrl).text)
 
     json.data.each { episode ->
+        println "episode: ${episode.episode_raw_url}"
+        if (list.find { it.src == episode.episode_raw_url }) {
+            println "Already in list"
+            return
+        }
+
         def element = [
             src: episode.episode_raw_url,
             title: episode.title,
@@ -105,14 +111,9 @@ apis.each{ inUrl->
             podcast: episode.parent.title
         ]
 
-        if (list.find { it.src == episode.episode_raw_url }) {
-            println "Already in list"
-            return
-        }
-
         list << element
         println "$element"
-}
+    }
 }
 
 list.sort { a, b -> dateFormatter.parse(a.date) <=> dateFormatter.parse(b.date) }
