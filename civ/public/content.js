@@ -62,6 +62,7 @@ function loadUI() {
     }
     log("loadUI done");
 }
+var progress;
 function UIProtocollo() {
     log("UIProtocollo");
     var targetNode = document.querySelector("div.menu-extras > ul");
@@ -70,6 +71,11 @@ function UIProtocollo() {
         return;
     }
     var currentYear = new Date().getFullYear();
+    progress = document.createElement("div");
+    progress.style.fontSize = 'large';
+    progress.style.color = 'white';
+    targetNode.parentNode.insertBefore(progress, targetNode.nextSibling);
+    targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
     var downloadloadButtonThisYear = document.createElement("INPUT");
     downloadloadButtonThisYear.type = "button";
     downloadloadButtonThisYear.id = "rg-civ-download-thisYear";
@@ -79,7 +85,7 @@ function UIProtocollo() {
     targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
     var downloadloadButtonLastYear = document.createElement("INPUT");
     downloadloadButtonLastYear.type = "button";
-    downloadloadButtonLastYear.id = "rg-civ-download-thisYear";
+    downloadloadButtonLastYear.id = "rg-civ-download-lastYear";
     downloadloadButtonLastYear.value = "Download ".concat(currentYear - 1);
     downloadloadButtonLastYear.addEventListener("click", function () { return downloadYear(currentYear - 1); });
     targetNode.parentNode.insertBefore(downloadloadButtonLastYear, targetNode.nextSibling);
@@ -104,9 +110,10 @@ function downloadYear(year) {
                     pageCount = newPageCount;
                     elements.push.apply(elements, pageElements);
                     log("downloadPage: ".concat(year, " - page: ").concat(page, " - pageCount: ").concat(pageCount, " - elements: ").concat(pageElements.length, " - total: ").concat(elements.length));
-                    if (page == 2) {
-                        return [3 /*break*/, 4];
-                    }
+                    // if (page == 2) {
+                    // 	break;
+                    // }
+                    progress.textContent = "Scaricamento ".concat(year, " - Pagina ").concat(page, " di ").concat(pageCount, " - Elementi: ").concat(elements.length);
                     page++;
                     _a.label = 3;
                 case 3:
@@ -115,6 +122,7 @@ function downloadYear(year) {
                 case 4:
                     downloadCSV(elements, year);
                     log("downloadYear: ".concat(year, " done"));
+                    progress.textContent = "Scaricamento ".concat(year, " completato - Elementi: ").concat(elements.length);
                     return [2 /*return*/];
             }
         });
@@ -149,7 +157,10 @@ function downloadCSV(elements, year) {
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = url;
-        a.download = "pratiche_".concat(year, ".csv");
+        var now = new Date();
+        var ts = "".concat(now.getFullYear()).concat(now.getMonth() + 1).concat(now.getDate(), "_").concat(now.getHours()).concat(now.getMinutes()).concat(now.getSeconds());
+        log("downloadCSV: ".concat(year, " - elements: ").concat(elements.length, " - ts: ").concat(ts));
+        a.download = "pratiche_".concat(year, "_").concat(ts, ".csv");
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

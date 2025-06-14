@@ -35,6 +35,7 @@ function loadUI() {
 	log("loadUI done")
 }
 
+let progress
 function UIProtocollo() {
 	log("UIProtocollo")
 	
@@ -46,6 +47,13 @@ function UIProtocollo() {
 	
 	const currentYear = new Date().getFullYear();
 	
+	progress = document.createElement("div") as HTMLInputElement;
+	progress.style.fontSize = 'large';
+	progress.style.color = 'white';
+	targetNode.parentNode.insertBefore(progress, targetNode.nextSibling);
+
+	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+
 	var downloadloadButtonThisYear = document.createElement("INPUT") as HTMLInputElement;
 	downloadloadButtonThisYear.type = "button"
 	downloadloadButtonThisYear.id = "rg-civ-download-thisYear"
@@ -58,7 +66,7 @@ function UIProtocollo() {
 	
 	var downloadloadButtonLastYear = document.createElement("INPUT") as HTMLInputElement;
 	downloadloadButtonLastYear.type = "button"
-	downloadloadButtonLastYear.id = "rg-civ-download-thisYear"
+	downloadloadButtonLastYear.id = "rg-civ-download-lastYear"
 	downloadloadButtonLastYear.value = `Download ${currentYear-1}`;
 	downloadloadButtonLastYear.addEventListener("click", () => downloadYear(currentYear-1))
 	targetNode.parentNode.insertBefore(downloadloadButtonLastYear, targetNode.nextSibling);
@@ -80,14 +88,16 @@ async function downloadYear(year: number) {
 		pageCount = newPageCount;
 		elements.push(...pageElements);
 		log(`downloadPage: ${year} - page: ${page} - pageCount: ${pageCount} - elements: ${pageElements.length} - total: ${elements.length}`);
-		if (page == 2) {
-			break;
-		}
+		// if (page == 2) {
+		// 	break;
+		// }
+		progress!.textContent = `Scaricamento ${year} - Pagina ${page} di ${pageCount} - Elementi: ${elements.length}`;
 		page++;
 	} while (page <= pageCount);
 	
 	downloadCSV(elements, year)
 	log(`downloadYear: ${year} done`)
+	progress!.textContent = `Scaricamento ${year} completato - Elementi: ${elements.length}`;
 }
 
 function downloadCSV(elements: any[], year: number) {
@@ -114,7 +124,10 @@ function downloadCSV(elements: any[], year: number) {
 		const url = URL.createObjectURL(blob)
 		const a = document.createElement("a")
 		a.href = url
-		a.download = `pratiche_${year}.csv`
+		const now = new Date()
+		const ts = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+		log(`downloadCSV: ${year} - elements: ${elements.length} - ts: ${ts}`)
+		a.download = `pratiche_${year}_${ts}.csv`
 		document.body.appendChild(a)
 		a.click()
 		document.body.removeChild(a)
