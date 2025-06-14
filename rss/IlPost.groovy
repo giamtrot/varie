@@ -88,22 +88,29 @@ urls.each{ inUrl->
         }
         list << element
         println "$element"
-        // System.exit(0)
-    }
+// System.exit(0)
+}
 
 }
 
 apis.each{ inUrl->
     println "podcast: $inUrl"
     def json = jsonSlurper.parseText(new URL(inUrl).text)
-    
+
     json.data.each { episode ->
+        println "episode: ${episode.episode_raw_url}"
+        if (list.find { it.src == episode.episode_raw_url }) {
+            println "Already in list"
+            return
+        }
+
         def element = [
             src: episode.episode_raw_url,
             title: episode.title,
             date: episode.date,
             podcast: episode.parent.title
         ]
+
         list << element
         println "$element"
     }
