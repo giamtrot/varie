@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -61,18 +61,64 @@ function openTab(url) {
         });
     });
 }
-function setLocalStorage(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+// function setLocalStorage(key: string, value: any) {
+// 	localStorage.setItem(key, JSON.stringify(value));
+// }
+// function getLocalStorage(key: string) {
+// 	const value = localStorage.getItem(key);
+// 	if (value) {
+// 		return JSON.parse(value);
+// 	}
+// 	return null;
+// }
+// function initLocalStorage(key: string, initValue: any) {
+// 	if (!getLocalStorage(key)) {
+// 		setLocalStorage(key, initValue);
+// 	}
+// }
+var ARRAY_NAME = "rg-linkedin-map";
+function saveStorage(value) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, chrome.storage.local.set((_a = {}, _a[ARRAY_NAME] = JSON.stringify(value), _a))];
+                case 1:
+                    _b.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
-function getLocalStorage(key) {
-    var value = localStorage.getItem(key);
-    if (value) {
-        return JSON.parse(value);
-    }
-    return null;
+function getStorage() {
+    return __awaiter(this, void 0, void 0, function () {
+        var value;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, chrome.storage.local.get([ARRAY_NAME])];
+                case 1:
+                    value = _a.sent();
+                    if (value[ARRAY_NAME]) {
+                        return [2 /*return*/, JSON.parse(value[ARRAY_NAME])];
+                    }
+                    return [2 /*return*/, null];
+            }
+        });
+    });
 }
-function initLocalStorage(key, initValue) {
-    if (!getLocalStorage(key)) {
-        setLocalStorage(key, initValue);
-    }
+function initStorage(initValue) {
+    return __awaiter(this, void 0, void 0, function () {
+        var value;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getStorage()];
+                case 1:
+                    value = _a.sent();
+                    if (!value) {
+                        saveStorage(initValue);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
