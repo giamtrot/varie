@@ -1,6 +1,5 @@
 const EXT_ID = "LN - 2024.10.14-1"
 
-const MAP_NAME = "rg-linkedin-map"
 const CARDS = "li.ember-view.scaffold-layout__list-item"
 
 log("before start", document.readyState)
@@ -40,7 +39,7 @@ function waitForList(callback: (element: HTMLLIElement) => void) {
 		childList: true,
 		subtree: true
 	})
-	
+
 	const targetSelector = CARDS + ":not([data-rg-enriched=true])"
 	const observer = new MutationObserver(() => {
 		const targetNodes = document.querySelectorAll(targetSelector)
@@ -54,13 +53,13 @@ function waitForList(callback: (element: HTMLLIElement) => void) {
 	})
 }
 
-function enrich(li: HTMLElement) {
+async function enrich(li: HTMLElement) {
 
 	const button = li.querySelector("button");
 
-	if (!button) { 
+	if (!button) {
 		log("button not found", li)
-		return 
+		return
 	}
 
 	const id = li.dataset.occludableJobId
@@ -120,13 +119,13 @@ function addUI() {
 		log("parent node is null")
 		return
 	}
-	
+
 	const element = document.querySelector("header.scaffold-layout__list-header")
 	if (element === null) {
 		log("element node is null")
 		return
 	}
-	
+
 
 	var removeAllButton = document.createElement("INPUT") as HTMLInputElement;
 	removeAllButton.type = "button"
@@ -167,17 +166,20 @@ function audit(li: HTMLElement) {
 	const { url, title, company } = getJobInfo(li)
 	auditValue(getRow(title, company))
 }
-function auditValue(row: string) {
-	const map = getMap()
+
+async function auditValue(row: string) {
+	const map = await getMap()
 	map[row] = Date.now()
 	// const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 	// const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
 	const newMap = map
-	setLocalStorage(MAP_NAME, newMap)
+	await saveStorage(newMap)
 }
-function getMap() {
-	initLocalStorage(MAP_NAME, {})
-	const map = getLocalStorage(MAP_NAME)
+
+
+async function getMap() {
+	await initStorage({})
+	const map = await getStorage()
 	return map
 }
 
