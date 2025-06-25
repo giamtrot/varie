@@ -1,4 +1,4 @@
-const EXT_ID = "LN - 2024.10.14-1"
+const EXT_ID = "LN - 2025.06.25-1"
 
 const CARDS = "li.ember-view.scaffold-layout__list-item"
 
