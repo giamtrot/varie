@@ -57,7 +57,8 @@ jobs:
           git push
       
       - name: Send Email Notification
-        if: ${{ steps.IlPost.outputs.send_email == 'true' }}
+        if: false # disable step
+        # if: ${{ steps.IlPost.outputs.send_email == 'true' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
