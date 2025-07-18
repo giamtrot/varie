@@ -1,5 +1,5 @@
 
-const EXT_ID = "CIV - 2025.06.07-1"
+const EXT_ID = "CIV - 2025.07.12-1"
 const WAIT = 2000
 const MOVE_AREA = "rg-civ-move"
 
@@ -53,17 +53,25 @@ function UIProtocollo() {
 	targetNode.parentNode.insertBefore(progress, targetNode.nextSibling);
 
 	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+	
+	var downloadloadButtonThisMonth = document.createElement("INPUT") as HTMLInputElement;
+	downloadloadButtonThisMonth.type = "button"
+	downloadloadButtonThisMonth.id = "rg-civ-download-thisMonth"
+	downloadloadButtonThisMonth.value = `Download Last Month`;
+	downloadloadButtonThisMonth.addEventListener("click", () => downloadYear(currentYear, true))
+	targetNode.parentNode.insertBefore(downloadloadButtonThisMonth, targetNode.nextSibling);
+	
+	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
 
 	var downloadloadButtonThisYear = document.createElement("INPUT") as HTMLInputElement;
 	downloadloadButtonThisYear.type = "button"
 	downloadloadButtonThisYear.id = "rg-civ-download-thisYear"
 	downloadloadButtonThisYear.value = `Download ${currentYear}`;
-	
 	downloadloadButtonThisYear.addEventListener("click", () => downloadYear(currentYear))
 	targetNode.parentNode.insertBefore(downloadloadButtonThisYear, targetNode.nextSibling);
 	
 	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
-	
+
 	var downloadloadButtonLastYear = document.createElement("INPUT") as HTMLInputElement;
 	downloadloadButtonLastYear.type = "button"
 	downloadloadButtonLastYear.id = "rg-civ-download-lastYear"
@@ -74,7 +82,7 @@ function UIProtocollo() {
 	targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
 }
 
-async function downloadYear(year: number) {
+async function downloadYear(year: number, lastMonth: boolean = false) {
 
 	log(`downloadYear: ${year}`)
 	
@@ -82,6 +90,7 @@ async function downloadYear(year: number) {
 	let page = 1; // Pagina da scaricare
 	let pageCount = 1; // Numero di pagine da scaricare (puoi modificarlo in base alle tue esigenze)
 	const elements: any[] = []; // Array per memorizzare gli elementi scaricati
+	let olderThanAMonth = false; // Se true, scarica solo pratiche più vecchie di un mese
 	do {
 		const ris = await downloadPage(year, page, pageSize);
 		const { pageCount: newPageCount, elements: pageElements } = ris;
@@ -93,11 +102,26 @@ async function downloadYear(year: number) {
 		// }
 		progress!.textContent = `Scaricamento ${year} - Pagina ${page} di ${pageCount} - Elementi: ${elements.length}`;
 		page++;
-	} while (page <= pageCount);
+		olderThanAMonth = lastMonth && isOlderThanAMonth(elements[elements.length - 1].DataRegistrazione);
+		log(`downloadYear: ${year} - page: ${page} - olderThanAMonth: ${olderThanAMonth}`);
+	} while (page <= pageCount && !olderThanAMonth);
+	// } while (page <= 1);
 	
 	downloadCSV(elements, year)
 	log(`downloadYear: ${year} done`)
 	progress!.textContent = `Scaricamento ${year} completato - Elementi: ${elements.length}`;
+}
+
+function isOlderThanAMonth(dateString: string): boolean {
+	const [day, month, year] = dateString.split('/').map(Number);
+	const date = new Date(year, month - 1, day);
+
+	const now = new Date();
+	const oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+
+	const older = date < oneMonthAgo
+	log(`isOlderThanAMonth: ${dateString} - date: ${date} - oneMonthAgo: ${oneMonthAgo} - older: ${older}`);
+	return older;
 }
 
 function downloadCSV(elements: any[], year: number) {

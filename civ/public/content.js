@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var EXT_ID = "CIV - 2025.06.07-1";
+var EXT_ID = "CIV - 2025.07.12-1";
 var WAIT = 2000;
 var MOVE_AREA = "rg-civ-move";
 log("before start", document.readyState);
@@ -76,6 +76,13 @@ function UIProtocollo() {
     progress.style.color = 'white';
     targetNode.parentNode.insertBefore(progress, targetNode.nextSibling);
     targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
+    var downloadloadButtonThisMonth = document.createElement("INPUT");
+    downloadloadButtonThisMonth.type = "button";
+    downloadloadButtonThisMonth.id = "rg-civ-download-thisMonth";
+    downloadloadButtonThisMonth.value = "Download Last Month";
+    downloadloadButtonThisMonth.addEventListener("click", function () { return downloadYear(currentYear, true); });
+    targetNode.parentNode.insertBefore(downloadloadButtonThisMonth, targetNode.nextSibling);
+    targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
     var downloadloadButtonThisYear = document.createElement("INPUT");
     downloadloadButtonThisYear.type = "button";
     downloadloadButtonThisYear.id = "rg-civ-download-thisYear";
@@ -91,9 +98,10 @@ function UIProtocollo() {
     targetNode.parentNode.insertBefore(downloadloadButtonLastYear, targetNode.nextSibling);
     targetNode.parentNode.insertBefore(document.createTextNode("\u00A0"), targetNode.nextSibling);
 }
-function downloadYear(year) {
-    return __awaiter(this, void 0, void 0, function () {
-        var pageSize, page, pageCount, elements, ris, newPageCount, pageElements;
+function downloadYear(year_1) {
+    return __awaiter(this, arguments, void 0, function (year, lastMonth) {
+        var pageSize, page, pageCount, elements, olderThanAMonth, ris, newPageCount, pageElements;
+        if (lastMonth === void 0) { lastMonth = false; }
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -102,6 +110,7 @@ function downloadYear(year) {
                     page = 1;
                     pageCount = 1;
                     elements = [];
+                    olderThanAMonth = false;
                     _a.label = 1;
                 case 1: return [4 /*yield*/, downloadPage(year, page, pageSize)];
                 case 2:
@@ -115,11 +124,14 @@ function downloadYear(year) {
                     // }
                     progress.textContent = "Scaricamento ".concat(year, " - Pagina ").concat(page, " di ").concat(pageCount, " - Elementi: ").concat(elements.length);
                     page++;
+                    olderThanAMonth = lastMonth && isOlderThanAMonth(elements[elements.length - 1].DataRegistrazione);
+                    log("downloadYear: ".concat(year, " - page: ").concat(page, " - olderThanAMonth: ").concat(olderThanAMonth));
                     _a.label = 3;
                 case 3:
-                    if (page <= pageCount) return [3 /*break*/, 1];
+                    if (page <= pageCount && !olderThanAMonth) return [3 /*break*/, 1];
                     _a.label = 4;
                 case 4:
+                    // } while (page <= 1);
                     downloadCSV(elements, year);
                     log("downloadYear: ".concat(year, " done"));
                     progress.textContent = "Scaricamento ".concat(year, " completato - Elementi: ").concat(elements.length);
@@ -127,6 +139,15 @@ function downloadYear(year) {
             }
         });
     });
+}
+function isOlderThanAMonth(dateString) {
+    var _a = dateString.split('/').map(Number), day = _a[0], month = _a[1], year = _a[2];
+    var date = new Date(year, month - 1, day);
+    var now = new Date();
+    var oneMonthAgo = new Date(now.setMonth(now.getMonth() - 1));
+    var older = date < oneMonthAgo;
+    log("isOlderThanAMonth: ".concat(dateString, " - date: ").concat(date, " - oneMonthAgo: ").concat(oneMonthAgo, " - older: ").concat(older));
+    return older;
 }
 function downloadCSV(elements, year) {
     var csvRows = [];
