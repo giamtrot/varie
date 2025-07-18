@@ -12,3 +12,4 @@ rss/AdAltaVoce.CommitStatus.txt
 macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
 **/node_modules/**/*
+ln/node_modules/.package-lock.json

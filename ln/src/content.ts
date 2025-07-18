@@ -1,4 +1,4 @@
-const EXT_ID = "LN - 2025.06.25-1"
+const EXT_ID = "LN - 2025.07.17-1"
 
 const CARDS = "li.ember-view.scaffold-layout__list-item"
 
@@ -13,12 +13,23 @@ log("after start")
 
 //=====================================================================
 
-function start() {
+async function start() {
 
-	console.clear()
+	// console.clear()
 	log("start")
+	log("getStorage")
+	const map1: StorageMap = await getStorage()
+	log("map - init: ", map1.fieldName, map1.value)
 
-	enrichJobPost()
+	map1.value[EXT_ID] = Date.now()
+	log("map - middle: ", map1)
+	await saveStorage(map1)
+
+	// const map2 = await getStorage()
+	// log("map - after: ", map2)
+
+	log("start completed")
+	// enrichJobPost()
 }
 
 function enrichJobPost() {
@@ -55,41 +66,42 @@ function waitForList(callback: (element: HTMLLIElement) => void) {
 
 async function enrich(li: HTMLElement) {
 
-	const button = li.querySelector("button");
+	return
+	// const button = li.querySelector("button");
 
-	if (!button) {
-		log("button not found", li)
-		return
-	}
+	// if (!button) {
+	// 	// log("button not found", li)
+	// 	return
+	// }
 
-	const id = li.dataset.occludableJobId
-	if (!id) {
-		throw new Error("occludableJobId not found")
-	}
-	const { url, title, company } = getJobInfo(li)
-	log(url, title, company)
-	li.setAttribute("data-rg-enriched", 'true');
-	// hideBySelector(li, "div.job-card-list__insight")
-	// hideBySelector(li, "ul.job-card-list__footer-wrapper")
+	// const id = li.dataset.occludableJobId
+	// if (!id) {
+	// 	throw new Error("occludableJobId not found")
+	// }
+	// const { url, title, company } = getJobInfo(li)
+	// log(url, title, company)
+	// li.setAttribute("data-rg-enriched", 'true');
+	// // hideBySelector(li, "div.job-card-list__insight")
+	// // hideBySelector(li, "ul.job-card-list__footer-wrapper")
 
-	var newButton = document.createElement("button");
-	newButton.id = "rg-button-X-" + id
-	newButton.textContent = "->"
-	newButton.addEventListener("click", function () {
-		log("opening", url)
-		openTab(url)
-	})
-	log(button.parentNode)
-	button.parentNode?.insertBefore(newButton, button);
+	// var newButton = document.createElement("button");
+	// newButton.id = "rg-button-X-" + id
+	// newButton.textContent = "->"
+	// newButton.addEventListener("click", function () {
+	// 	log("opening", url)
+	// 	openTab(url)
+	// })
+	// log(button.parentNode)
+	// button.parentNode?.insertBefore(newButton, button);
 
-	const oldJob = oldJOb(title, company)
-	if (oldJob) {
-		log("Found already seen job")
-		const { button, role } = getJobButton(li);
-		if (!button) { return }
-		button.click();
-		emptyLi(li)
-	}
+	// const oldJob = oldJOb(title, company)
+	// if (oldJob) {
+	// 	log("Found already seen job")
+	// 	const { button, role } = getJobButton(li);
+	// 	if (!button) { return }
+	// 	button.click();
+	// 	emptyLi(li)
+	// }
 
 }
 
@@ -142,15 +154,20 @@ function addUI() {
 function rimuoviTutti() {
 	// const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
 	const targetNodes = document.querySelectorAll(CARDS)
-	// log("rimuoviTutti", targetNodes)
-	Array.from(targetNodes).forEach((li) => {
+	log("rimuoviTutti", targetNodes)
+	// Array.from(targetNodes).forEach((li) => {
+	const nodesArray = Array.from(targetNodes);
+	for (let i = 0; i < nodesArray.length; i++) {
+		const li = nodesArray[i];
+
 		const { button, role } = getJobButton(li);
 		if (!button) { return }
 		if (role === "undo-small") { return }
 		audit(li as HTMLElement)
-		// log("rimuoviTutti", button)
+		log("rimuoviTutti", li)
 		button.click();
-	})
+	}
+	// )
 	log("rimuoviTutti done")
 	window.location.reload();
 }
@@ -168,19 +185,23 @@ function audit(li: HTMLElement) {
 }
 
 async function auditValue(row: string) {
-	const map = await getMap()
-	map[row] = Date.now()
+	// const map = await getMap()
+	// map[row] = Date.now()
+
 	// const oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 	// const newMap = Object.fromEntries(Object.entries(map).filter(([key, timestamp]) => typeof timestamp === 'number' && timestamp >= oneWeekAgo))
-	const newMap = map
-	await saveStorage(newMap)
+
+	// const newMap = map
+	const newMap = {}
+	// await saveStorage(newMap)
 }
 
 
 async function getMap() {
-	await initStorage({})
-	const map = await getStorage()
-	return map
+	return {}
+	// await initStorage({})
+	// const map = await getStorage()
+	// return map
 }
 
 function oldJOb(title: string, company: string) {
@@ -196,4 +217,3 @@ function emptyLi(li: HTMLElement) {
 	li.querySelector("div.artdeco-entity-lockup__subtitle")?.remove()
 	li.querySelector("div.artdeco-entity-lockup__caption")?.remove()
 }
-

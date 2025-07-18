@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var EXT_ID = "LN - 2025.06.25-1";
+var EXT_ID = "LN - 2025.07.17-1";
 var CARDS = "li.ember-view.scaffold-layout__list-item";
 log("before start", document.readyState);
 if (document.readyState != 'complete') {
@@ -47,9 +47,33 @@ else {
 log("after start");
 //=====================================================================
 function start() {
-    console.clear();
-    log("start");
-    enrichJobPost();
+    return __awaiter(this, void 0, void 0, function () {
+        var map1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    // console.clear()
+                    log("start");
+                    log("getStorage");
+                    return [4 /*yield*/, getStorage()];
+                case 1:
+                    map1 = _a.sent();
+                    log("map - init: ", map1.fieldName, map1.value);
+                    map1.value[EXT_ID] = Date.now();
+                    log("map - middle: ", map1);
+                    return [4 /*yield*/, saveStorage(map1)
+                        // const map2 = await getStorage()
+                        // log("map - after: ", map2)
+                    ];
+                case 2:
+                    _a.sent();
+                    // const map2 = await getStorage()
+                    // log("map - after: ", map2)
+                    log("start completed");
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 function enrichJobPost() {
     waitForList(function (li) { enrich(li); });
@@ -79,40 +103,7 @@ function waitForList(callback) {
 }
 function enrich(li) {
     return __awaiter(this, void 0, void 0, function () {
-        var button, id, _a, url, title, company, newButton, oldJob, _b, button_1, role;
-        var _c;
-        return __generator(this, function (_d) {
-            button = li.querySelector("button");
-            if (!button) {
-                log("button not found", li);
-                return [2 /*return*/];
-            }
-            id = li.dataset.occludableJobId;
-            if (!id) {
-                throw new Error("occludableJobId not found");
-            }
-            _a = getJobInfo(li), url = _a.url, title = _a.title, company = _a.company;
-            log(url, title, company);
-            li.setAttribute("data-rg-enriched", 'true');
-            newButton = document.createElement("button");
-            newButton.id = "rg-button-X-" + id;
-            newButton.textContent = "->";
-            newButton.addEventListener("click", function () {
-                log("opening", url);
-                openTab(url);
-            });
-            log(button.parentNode);
-            (_c = button.parentNode) === null || _c === void 0 ? void 0 : _c.insertBefore(newButton, button);
-            oldJob = oldJOb(title, company);
-            if (oldJob) {
-                log("Found already seen job");
-                _b = getJobButton(li), button_1 = _b.button, role = _b.role;
-                if (!button_1) {
-                    return [2 /*return*/];
-                }
-                button_1.click();
-                emptyLi(li);
-            }
+        return __generator(this, function (_a) {
             return [2 /*return*/];
         });
     });
@@ -157,8 +148,11 @@ function addUI() {
 function rimuoviTutti() {
     // const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
     var targetNodes = document.querySelectorAll(CARDS);
-    // log("rimuoviTutti", targetNodes)
-    Array.from(targetNodes).forEach(function (li) {
+    log("rimuoviTutti", targetNodes);
+    // Array.from(targetNodes).forEach((li) => {
+    var nodesArray = Array.from(targetNodes);
+    for (var i = 0; i < nodesArray.length; i++) {
+        var li = nodesArray[i];
         var _a = getJobButton(li), button = _a.button, role = _a.role;
         if (!button) {
             return;
@@ -167,9 +161,10 @@ function rimuoviTutti() {
             return;
         }
         audit(li);
-        // log("rimuoviTutti", button)
+        log("rimuoviTutti", li);
         button.click();
-    });
+    }
+    // )
     log("rimuoviTutti done");
     window.location.reload();
 }
@@ -185,35 +180,21 @@ function audit(li) {
 }
 function auditValue(row) {
     return __awaiter(this, void 0, void 0, function () {
-        var map, newMap;
+        var newMap;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getMap()];
-                case 1:
-                    map = _a.sent();
-                    map[row] = Date.now();
-                    newMap = map;
-                    return [4 /*yield*/, saveStorage(newMap)];
-                case 2:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
+            newMap = {};
+            return [2 /*return*/];
         });
     });
 }
 function getMap() {
     return __awaiter(this, void 0, void 0, function () {
-        var map;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, initStorage({})];
-                case 1:
-                    _a.sent();
-                    return [4 /*yield*/, getStorage()];
-                case 2:
-                    map = _a.sent();
-                    return [2 /*return*/, map];
-            }
+            return [2 /*return*/, {}
+                // await initStorage({})
+                // const map = await getStorage()
+                // return map
+            ];
         });
     });
 }
