@@ -25,8 +25,8 @@ async function start() {
 	log("map - middle: ", map1)
 	await saveStorage(map1)
 
-	// const map2 = await getStorage()
-	// log("map - after: ", map2)
+	const map2 = await getStorage()
+	log("map - after: ", map2)
 
 	log("start completed")
 	// enrichJobPost()

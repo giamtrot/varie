@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -38,6 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var ARRAY_NAME = "rg-linkedin-map";
 var GET_STORAGE_API = "GET_STORAGE_API";
 var SAVE_STORAGE_API = "SAVE_STORAGE_API";
+// This script is used both as background script (service worker) and as content script
+// The handlers for the APIs are registered only in the service worker
 if (chrome.runtime) {
     chrome.runtime.onMessage.addListener(loadScriptsHandler);
     chrome.runtime.onMessage.addListener(getStorageHandler);
@@ -80,7 +82,7 @@ function getStorageHandler(message, sender, sendResponse) {
     var map = new StorageMap(message.data.fieldName);
     chrome.storage.local.get([map.fieldName], function (result) {
         console.log(message.action, "result", result);
-        map.value = result || {};
+        map.value = (result && result[map.fieldName]) || {};
         console.log(message.action, "map", map);
         sendResponse(map);
     });
@@ -115,23 +117,40 @@ function saveStorage(value) {
         });
     });
 }
+/*
+ This script is used both as background script (service worker) and as content script
+ Call a Chrome API and return a Promise that resolves with the response data.
+ The API is expected to send a message back with the action name suffixed with "Response".
+ The API is invoked with a window.postMessage call as the content script cannot invoke some chrome API directly
+ due to the different execution World.
+ So the process is:
+ - content script call an API from background script wich can use window.postMessage
+ - background script listens for the message and invokes window.postMessage to send the request to the
+     loader script which is the registered content script
+ - loader script listens for the message and invokes the API
+ - loader script sends the response back to the background script with another window.postMessage
+ - background script listens for the response and resolves the Promise with the response data
+
+ * @param api The API to call.
+ * @param data The data to send with the API call.
+*/
 function callAPI(api, data) {
     return __awaiter(this, void 0, void 0, function () {
         var returnMessage;
         return __generator(this, function (_a) {
             returnMessage = api + "Response";
             return [2 /*return*/, new Promise(function (resolve) {
-                function handler(event) {
-                    if (event.source !== window || event.data.action !== returnMessage)
-                        return;
-                    window.removeEventListener("message", handler);
-                    console.log(returnMessage, event);
-                    resolve(event.data.data);
-                }
-                window.addEventListener("message", handler);
-                log("callAPI", api, data);
-                window.postMessage({ action: api, data: data }, "*");
-            })];
+                    function handler(event) {
+                        if (event.source !== window || event.data.action !== returnMessage)
+                            return;
+                        window.removeEventListener("message", handler);
+                        console.log(returnMessage, event);
+                        resolve(event.data.data);
+                    }
+                    window.addEventListener("message", handler);
+                    log("callAPI", api, data);
+                    window.postMessage({ action: api, data: data }, "*");
+                })];
         });
     });
 }
