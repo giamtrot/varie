@@ -48,29 +48,20 @@ log("after start");
 //=====================================================================
 function start() {
     return __awaiter(this, void 0, void 0, function () {
-        var map1, map2;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    // console.clear()
-                    log("start");
-                    log("getStorage");
-                    return [4 /*yield*/, getStorage()];
-                case 1:
-                    map1 = _a.sent();
-                    log("map - init: ", map1.fieldName, map1.value);
-                    map1.value[EXT_ID] = Date.now();
-                    log("map - middle: ", map1);
-                    return [4 /*yield*/, saveStorage(map1)];
-                case 2:
-                    _a.sent();
-                    return [4 /*yield*/, getStorage()];
-                case 3:
-                    map2 = _a.sent();
-                    log("map - after: ", map2);
-                    log("start completed");
-                    return [2 /*return*/];
-            }
+            // console.clear()
+            log("start");
+            // log("getStorage")
+            // const map1: StorageMap = await getStorage()
+            // log("map - init: ", map1.fieldName, map1.value)
+            // map1.value[EXT_ID] = Date.now()
+            // log("map - middle: ", map1)
+            // await saveStorage(map1)
+            // const map2 = await getStorage()
+            // log("map - after: ", map2)
+            enrichJobPost();
+            log("start completed");
+            return [2 /*return*/];
         });
     });
 }
@@ -102,8 +93,46 @@ function waitForList(callback) {
 }
 function enrich(li) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
+        var button, id, _a, url, title, company, newButton, oldJob, _b, button_1, role;
+        var _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    button = li.querySelector("button");
+                    if (!button) {
+                        // log("button not found", li)
+                        return [2 /*return*/];
+                    }
+                    id = li.dataset.occludableJobId;
+                    if (!id) {
+                        throw new Error("occludableJobId not found");
+                    }
+                    _a = getJobInfo(li), url = _a.url, title = _a.title, company = _a.company;
+                    log(url, title, company);
+                    li.setAttribute("data-rg-enriched", 'true');
+                    newButton = document.createElement("button");
+                    newButton.id = "rg-button-X-" + id;
+                    newButton.textContent = "->";
+                    newButton.addEventListener("click", function () {
+                        log("opening", url);
+                        openTab(url);
+                    });
+                    log(button.parentNode);
+                    (_c = button.parentNode) === null || _c === void 0 ? void 0 : _c.insertBefore(newButton, button);
+                    return [4 /*yield*/, oldJOb(title, company)];
+                case 1:
+                    oldJob = _d.sent();
+                    if (oldJob) {
+                        log("Found already seen job");
+                        _b = getJobButton(li), button_1 = _b.button, role = _b.role;
+                        if (!button_1) {
+                            return [2 /*return*/];
+                        }
+                        button_1.click();
+                        emptyLi(li);
+                    }
+                    return [2 /*return*/];
+            }
         });
     });
 }
@@ -145,27 +174,42 @@ function addUI() {
     log("addUI done");
 }
 function rimuoviTutti() {
-    // const targetSelector = "li.ember-view.jobs-search-results__list-item.occludable-update.p0.relative.scaffold-layout__list-item"
-    var targetNodes = document.querySelectorAll(CARDS);
-    log("rimuoviTutti", targetNodes);
-    // Array.from(targetNodes).forEach((li) => {
-    var nodesArray = Array.from(targetNodes);
-    for (var i = 0; i < nodesArray.length; i++) {
-        var li = nodesArray[i];
-        var _a = getJobButton(li), button = _a.button, role = _a.role;
-        if (!button) {
-            return;
-        }
-        if (role === "undo-small") {
-            return;
-        }
-        audit(li);
-        log("rimuoviTutti", li);
-        button.click();
-    }
-    // )
-    log("rimuoviTutti done");
-    window.location.reload();
+    return __awaiter(this, void 0, void 0, function () {
+        var targetNodes, nodesArray, i, li, _a, button, role;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    targetNodes = document.querySelectorAll(CARDS);
+                    nodesArray = Array.from(targetNodes);
+                    i = 0;
+                    _b.label = 1;
+                case 1:
+                    if (!(i < nodesArray.length)) return [3 /*break*/, 4];
+                    li = nodesArray[i];
+                    _a = getJobButton(li), button = _a.button, role = _a.role;
+                    if (!button) {
+                        return [3 /*break*/, 3];
+                    }
+                    if (role === "undo-small") {
+                        return [3 /*break*/, 3];
+                    }
+                    return [4 /*yield*/, audit(li)];
+                case 2:
+                    _b.sent();
+                    log("rimuoviTutti", li);
+                    button.click();
+                    _b.label = 3;
+                case 3:
+                    i++;
+                    return [3 /*break*/, 1];
+                case 4:
+                    // )
+                    log("rimuoviTutti done");
+                    window.location.reload();
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 function getJobButton(li) {
     var _a;
@@ -174,34 +218,70 @@ function getJobButton(li) {
     return { button: button, role: role };
 }
 function audit(li) {
-    var _a = getJobInfo(li), url = _a.url, title = _a.title, company = _a.company;
-    auditValue(getRow(title, company));
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, url, title, company;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = getJobInfo(li), url = _a.url, title = _a.title, company = _a.company;
+                    return [4 /*yield*/, auditValue(getRow(title, company))];
+                case 1:
+                    _b.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 function auditValue(row) {
     return __awaiter(this, void 0, void 0, function () {
-        var newMap;
+        var map, oneWeekAgo;
         return __generator(this, function (_a) {
-            newMap = {};
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getMap()];
+                case 1:
+                    map = _a.sent();
+                    map.value[row] = Date.now();
+                    oneWeekAgo = Date.now() - 1 * 7 * 24 * 60 * 60 * 1000;
+                    map.value = Object.fromEntries(Object.entries(map.value).filter(function (_a) {
+                        var key = _a[0], timestamp = _a[1];
+                        return typeof timestamp === 'number' && timestamp >= oneWeekAgo;
+                    }));
+                    return [4 /*yield*/, saveStorage(map)];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
 function getMap() {
     return __awaiter(this, void 0, void 0, function () {
+        var map;
         return __generator(this, function (_a) {
-            return [2 /*return*/, {}
-                // await initStorage({})
-                // const map = await getStorage()
-                // return map
-            ];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getStorage()];
+                case 1:
+                    map = _a.sent();
+                    return [2 /*return*/, map];
+            }
         });
     });
 }
 function oldJOb(title, company) {
-    var row = getRow(title, company);
-    var map = getMap();
-    var oldJob = row in map;
-    return oldJob;
+    return __awaiter(this, void 0, void 0, function () {
+        var row, map, oldJob;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    row = getRow(title, company);
+                    return [4 /*yield*/, getMap()];
+                case 1:
+                    map = _a.sent();
+                    oldJob = row in map.value;
+                    return [2 /*return*/, oldJob];
+            }
+        });
+    });
 }
 function emptyLi(li) {
     var _a, _b, _c;

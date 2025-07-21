@@ -29,7 +29,8 @@ class StorageMap {
 }
 
 function saveStorageHandler(message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) {
-	console.log("saveStorageHandler", message, sender)
+
+	// console.log("saveStorageHandler", message, sender)
 
 	if (message.action !== SAVE_STORAGE_API) {
 		return
@@ -37,7 +38,7 @@ function saveStorageHandler(message: any, sender: chrome.runtime.MessageSender, 
 
 	console.log(SAVE_STORAGE_API, message);
 
-	const map: StorageMap = message.data.value
+	const map: StorageMap = message.data
 
 	chrome.storage.local.set({ [map.fieldName]: map.value }, function () {
 		console.log(message.action, "done");
@@ -48,7 +49,8 @@ function saveStorageHandler(message: any, sender: chrome.runtime.MessageSender, 
 }
 
 function getStorageHandler(message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) {
-	console.log("getStorageHandler", message, sender)
+
+	// console.log("getStorageHandler", message, sender)
 
 	if (message.action !== GET_STORAGE_API) {
 		return

@@ -60,13 +60,13 @@ var StorageMap = /** @class */ (function () {
     return StorageMap;
 }());
 function saveStorageHandler(message, sender, sendResponse) {
+    // console.log("saveStorageHandler", message, sender)
     var _a;
-    console.log("saveStorageHandler", message, sender);
     if (message.action !== SAVE_STORAGE_API) {
         return;
     }
     console.log(SAVE_STORAGE_API, message);
-    var map = message.data.value;
+    var map = message.data;
     chrome.storage.local.set((_a = {}, _a[map.fieldName] = map.value, _a), function () {
         console.log(message.action, "done");
         sendResponse("done: " + message.action);
@@ -74,7 +74,7 @@ function saveStorageHandler(message, sender, sendResponse) {
     return true; // Se usi setTimeout, fetch, chrome.storage, o qualsiasi cosa asincrona, devi restituire true
 }
 function getStorageHandler(message, sender, sendResponse) {
-    console.log("getStorageHandler", message, sender);
+    // console.log("getStorageHandler", message, sender)
     if (message.action !== GET_STORAGE_API) {
         return;
     }
