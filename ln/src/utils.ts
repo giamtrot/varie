@@ -26,23 +26,11 @@ async function openTab(url: string) {
 // 	}
 // }
 
-const ARRAY_NAME = "rg-linkedin-map"
 
-async function saveStorage(value: any) {
-	await chrome.storage.local.set({ [ARRAY_NAME]: JSON.stringify(value) });
-}
 
-async function getStorage() {
-	const value = await chrome.storage.local.get([ARRAY_NAME]);
-	if (value[ARRAY_NAME]) {
-		return JSON.parse(value[ARRAY_NAME]);
-	}
-	return null;
-}
 
-async function initStorage(initValue: any) {
-	const value = await getStorage();
-	if (!value) {
-		saveStorage(initValue);
-	}
-}
+
+
+
+
+

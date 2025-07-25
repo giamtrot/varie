@@ -3,12 +3,33 @@ document.onreadystatechange = (document as any).onload = function (this: Documen
     console.log("loader.js")
 
     if ((!this.readyState || this.readyState == 'complete')) {
-        loadScripts(['utils.js', 'content.js'], "MAIN")
-        window.addEventListener("message", forwardOpenTab );
+        initAPI("GET_STORAGE_API")
+        initAPI("SAVE_STORAGE_API")
+
+        loadScripts(['background.js', 'utils.js', 'content.js'], "MAIN")
+        window.addEventListener("message", forwardOpenTab);
     };
 };
 
-function forwardOpenTab(event: MessageEvent<any>)  {
+function initAPI(api: string) {
+    console.log("loader - initAPI", api);
+
+    const returnMessage = api + "Response";
+    window.addEventListener("message", function (event: MessageEvent<any>) {
+        if (event.source !== window || !event.data.action || event.data.action !== api) return;
+
+        console.log("loader", api, event);
+
+        chrome.runtime.sendMessage(event.data, function (response) {
+            console.log("loader", returnMessage, response);
+            // Send the response back to the page context
+            window.postMessage({ action: returnMessage, data: response }, "*");
+        });
+
+    });
+}
+
+function forwardOpenTab(event: MessageEvent<any>) {
     if (event.source !== window || !event.data.action || event.data.action !== "openTab") return;
 
     console.log("loader.js", event);
