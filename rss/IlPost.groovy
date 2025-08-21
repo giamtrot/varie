@@ -9,10 +9,10 @@ import groovy.json.JsonSlurper
 final RSS_DIR = "./rss/"
 
 def urls = [
+    "https://www.ilpost.it/podcasts/morning/",
     "https://www.ilpost.it/podcasts/altre-indagini/",
     "https://www.ilpost.it/podcasts/ci-vuole-una-scienza/",
     "https://www.ilpost.it/podcasts/globo/",
-    "https://www.ilpost.it/podcasts/morning/",
     "https://www.ilpost.it/podcasts/orazio/",
     "https://www.ilpost.it/podcasts/basaglia-e-i-suoi/",
     "https://www.ilpost.it/podcasts/l-ombelico-di-un-mondo/",
@@ -53,19 +53,20 @@ urls.each{ inUrl->
 
     println "podcast: $inUrl"
     def doc = Jsoup.connect(inUrl).get()
-    // def divs = doc.select("main.container > div")
-    def divs = doc.select("main.container > div[class*=\"_episode-item_\"]")
-    divs.each{ div->
-        def link = div.select("h3 > a").first()
-        def url = link.attr("href")
-        println "episode: $url"
-        def episodeDoc = Jsoup.connect(url).get()
-        // println episode
-        def jsonData = episodeDoc.select("script").find { it.attr("type") == "application/json" }.html()
-        // println data
-        def json = jsonSlurper.parseText(jsonData)
-        def episode = json.props.pageProps.data.data.episode.data
-        def episode_raw_url = episode.episode_raw_url[0]
+    def nextData = doc.select("#__NEXT_DATA__").html()
+    def jsonNextData = jsonSlurper.parseText(nextData)
+
+    def podcast_title = jsonNextData.props.pageProps.data.data.podcast.data.title
+    println "podcast_title: $podcast_title"
+
+    jsonNextData.props.pageProps.data.data.episodes.data.each{ episode ->
+        def episode_raw_url = episode.episode_raw_url
+        def episode_title = episode.title
+        def episode_date = episode.date
+
+        println "episode: $episode_raw_url"
+        println "title: $episode_title"
+        println "date: $episode_date"
 
         if (episode_raw_url == "") {
             println "Private Episode"
@@ -77,14 +78,11 @@ urls.each{ inUrl->
             return
         }
 
-        // println "${episode.date[0]}"
-        // println "${dateReader.parse(episode.date[0])}"
-        // println "${dateFormatter.format(dateReader.parse(episode.date[0]))}"
         def element = [
-            src: episode.episode_raw_url[0],
-            title: episode.title[0],
-            date: dateFormatter.format(dateReader.parse(episode.date[0])),
-            podcast: episode.parent.title[0]
+            src: episode_raw_url,
+            title: episode_title,
+            date: dateFormatter.format(dateReader.parse(episode_date)),
+            podcast: podcast_title
         ]
         if (element.title.endsWith("Seconda parte")) {
             // println element.title
@@ -95,10 +93,11 @@ urls.each{ inUrl->
         }
         list << element
         println "$element"
+        // System.exit(0)
+    }
+    // System.exit(0)
+}
 // System.exit(0)
-}
-
-}
 
 apis.each{ inUrl->
     println "podcast: $inUrl"
@@ -124,7 +123,7 @@ apis.each{ inUrl->
 }
 
 list.sort { a, b -> dateFormatter.parse(a.date) <=> dateFormatter.parse(b.date) }
-mapFile.write(groovy.json.JsonOutput.toJson(list))
+mapFile.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(list)))
 
 def xmlWriter = new StringWriter()
 def xmlMarkup = new MarkupBuilder(xmlWriter)
