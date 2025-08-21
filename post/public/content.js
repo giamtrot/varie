@@ -12,7 +12,9 @@ log("after start");
 function start() {
     log("start");
     if ((!document.readyState || document.readyState == 'complete')) {
-        addUI(document.querySelector("#__next > header"));
+        const links = document.querySelectorAll("#__next a");
+        const targetNode = Array.from(links).filter(it => it.className.startsWith("_logo"))[0];
+        addUI(targetNode);
         // checkPhotostream();
         // checkPhoto();
         // ones()
@@ -25,12 +27,12 @@ function addUI(targetNode) {
         log("targetNode or targetNode.parentNode not found", targetNode);
         return;
     }
-    // var loadButton = document.createElement("INPUT") as HTMLInputElement
-    // loadButton.type = "button"
-    // loadButton.id = "rg-fli-load"
-    // loadButton.value = "Load"
-    // loadButton.addEventListener("click", load)
-    // targetNode.parentNode.insertBefore(loadButton, targetNode.nextSibling);
+    var loadButton = document.createElement("INPUT");
+    loadButton.type = "button";
+    loadButton.id = "rg-post-load";
+    loadButton.value = "Load";
+    loadButton.addEventListener("click", load);
+    targetNode.parentNode.insertBefore(loadButton, targetNode.nextSibling);
     // targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
     // var scrollButton48 = document.createElement("INPUT") as HTMLInputElement
     // scrollButton48.type = "button"
@@ -54,4 +56,10 @@ function addUI(targetNode) {
     // targetNode.parentNode.insertBefore(scroll12Button, targetNode.nextSibling);
     // targetNode.parentNode.insertBefore(document.createTextNode("&nbsp;"), targetNode.nextSibling);
     log("addUI done");
+}
+function load() {
+    var _a;
+    const nextData = (_a = document.querySelector("#__NEXT_DATA__")) === null || _a === void 0 ? void 0 : _a.textContent;
+    const data = JSON.parse(nextData || "{}");
+    log("load", data);
 }
