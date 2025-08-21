@@ -18,5 +18,10 @@
 	},
 	"host_permissions": [
     "https://www.ilpost.it/*"
+	],
+	"permissions": [
+		"tabs",
+		"activeTab",
+		"scripting"
 	]
 }
