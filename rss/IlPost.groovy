@@ -65,9 +65,10 @@ urls.each{ inUrl->
         // println data
         def json = jsonSlurper.parseText(jsonData)
         def episode = json.props.pageProps.data.data.episode.data
+        def episode_raw_url = episode.episode_raw_url[0]
 
-        if (list.find { it.src == episode.episode_raw_url[0] }) {
-            println "Already in list"
+        if (list.find { it.src == episode_raw_url }) {
+            println "$episode_raw_url -> Already in list"
             return
         }
 
