@@ -67,6 +67,11 @@ urls.each{ inUrl->
         def episode = json.props.pageProps.data.data.episode.data
         def episode_raw_url = episode.episode_raw_url[0]
 
+        if (episode_raw_url == "") {
+            println "Private Episode"
+            return
+        }
+
         if (list.find { it.src == episode_raw_url }) {
             println "$episode_raw_url -> Already in list"
             return
