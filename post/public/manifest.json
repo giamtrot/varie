@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "IlPost Utility",
+  "version": "1.0",
+  "content_scripts": [
+		{
+			"matches": [
+				"https://www.ilpost.it/*"
+			],
+			"js": [
+				"loader.js"
+			]
+		}
+	],
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"host_permissions": [
+    "https://www.ilpost.it/*"
+	]
+}
