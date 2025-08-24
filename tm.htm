@@ -74,7 +74,7 @@
 		getDivSecondi().addEventListener('input', controllaNumero, false);
 		getNoScreenOff().addEventListener('change', controllaNumero, false);
 
-		var getParams = function getParams() {
+		function getParams() {
 
 			const queryString = document.location.href.split('?')[1];
 			console.log(queryString);
@@ -104,6 +104,9 @@
 			let minuti = getDivMinuti().innerHTML;
 			let secondi = getDivSecondi().innerHTML;
 			let sonoNumeri = isNumeric(minuti) && isNumeric(secondi);
+			if (sonoNumeri) {
+				cambia();
+			}
 			getAvvio().disabled = !noScreenOff || !sonoNumeri;
 		}
 
@@ -229,6 +232,16 @@
 			inizializzoTimer(scadenza);
 		}
 
+		function cambia() {
+			let minuti = parseInt(getDivMinuti().innerHTML);
+			let secondi = parseInt(getDivSecondi().innerHTML);
+			let durataNuova = (minuti * 60 + secondi - ritardo);
+			let minNuovo = Math.ceil(min / durata * durataNuova);
+			setMimino(minNuovo);
+			let maxNuovo = Math.ceil(max / durata * durataNuova);
+			setMassimo(maxNuovo);
+		}
+
 		function tempoRimasto(tempo) {
 			let t = Date.parse(tempo) - Date.parse(new Date());
 			return millisToStruct(t);
@@ -310,7 +323,7 @@
 
 		// sec=60&rit=10&min=60&max=120&med30=22&max30=30
 		let params = getParams();
-		let secondi = parseInt(params.sec || 0);
+		let durata = parseInt(params.sec || 0);
 		let ritardo = parseInt(params.rit || 0);
 		let min = parseInt(params.min || 0);
 		let max = parseInt(params.max || 0);
@@ -318,23 +331,23 @@
 		let max30 = parseInt(params.max30 || 0);
 		setMedio30(med30);
 		setMassimo30(max30);
-		if (secondi + ritardo > 0) {
-			var initTime = millisToStruct((secondi + ritardo) * 1000);
+		if (durata + ritardo > 0) {
+			var initTime = millisToStruct((durata + ritardo) * 1000);
 			setMinuti(initTime.minuti);
 			setSecondi(initTime.secondi);
 			controllaNumero();
 		}
 		var daFare = {};
-		if (secondi > 0 && min > 0) {
+		if (durata > 0 && min > 0) {
 			daFare.min = min;
-			daFare.minRatio = (min || 0) / secondi;
+			daFare.minRatio = (min || 0) / durata;
 			setMimino(min);
 		}
 
 
-		if (secondi > 0 && max > 0) {
+		if (durata > 0 && max > 0) {
 			daFare.max = max;
-			daFare.maxRatio = (max || 0) / secondi;
+			daFare.maxRatio = (max || 0) / durata;
 			setMassimo(max);
 		}
 
