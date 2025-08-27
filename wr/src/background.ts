@@ -23,6 +23,34 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 chrome.contextMenus.onClicked.addListener(genericOnClick);
 
+chrome.commands.onCommand.addListener((command) => {
+	if (command === "execute-generic-on-click") {
+		console.log("execute-generic-on-click");
+		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			console.log(tabs);
+			if (tabs[0] && tabs[0].id) {
+				console.log(tabs[0].id);
+				chrome.scripting.executeScript(
+					{
+						target: { tabId: tabs[0].id },
+						func: () => {
+							return window.getSelection()?.toString();
+						},
+					},
+					(results) => {
+						if (results && results[0]) {
+							genericOnClick({
+								menuItemId: "WordReference",
+								selectionText: results[0].result,
+							});
+						}
+					}
+				);
+			}
+		});
+	}
+});
+
 chrome.runtime.onInstalled.addListener(function () {
 	chrome.contextMenus.create({
 		id: "WordReference",

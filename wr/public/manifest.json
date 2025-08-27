@@ -27,5 +27,13 @@
 	],
 	"icons": {
 		"192": "icon-192.png"
+	},
+	"commands": {
+		"execute-generic-on-click": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+F"
+			},
+			"description": "Execute Generic On Click"
+		}
 	}
 }

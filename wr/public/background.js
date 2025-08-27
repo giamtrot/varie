@@ -22,6 +22,28 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     sendResponse("done: " + message.action);
 });
 chrome.contextMenus.onClicked.addListener(genericOnClick);
+chrome.commands.onCommand.addListener(function (command) {
+    if (command === "execute-generic-on-click") {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs[0] && tabs[0].id) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    func: function () {
+                        var _a;
+                        return (_a = window.getSelection()) === null || _a === void 0 ? void 0 : _a.toString();
+                    },
+                }, function (results) {
+                    if (results && results[0]) {
+                        genericOnClick({
+                            menuItemId: "WordReference",
+                            selectionText: results[0].result,
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
 chrome.runtime.onInstalled.addListener(function () {
     chrome.contextMenus.create({
         id: "WordReference",
