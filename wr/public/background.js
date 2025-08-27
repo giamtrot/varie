@@ -36,6 +36,20 @@ function genericOnClick(info) {
     }
     var url = "https://www.wordreference.com/iten/".concat(info.selectionText);
     console.log('Opening from context menu -> ', url);
+    chrome.windows.create({
+        url: url,
+        type: 'popup',
+        width: 1200,
+        height: 800
+    });
+}
+function genericOnClickOld(info) {
+    console.log('Standard context menu item clicked.', info);
+    if (info.menuItemId != "WordReference" || !info.selectionText) {
+        return;
+    }
+    var url = "https://www.wordreference.com/iten/".concat(info.selectionText);
+    console.log('Opening from context menu -> ', url);
     chrome.tabs.create({
         url: url,
         active: false // Questo apre il tab in background
