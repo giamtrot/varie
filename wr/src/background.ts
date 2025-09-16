@@ -24,8 +24,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 chrome.contextMenus.onClicked.addListener(genericOnClick);
 
 chrome.commands.onCommand.addListener((command) => {
+	console.log("onCommand", command);
 	if (command === "execute-generic-on-click") {
-		console.log("execute-generic-on-click");
 		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 			console.log(tabs);
 			if (tabs[0] && tabs[0].id) {
@@ -48,6 +48,7 @@ chrome.commands.onCommand.addListener((command) => {
 				);
 			}
 		});
+		return true
 	}
 });
 

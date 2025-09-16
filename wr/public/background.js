@@ -23,9 +23,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 chrome.contextMenus.onClicked.addListener(genericOnClick);
 chrome.commands.onCommand.addListener(function (command) {
+    console.log("onCommand", command);
     if (command === "execute-generic-on-click") {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            console.log(tabs);
             if (tabs[0] && tabs[0].id) {
+                console.log(tabs[0].id);
                 chrome.scripting.executeScript({
                     target: { tabId: tabs[0].id },
                     func: function () {
@@ -42,6 +45,7 @@ chrome.commands.onCommand.addListener(function (command) {
                 });
             }
         });
+        return true;
     }
 });
 chrome.runtime.onInstalled.addListener(function () {
