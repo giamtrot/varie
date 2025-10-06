@@ -204,6 +204,18 @@
         "podcast": "Strade blu"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2022/09/25/1664111784-tienimi-morning.mp3",
+        "title": "Talk Faenza, 24/09/2022",
+        "date": "2022-09-25T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2023/05/07/1683491836-voices-tienimi-morning.mp3",
+        "title": "Voices Torino, 06/05/23",
+        "date": "2023-05-08T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2023/07/10/1688998702-altre_indagini_230710_v5_-16lufs.mp3",
         "title": "Seveso, 10 luglio 1976 &#8211; Prima parte",
         "date": "2023-07-10T08:57:18+02:00",
@@ -244,6 +256,12 @@
         "title": "La scomunica, le madonne pellegrine e i frati volanti &#8211; parte 2",
         "date": "2023-09-21T00:00:00Z",
         "podcast": "L'ombelico di un mondo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2023/09/25/1695626538-tienimi-morning-23-09-2023.mp3",
+        "title": "Talk Faenza, 23/09/2023",
+        "date": "2023-09-25T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2023/10/09/1696866445-altre_indagini_231010_pt1_v2_-16lufs.mp3",
@@ -310,6 +328,12 @@
         "title": "Milano, 18 marzo 1978 &#8211; Seconda parte",
         "date": "2024-04-10T09:26:24+02:00",
         "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/14/1713111326-voices_tienimi_morning_240415-16lufs.mp3",
+        "title": "Voices Torino, 13/04/24",
+        "date": "2024-04-15T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/06/09/1717919976-altre-indagini-brescia-pt1-v2.mp3",
@@ -418,6 +442,12 @@
         "title": "L\u2019intelligenza artificiale contro il complottismo",
         "date": "2024-09-20T10:00:33+02:00",
         "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/09/23/1727083116-tienimi-morning-faenza-2024-v2.mp3",
+        "title": "Talk Faenza, 21/09/2024",
+        "date": "2024-09-23T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/09/25/1727255619-Globo-240925_v4_-16lufs.mp3",
@@ -4356,6 +4386,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/09/23/1758651067-tienimi-wilson_-16lufs.mp3",
+        "title": "Talk Faenza, 20/09/2025",
+        "date": "2025-09-24T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2025/09/25/1758780835-25morningmorning_mixdown.mp3",
         "title": "Ep. 1049 \u2013 Un giorno come tanti in Cisgiordania e le altre storie di oggi",
         "date": "2025-09-25T00:00:00Z",
@@ -4582,5 +4618,17 @@
         "title": "Morning Weekend &#8211; Due approcci molto diversi nei confronti della Flotilla, e altre storie",
         "date": "2025-10-04T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/06/1759731271-6ottobremorning_mixdown.mp3",
+        "title": "Ep. 1056 \u2013 Le patenti di pacifismo e le altre storie di oggi",
+        "date": "2025-10-06T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/05/1759688731-20222233-tienimi-bordone-puntata-1365-una-serie-racconta-ed-gein-il-primo-serial-killer-con-stefano-nazzi.mp3",
+        "title": "Una serie racconta Ed Gein, il primo serial killer (con Stefano Nazzi)",
+        "date": "2025-10-06T00:00:00Z",
+        "podcast": "Tienimi Bordone"
     }
 ]
