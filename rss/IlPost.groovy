@@ -26,6 +26,7 @@ def urls = [
     "https://www.ilpost.it/podcasts/tienimi-bordone/",
     "https://www.ilpost.it/podcasts/strade-blu/",
     "https://www.ilpost.it/podcasts/colonne/",
+    "https://www.ilpost.it/podcasts/perche-non-parliamo-di-soldi/",
 ]
 
 def apis = [
