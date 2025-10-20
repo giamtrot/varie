@@ -5,7 +5,7 @@ import datetime
 
 # Path to the .tgz file
 output_directory = r"C:\Users\giamt\Downloads"  # Specify the output directory
-tgz_file_path = "2024_4_tr"
+tgz_file_path = "2025_2_tr"
 
 
 # Extract the .tgz file

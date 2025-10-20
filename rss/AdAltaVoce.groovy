@@ -11,16 +11,10 @@ import groovy.json.JsonSlurper
 final  BASE_DIR = new File(getClass().protectionDomain.codeSource.location.path).parent + "/"
 println "BASE_DIR: ${BASE_DIR}"
 final DATE_FILE = BASE_DIR + "AdAltaVoce.date"
-// final TO_EXCLUDE = ["Alice nel paese delle meraviglie", "Alpinisti ciabattoni", "Amuleto", "Cuore di tenebra", "Diario di Anna Frank", "Febbre",
-// "Fiabe dei fratelli Grimm", "Flush. Una biografia", "Gioventù senza Dio", "I Malavoglia", "I dolori del giovane Werther", "I mille da Genova a Capua", "I promessi sposi",
-// "I ragazzi della Via Pal", "I viaggi di Gulliver", "Il Milione", "Il cappello del prete", "Il fu Mattia Pascal", "Il giardino dei Finzi Contini",
-// "Il giornalino di Gian Burrasca", "Il grande Gatsby", "Il libro della giungla", "Il mago di Oz", "Il ritratto di Dorian Gray", "Il sistema periodico",
-// "La coscienza di Zeno", "La metamorfosi", "Le avventure di Pinocchio", "Le avventure di Tom Sawyer", "Lo stadio di Wimbledon",
-// "Ma gli androidi sognano pecore elettriche?", "Peter Pan", "Sorelle Materassi", "Sostiene Pereira", "Ventimila leghe sotto i mari", ]
 
 final TO_EXCLUDE = ["alicenelpaesedellemeraviglie", "alpinisticiabattoni", "amuleto", "cuoreditenebra", "diariodiannafrank", "febbre",
 "fiabedeifratelligrimm", "flushunabiografia", "gioventusenzadio", "imalavoglia", "idoloridelgiovanewerther", "imilledagenovaacapua", "ipromessisposi", "iragazzidellaviapal",
-"iviaggidigulliver", "ilmilione", "ilcappellodelprete", "ilfumattiapascal", "ilgiardinodeifinzicontini", "ilgiornalinodigianburrasca", "ilgrandegatsby", "illibrodellagiungla",
+"iviaggidigulliver", "ilmilione", "ilcappellodelprete", "ildiavolosullecolline", "ilfumattiapascal", "ilgiardinodeifinzicontini", "ilgiornalinodigianburrasca", "ilgrandegatsby", "illibrodellagiungla",
 "ilmagodioz", "ilritrattodidoriangray", "ilsistemaperiodico", "lacoscienzadizeno", "lametamorfosi", "leavventuredipinocchio", "leavventureditomsawyer", "lostadiodiwimbledon",
 "magliandroidisognanopecoreelettriche", "peterpan", "sorellematerassi", "sostienepereira", "ventimilaleghesottoimari", "raccontidialbertomoravia", "raccontidiantoncechov", "raccontidiernesthemingway", 
 "raccontidifranzkafka", "raccontidiitalocalvino", "raccontidiryunosukeakutagawa",]
@@ -31,7 +25,7 @@ final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "
 "diario1941-1943", "diariodiunpazzo", "dieciindianiecampoindiano", "distanza", "doppiosogno", "dracula", "emma", "fame", "fosca", "frankenstein", "girodivite",
 "gliindifferenti", "gliocchialidoro", "gliultimiannidicleliatrotti", "grandefiumedaiduecuori", "grandisperanze", "hoservitoilredinghilterra", 
 "idiecigiornichesconvolseroilmondo", "imieipremi", "ipadrilontani", "itremoschettieri", "ivecchieigiovani",
-"ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo", "ildiavolosullecolline",
+"ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo",
 "ildisperso", "ilfondodellabottiglia", "ilgiocodeiregni", "ilgiornodelgiudizio", "ilgiuocodelleperledivetro", "ilgrandebob", "ilmaestroemargherita", 
 "iquarantagiornidelmussadagh", "ilmantello", "ilmisterodiedwindrood", "ilmonaco", "ilnaso", "ilnomedellarosa", "ilpaesedicuccagna", "ilpiacere", "ilpranzodibabette", 
 "ilritratto", "ilrossoeilnero", "ilsentierodeinididiragno", "ilsergentenellaneve", "ilsoccombente", "jakobvongunten", "janeeyre", "julesejim", "liguana", 
