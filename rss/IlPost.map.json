@@ -204,6 +204,18 @@
         "podcast": "Strade blu"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2022/09/25/1664111784-tienimi-morning.mp3",
+        "title": "Talk Faenza, 24/09/2022",
+        "date": "2022-09-25T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2023/05/07/1683491836-voices-tienimi-morning.mp3",
+        "title": "Voices Torino, 06/05/23",
+        "date": "2023-05-08T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2023/07/10/1688998702-altre_indagini_230710_v5_-16lufs.mp3",
         "title": "Seveso, 10 luglio 1976 &#8211; Prima parte",
         "date": "2023-07-10T08:57:18+02:00",
@@ -244,6 +256,12 @@
         "title": "La scomunica, le madonne pellegrine e i frati volanti &#8211; parte 2",
         "date": "2023-09-21T00:00:00Z",
         "podcast": "L'ombelico di un mondo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2023/09/25/1695626538-tienimi-morning-23-09-2023.mp3",
+        "title": "Talk Faenza, 23/09/2023",
+        "date": "2023-09-25T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2023/10/09/1696866445-altre_indagini_231010_pt1_v2_-16lufs.mp3",
@@ -310,6 +328,12 @@
         "title": "Milano, 18 marzo 1978 &#8211; Seconda parte",
         "date": "2024-04-10T09:26:24+02:00",
         "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/14/1713111326-voices_tienimi_morning_240415-16lufs.mp3",
+        "title": "Voices Torino, 13/04/24",
+        "date": "2024-04-15T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/06/09/1717919976-altre-indagini-brescia-pt1-v2.mp3",
@@ -418,6 +442,12 @@
         "title": "L\u2019intelligenza artificiale contro il complottismo",
         "date": "2024-09-20T10:00:33+02:00",
         "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/09/23/1727083116-tienimi-morning-faenza-2024-v2.mp3",
+        "title": "Talk Faenza, 21/09/2024",
+        "date": "2024-09-23T00:00:00Z",
+        "podcast": "Tienimi Wilson"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/09/25/1727255619-Globo-240925_v4_-16lufs.mp3",
@@ -4356,6 +4386,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/09/23/1758651067-tienimi-wilson_-16lufs.mp3",
+        "title": "Talk Faenza, 20/09/2025",
+        "date": "2025-09-24T00:00:00Z",
+        "podcast": "Tienimi Wilson"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2025/09/25/1758780835-25morningmorning_mixdown.mp3",
         "title": "Ep. 1049 \u2013 Un giorno come tanti in Cisgiordania e le altre storie di oggi",
         "date": "2025-09-25T00:00:00Z",
@@ -4581,6 +4617,486 @@
         "src": "https://www.ilpost.it/wp-content/uploads/2025/10/03/1759507195-m_w_251004_v3_-14lufs.mp3",
         "title": "Morning Weekend &#8211; Due approcci molto diversi nei confronti della Flotilla, e altre storie",
         "date": "2025-10-04T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/06/1759731271-6ottobremorning_mixdown.mp3",
+        "title": "Ep. 1056 \u2013 Le patenti di pacifismo e le altre storie di oggi",
+        "date": "2025-10-06T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/05/1759688731-20222233-tienimi-bordone-puntata-1365-una-serie-racconta-ed-gein-il-primo-serial-killer-con-stefano-nazzi.mp3",
+        "title": "Una serie racconta Ed Gein, il primo serial killer (con Stefano Nazzi)",
+        "date": "2025-10-06T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/06/1759754173-Pt-142-6.10.25.mp3",
+        "title": "Ep 142 &#8211; Prendersi cura",
+        "date": "2025-10-06T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/07/1759817804-7ottobremorning_mixdown.mp3",
+        "title": "Ep. 1057 \u2013 Una Fornero per Macron e le altre storie di oggi",
+        "date": "2025-10-07T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/06/1759784338-0600000-tienimi-bordone-puntata-1366-latinorum-labubu-e-il-pericoloso-mondo-di-amelie.mp3",
+        "title": "Latinorum, labubu e il pericoloso mondo di Am\u00e9lie",
+        "date": "2025-10-07T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/07/1759846800-Pt-143-7.10.25.mp3",
+        "title": "Ep 143 &#8211; Il giorno in cui mi dimisi",
+        "date": "2025-10-07T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/06/1759759587-uvl_251007_v1_-14lufs.mp3",
+        "title": "La volpe, Dracula e gli schermi sensibili",
+        "date": "2025-10-07T00:00:00Z",
+        "podcast": "Un vocale lungo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/08/1759903850-8ottobremorning_mixdown.mp3",
+        "title": "Ep. 1058 \u2013 Il garantismo degli altri e le altre storie di oggi",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/07/1759864401-0655555-tienimi-bordone-puntata-1367-una-canzone-tremenda-per-la-cucina-italiana-voluta-dal-governo.mp3",
+        "title": "Una canzone tremenda voluta dal governo",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/08/1759924511-globo_251008_ita_v3_-14lufs.mp3",
+        "title": "Una proposta radicale per il futuro della Palestina, con Ilan Papp\u00e9",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/08/1759911988-globo_251008_eng_v2_-14ufs.mp3",
+        "title": "A radical proposal for the future of Palestine, with Ilan Papp\u00e9 (versione originale, in inglese)",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/08/1759911972-Pt-144-8.10.25.mp3",
+        "title": "Ep 144 &#8211; Come scavare un pozzo con un ago",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/08/1759923798-202937444-tienimi-bordone-puntata-1367-una-canzone-tremenda-voluta-dal-governo.mp3",
+        "title": "Una canzone tremenda voluta dal governo",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/08/1759951897-globo_251008_eng_v3_-14lufs.mp3",
+        "title": "A radical proposal for the future of Palestine, with Ilan Papp\u00e9 (versione originale, in inglese)",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/09/1760024813-globo_251008_eng_v4_-14lufs.mp3",
+        "title": "A radical proposal for the future of Palestine, with Ilan Papp\u00e9 (versione originale, in inglese)",
+        "date": "2025-10-08T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/09/1759989277-9ottobremorning_mixdown.mp3",
+        "title": "Ep. 1059 \u2013 L&#8217;accordo su Gaza, la teoria del matto e le altre storie di oggi",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/08/1759939410-45879311-tienimi-bordone-puntata-1368-alcune-cose-che-diciamo-e-forse-potremmo-non-dire.mp3",
+        "title": "Alcune cose che diciamo e forse potremmo non dire",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/09/1759991348-ok9ottobremorning_mixdown.mp3",
+        "title": "Ep. 1059 \u2013 L&#8217;accordo su Gaza, la teoria del matto e le altre storie di oggi",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/09/1760008307-Pt-145-9.10.25.mp3",
+        "title": "Ep 145 &#8211; Prove di pace",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/09/1759994163-wilson-251009-v1_02.mp3",
+        "title": "Da che parte stanno i giornali?",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/09/1760024120-wilson_251009_v1_-14lufs.mp3",
+        "title": "Da che parte stanno i giornali?",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/12/1760288205-wilson_251009_v2.mp3",
+        "title": "Da che parte stanno i giornali?",
+        "date": "2025-10-09T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/10/1760076945-10ottobremorning_mixdown.mp3",
+        "title": "Ep. 1060 \u2013 I complici silenziosi della pace e le altre storie di oggi",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/09/1760047530-30333333-tienimi-bordone-puntata-1369-il-nostro-meteorologo-preferito-la-fine-di-twin-peaks-e-una-novita.mp3",
+        "title": "Il nostro meteorologo preferito, la fine di Twin Peaks e una novit\u00e0",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/09/1760034369-altre_indagini_251010_pt1_v3_-14lufs.mp3",
+        "title": "Ostia, 2 novembre 1975 &#8211; Prima parte",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/10/1760081000-cvus_251010_v1_-14lufs.mp3",
+        "title": "Un Premio Nobel \u00e8 per sempre",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/10/1760091693-Pt-146-10.10.25.mp3",
+        "title": "Ep 146 &#8211; Inizi difficili",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/13/1760357973-altre_indagini_251010_v4_-14lufs.mp3",
+        "title": "Ostia, 2 novembre 1975 &#8211; Prima parte",
+        "date": "2025-10-10T00:00:00Z",
+        "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/09/1760033833-altre_indagini_251010_pt2_v3_-14lufs.mp3",
+        "title": "Ostia, 2 novembre 1975 &#8211; Seconda parte",
+        "date": "2025-10-10T01:00:00Z",
+        "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/10/1760137120-m_w_251011_v4_-14lufs.mp3",
+        "title": "Morning Weekend &#8211; Cosa potr\u00e0 fare l\u2019Europa per Gaza, e altre storie",
+        "date": "2025-10-11T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/12/1760301420-07888873-tienimi-bordone-puntata-1370-a-house-of-dynamite.mp3",
+        "title": "A house of dynamite",
+        "date": "2025-10-13T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/13/1760337152-13ottobremorning_mixdown.mp3",
+        "title": "Ep. 1061 \u2013 I sopravvalutati, i disprezzati e le altre storie di oggi",
+        "date": "2025-10-13T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/13/1760354819-Pt-147-13.10.25.mp3",
+        "title": "Ep 147 &#8211; Tornare a casa",
+        "date": "2025-10-13T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/14/1760422222-14ottobremorning_mixdown.mp3",
+        "title": "Ep. 1062 \u2013 Abbracci, una stretta di mano e le altre storie di oggi",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/13/1760388739-08999999-tienimi-bordone-puntata-1371-torno-subito-diane-keaton.mp3",
+        "title": "Torno Subito &#8211; Diane Keaton",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/14/1760424185-ok14ottobremorning_mixdown.mp3",
+        "title": "Ep. 1062 \u2013 Abbracci, una stretta di mano e le altre storie di oggi",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/14/1760426432-OkOk14ottobremorning_mixdown.mp3",
+        "title": "Ep. 1062 \u2013 Abbracci, una stretta di mano e le altre storie di oggi",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/14/1760446904-Pt-148-14.10.25.mp3",
+        "title": "Ep 148 &#8211; Vedevo il mondo attraverso i suoi occhi",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/14/1760425044-uvl_251014_v1_-14lufs.mp3",
+        "title": "Una di quelle settimane di Michela Murgia",
+        "date": "2025-10-14T00:00:00Z",
+        "podcast": "Un vocale lungo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/15/1760508431-15ottobremorning_mixdown.mp3",
+        "title": "Ep. 1063 \u2013 Quanto \u00e8 difficile chiedere scusa per un errore e le altre storie di oggi",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/14/1760461191-46522202-tienimi-bordone-puntata-1372-il-teorema-di-vannacci.mp3",
+        "title": "Il teorema di Vannacci",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/15/1760520304-Okok15ottobremorning_mixdown.mp3",
+        "title": "Ep. 1063 \u2013 Quanto \u00e8 difficile chiedere scusa per un errore e le altre storie di oggi",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/15/1760515085-globo_251015_v2_-14lufs.mp3",
+        "title": "Meritarsi il Nobel per la Pace, con Irene Panozzo",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/13/1760357309-Pt-149-15.5.25.mp3",
+        "title": "Ep 149 &#8211; La vita, nell\u2019attesa",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/15/1760520413-Tienimi-Bordone-Puntata-1372-Il-teorema-di-Vannacci-CORRETTA.mp3",
+        "title": "Il teorema di Vannacci",
+        "date": "2025-10-15T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/16/1760595264-16ottobremorning_mixdown.mp3",
+        "title": "Ep. 1064 \u2013 Prevenire le violenze \u00e8 una responsabilit\u00e0 collettiva e le altre storie di oggi",
+        "date": "2025-10-16T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/15/1760568538-9292222-tienimi-bordone-puntata-1373-torno-subito-dngelo.mp3",
+        "title": "Torno Subito &#8211; D\u2019Angelo",
+        "date": "2025-10-16T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/10/1760092529-Pt-150-16.10.25.mp3",
+        "title": "Ep 150 &#8211; Roma, 16 ottobre \u201843",
+        "date": "2025-10-16T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/16/1760600298-wilson-ferrari.mp3",
+        "title": "La tecnologia che cambia la storia",
+        "date": "2025-10-16T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/17/1760681564-17ottobremorning_mixdown.mp3",
+        "title": "Ep. 1065 \u2013 Darsi appuntamento a Budapest e le altre storie di oggi",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/16/1760631995-02933111-tienimi-bordone-puntata-1374-si-comincia-il-riguardone-di-bond-licenza-di-uccidere-1.mp3",
+        "title": "Comincia il \u201criguardone\u201d di 007: Licenza di uccidere",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/17/1760684137-ok17ottobremorning_mixdown.mp3",
+        "title": "Ep. 1065 \u2013 Darsi appuntamento a Budapest e le altre storie di oggi",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/17/1760686292-cvus_251017_v1_-14lufs.mp3",
+        "title": "Acchiappafantasmi fioriti e floppy disk da salvare",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/17/1760693896-Pt-151-17.10.25.mp3",
+        "title": "Ep 151 &#8211; Animali fantastici",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/17/1760703763-bancaetica_trailer_v2_-14LUFS.mp3",
+        "title": "E allora parliamone, dal 20 ottobre",
+        "date": "2025-10-17T00:00:00Z",
+        "podcast": "Perch\u00e9 non parliamo di soldi?"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/17/1760741365-mw_251018_-14LUFS_v4.mp3",
+        "title": "Morning Weekend &#8211; Una specie di fantasma, e altre storie",
+        "date": "2025-10-18T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/20/1760940930-20-ottobremorning_mixdown.mp3",
+        "title": "Ep. 1066 \u2013 Una stanza per gli affetti e le altre storie di oggi",
+        "date": "2025-10-20T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/20/1760920160-102333333-tienimi-bordone-puntata-1375-la-rivincita-democratica-delle-rane.mp3",
+        "title": "La rivincita democratica delle rane",
+        "date": "2025-10-20T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/20/1760964157-Pt-152-20.10.25.mp3",
+        "title": "Ep 152 &#8211; L\u2019arte della truffa",
+        "date": "2025-10-20T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/20/1760946422-392222211-tienimi-bordone-puntata-1375-la-rivincita-democratica-delle-rane-corretto.mp3",
+        "title": "La rivincita democratica delle rane",
+        "date": "2025-10-20T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/19/1760900684-bancaetica_cutugno_v3_-14LUFS.mp3",
+        "title": "1. Cosa c&#8217;entrano i soldi con la crisi climatica",
+        "date": "2025-10-20T00:00:00Z",
+        "podcast": "Perch\u00e9 non parliamo di soldi?"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/21/1761026667-21ottobremorning_mixdown.mp3",
+        "title": "Ep. 1067 \u2013 Le violenze tra gli ulivi e le altre storie di oggi",
+        "date": "2025-10-21T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/20/1760982049-93333331-tienimi-bordone-puntata-1376-i-social-network-continuano-a-morire-e-forse-va-bene-cosi.mp3",
+        "title": "I social network continuano a morire, e forse va bene cosi\u0300",
+        "date": "2025-10-21T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/21/1761053403-Pt-153-21.10.25.mp3",
+        "title": "Ep 153 &#8211; Una casa quasi mia",
+        "date": "2025-10-21T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/21/1761043953-uvl_251021_v1_-14lufs.mp3",
+        "title": "Elefanti",
+        "date": "2025-10-21T00:00:00Z",
+        "podcast": "Un vocale lungo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/22/1761113718-22ottobremorning_mixdown.mp3",
+        "title": "Ep. 1068 \u2013 Uomini in piazza, il patriottismo di Sinner e le altre storie di oggi",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/21/1761062771-28333333-tienimi-bordone-puntata-1377-giovani-rock-e-contemporanei-i-geese-sembrano-impossibili.mp3",
+        "title": "Giovani, rock e contemporanei, i Geese sembrano impossibili",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/22/1761115399-ok22ottobremorning_mixdown.mp3",
+        "title": "Ep. 1068 \u2013 Uomini in piazza, il patriottismo di Sinner e le altre storie di oggi",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/22/1761120182-globo_tamma_v3_-14lufs.mp3",
+        "title": "Su una cosa l\u2019Europa era prima, con Paola Tamma",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/22/1761124233-Pt-154-22.10.25.mp3",
+        "title": "Ep 154 &#8211; Io e i miei genitori",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/22/1761173699-em-morning-3.mp3",
+        "title": "Ep. 1069 \u2013 Morning ritorna domani",
+        "date": "2025-10-23T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/22/1761171454-39222222-tienimi-bordone-puntata-1378-le-bodycam-di-un-documentario-e-quelle-in-arrivo-in-italia-con-valeria-verdolini.mp3",
+        "title": "Le bodycam di un documentario e quelle in arrivo in Italia (con Valeria Verdolini)",
+        "date": "2025-10-23T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/23/1761229460-Pt-155-23.10.25.mp3",
+        "title": "Ep 155 &#8211; Memorie di famiglia",
+        "date": "2025-10-23T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/23/1761206416-wilson_mixdown-sanita.mp3",
+        "title": "Perch\u00e9 la sanit\u00e0 non funziona pi\u00f9",
+        "date": "2025-10-23T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/24/1761285778-morning_251024_v1_-16lufs.mp3",
+        "title": "Ep. 1070 \u2013 Il cielo \u00e8 di tutti e le altre storie di oggi",
+        "date": "2025-10-24T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/23/1761254504-383333333-tienimi-bordone-puntata-1379-i-kamikaze-non-sono-stati-quello-che-credete-con-flavio-parisi.mp3",
+        "title": "I kamikaze non sono stati quello che credete (con Flavio Parisi)",
+        "date": "2025-10-24T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/24/1761292490-morning_251024_v1_-16lufs_01-corretto.mp3",
+        "title": "Ep. 1070 \u2013 Il cielo \u00e8 di tutti e le altre storie di oggi",
+        "date": "2025-10-24T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/23/1761226993-cvus_251024_v2_-14lufs.mp3",
+        "title": "Il collasso ecologico a Gaza",
+        "date": "2025-10-24T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/24/1761305339-Pt-156-24.10.25.mp3",
+        "title": "Ep 156 &#8211; Effetti collaterali",
+        "date": "2025-10-24T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/10/24/1761342373-m_w_251025_v1_-14lufs.mp3",
+        "title": "Morning Weekend &#8211; La ragione per cui molti paesi europei invidiano la Svizzera, e altre storie",
+        "date": "2025-10-25T00:00:00Z",
         "podcast": "Morning"
     }
 ]
