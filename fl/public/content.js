@@ -125,7 +125,8 @@ function checkPhotostream() {
     addUI(targetNode);
 }
 function checkPhoto() {
-    if (!document.location.href.startsWith("https://www.flickr.com/photos/")) {
+    if (!document.location.href.startsWith("https://www.flickr.com/photos/") &&
+        !document.location.href.startsWith("https://flickr.com/photos/")) {
         log("No Photo");
         return;
     }
