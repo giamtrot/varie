@@ -5040,6 +5040,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/10/19/1763560643-globo_tamma_v4_-14lufs.mp3",
+        "title": "Su una cosa l\u2019Europa era prima, con Paola Tamma",
+        "date": "2025-10-22T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2025/10/22/1761173699-em-morning-3.mp3",
         "title": "Ep. 1069 \u2013 Morning ritorna domani",
         "date": "2025-10-23T00:00:00Z",
@@ -5638,5 +5644,11 @@
         "title": "Ep. 1088 \u2013 Migliorare il servizio e le altre storie di oggi",
         "date": "2025-11-19T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/11/19/1763543912-globo_250919_v2_-14lufs.mp3",
+        "title": "L&#8217;avanzata di al Qaida in Mali, con Andrea de Georgio",
+        "date": "2025-11-19T00:00:00Z",
+        "podcast": "Globo"
     }
 ]
