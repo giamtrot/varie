@@ -70,16 +70,17 @@ if __name__ == "__main__":
     current_page = 1
     all_programs = []
 
-    while True:
+    while current_page <= 2: # Loop for page 1 and page 2
         print(f"Fetching page {current_page}...")
         programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page)
 
         if not programs_on_page:
-            print("No more programs found. Stopping.")
+            print(f"No programs found on page {current_page}. Stopping.")
             break
         
         all_programs.extend(programs_on_page)
         current_page += 1
+
 
     if all_programs:
         print(f"\nFound a total of {len(all_programs)} programs:")
