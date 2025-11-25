@@ -13,3 +13,4 @@ macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
 **/node_modules/**/*
 **/codacy.instructions.md
+bbc/fullcontent.html

@@ -2,6 +2,67 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
+def parse_full_content_page(full_content_url):
+    """
+    Fetches and parses the full content page to extract specific details.
+
+    Args:
+        full_content_url (str): The URL of the full content page.
+
+    Returns:
+        dict: A dictionary with 'story', 'headlines', and 'keywords'.
+    """
+    if not full_content_url or full_content_url == 'N/A':
+        return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
+
+    try:
+        response = requests.get(full_content_url)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching full content page {full_content_url}: {e}")
+        return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    story = []
+    headlines = []
+    keywords = []
+
+    story_heading = soup.find('h3', string='The story')
+    if story_heading:
+        for sibling in story_heading.find_next_siblings():
+            if sibling.name == 'h3':
+                break
+            if sibling.name == 'p':
+                story.append(sibling.get_text(strip=True))
+
+    headlines_heading = soup.find('h3', string='News headlines')
+    if headlines_heading:
+        for sibling in headlines_heading.find_next_siblings():
+            if sibling.name == 'h3':
+                break
+            if sibling.name == 'p':
+                headlines.append(sibling.get_text(strip=True))
+
+    # A more robust way to find "Key words and phrases"
+    keywords_heading = soup.find('strong', string='Key words and phrases')
+    if keywords_heading and keywords_heading.parent.name == 'p':
+         # The real heading is the parent of the strong tag in this case
+        keywords_heading = keywords_heading.parent
+
+    if keywords_heading:
+        for sibling in keywords_heading.find_next_siblings():
+            if sibling.name == 'h3':
+                break
+            if sibling.name in ['p', 'ul']:
+                keywords.append(sibling.get_text(strip=True))
+
+    return {
+        'story': ' '.join(story) if story else 'N/A',
+        'headlines': '\n'.join(headlines) if headlines else 'N/A',
+        'keywords': '\n'.join(keywords) if keywords else 'N/A'
+    }
+
 def get_full_content_link(program_url):
     """
     Fetches the individual program page and extracts the link to the full content.
@@ -27,7 +88,6 @@ def get_full_content_link(program_url):
             data = json.loads(next_data_script.string)
             page_props = data.get('props', {}).get('pageProps', {})
             
-            # More robustly find the 'long' synopsis
             for key, value in page_props.get('page', {}).items():
                 if isinstance(value, dict) and 'contents' in value:
                     for content in value.get('contents', []):
@@ -36,13 +96,10 @@ def get_full_content_link(program_url):
                                 if block.get('type') == 'mediaMetadata':
                                     synopses = block.get('model', {}).get('synopses', {})
                                     long_synopsis = synopses.get('long', '')
-            # Extract the URL from the long synopsis text
-            if "https://" in long_synopsis:
-                # Split the text and find the URL
-                for word in long_synopsis.split():
-                    if word.startswith("https://"):
-                        return word.strip()
-
+                                    if "https://" in long_synopsis:
+                                        for word in long_synopsis.split():
+                                            if word.startswith("https://"):
+                                                return word.strip()
         except (json.JSONDecodeError, KeyError, IndexError) as e:
             print(f"Error parsing JSON on program page {program_url}: {e}")
 
@@ -63,7 +120,7 @@ def parse_bbc_audio_page(url, page_number=1):
     paginated_url = f"{url}?page={page_number}"
     try:
         response = requests.get(paginated_url)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the URL {paginated_url}: {e}")
         return None
@@ -101,11 +158,16 @@ def parse_bbc_audio_page(url, page_number=1):
                         
                         if title and path:
                             full_content_link = get_full_content_link(program_link)
+                            full_content_details = parse_full_content_page(full_content_link)
+                            
                             programs.append({
                                 'title': title,
                                 'description': description,
                                 'link': program_link,
-                                'full_content_link': full_content_link
+                                'full_content_link': full_content_link,
+                                'story': full_content_details.get('story'),
+                                'headlines': full_content_details.get('headlines'),
+                                'keywords': full_content_details.get('keywords')
                             })
         except (json.JSONDecodeError, KeyError) as e:
             print(f"Error parsing JSON from __NEXT_DATA__: {e}")
@@ -138,5 +200,8 @@ if __name__ == "__main__":
             print(f"  Description: {program.get('description', 'N/A')}")
             print(f"  Link: {program.get('link', 'N/A')}")
             print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
+            print(f"  Story: {program.get('story', 'N/A')}")
+            print(f"  Headlines: {program.get('headlines', 'N/A')}")
+            print(f"  Keywords: {program.get('keywords', 'N/A')}")
     else:
         print("Failed to parse the BBC Audio page.")
