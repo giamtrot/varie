@@ -2,6 +2,53 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
+def get_full_content_link(program_url):
+    """
+    Fetches the individual program page and extracts the link to the full content.
+
+    Args:
+        program_url (str): The URL of the individual program page.
+
+    Returns:
+        str: The URL to the full content, or 'N/A' if not found.
+    """
+    try:
+        response = requests.get(program_url)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching program page {program_url}: {e}")
+        return 'N/A'
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    next_data_script = soup.find('script', id='__NEXT_DATA__')
+    if next_data_script and next_data_script.string:
+        try:
+            data = json.loads(next_data_script.string)
+            page_props = data.get('props', {}).get('pageProps', {})
+            
+            # More robustly find the 'long' synopsis
+            for key, value in page_props.get('page', {}).items():
+                if isinstance(value, dict) and 'contents' in value:
+                    for content in value.get('contents', []):
+                        if content.get('type') == 'audio-episode':
+                            for block in content.get('model', {}).get('blocks', []):
+                                if block.get('type') == 'mediaMetadata':
+                                    synopses = block.get('model', {}).get('synopses', {})
+                                    long_synopsis = synopses.get('long', '')
+            # Extract the URL from the long synopsis text
+            if "https://" in long_synopsis:
+                # Split the text and find the URL
+                for word in long_synopsis.split():
+                    if word.startswith("https://"):
+                        return word.strip()
+
+        except (json.JSONDecodeError, KeyError, IndexError) as e:
+            print(f"Error parsing JSON on program page {program_url}: {e}")
+
+    return 'N/A'
+
+
 def parse_bbc_audio_page(url, page_number=1):
     """
     Fetches the content of a BBC Audio brand page for a specific page number and parses it.
@@ -25,15 +72,12 @@ def parse_bbc_audio_page(url, page_number=1):
     
     programs = []
 
-    # Try to find the __NEXT_DATA__ script tag which contains structured JSON data
     next_data_script = soup.find('script', id='__NEXT_DATA__')
     if next_data_script and next_data_script.string:
         try:
             data = json.loads(next_data_script.string)
             page_obj = data.get('props', {}).get('pageProps', {}).get('page', {})
             
-            # The key is dynamic based on the URL path.
-            # We can find it by looking for a key that contains the brand ID 'p05hw4bq'.
             page_data_key = next((key for key in page_obj if 'p05hw4bq' in key), None)
             
             if page_data_key:
@@ -46,6 +90,9 @@ def parse_bbc_audio_page(url, page_number=1):
                         title = model.get('title')
                         path = model.get('path')
                         description = 'N/A'
+                        
+                        program_link = f"https://www.bbc.com{path}"
+
                         for block in model.get('blocks', []):
                             if block.get('type') == 'mediaMetadata':
                                 synopses = block.get('model', {}).get('synopses', {})
@@ -53,13 +100,15 @@ def parse_bbc_audio_page(url, page_number=1):
                                 break
                         
                         if title and path:
+                            full_content_link = get_full_content_link(program_link)
                             programs.append({
                                 'title': title,
                                 'description': description,
-                                'link': f"https://www.bbc.com{path}"
+                                'link': program_link,
+                                'full_content_link': full_content_link
                             })
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON from __NEXT_DATA__: {e}")
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error parsing JSON from __NEXT_DATA__: {e}")
         except Exception as e:
             print(f"An unexpected error occurred while parsing JSON data: {e}")
 
@@ -70,7 +119,7 @@ if __name__ == "__main__":
     current_page = 1
     all_programs = []
 
-    while current_page <= 2: # Loop for page 1 and page 2
+    while current_page <= 3: # Loop for page 1, 2, and 3
         print(f"Fetching page {current_page}...")
         programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page)
 
@@ -81,7 +130,6 @@ if __name__ == "__main__":
         all_programs.extend(programs_on_page)
         current_page += 1
 
-
     if all_programs:
         print(f"\nFound a total of {len(all_programs)} programs:")
         for i, program in enumerate(all_programs):
@@ -89,5 +137,6 @@ if __name__ == "__main__":
             print(f"  Title: {program.get('title', 'N/A')}")
             print(f"  Description: {program.get('description', 'N/A')}")
             print(f"  Link: {program.get('link', 'N/A')}")
+            print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
     else:
         print("Failed to parse the BBC Audio page.")
