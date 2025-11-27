@@ -24,38 +24,63 @@ def parse_full_content_page(full_content_url):
 
     soup = BeautifulSoup(response.text, 'html.parser')
     
+    # Find the main content container
+    main_content = soup.find('div', class_='widget-richtext')
+    if not main_content:
+        return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
+
     story = []
     headlines = []
     keywords = []
 
-    story_heading = soup.find('h3', string='The story')
+    # --- Story Extraction ---
+    story_heading = main_content.find('h3', string='The story')
     if story_heading:
         for sibling in story_heading.find_next_siblings():
-            if sibling.name == 'h3':
+            if sibling.name == 'h3':  # Stop at the next heading
                 break
             if sibling.name == 'p':
                 story.append(sibling.get_text(strip=True))
 
-    headlines_heading = soup.find('h3', string='News headlines')
+    # --- Headlines Extraction ---
+    headlines_heading = main_content.find('h3', string='News headlines')
     if headlines_heading:
-        for sibling in headlines_heading.find_next_siblings():
-            if sibling.name == 'h3':
+        next_element = headlines_heading.find_next_sibling()
+        while next_element:
+            if next_element.name == 'p' and 'Key words and phrases' in next_element.get_text():
                 break
-            if sibling.name == 'p':
-                headlines.append(sibling.get_text(strip=True))
 
-    # A more robust way to find "Key words and phrases"
-    keywords_heading = soup.find('strong', string='Key words and phrases')
+            if next_element.name == 'p' and next_element.get_text(strip=True):
+                # Replace <br> with a unique separator
+                for br in next_element.find_all("br"):
+                    br.replace_with("||BR||")
+                
+                # Get text with spaces, then split by our separator
+                full_text = next_element.get_text(" ", strip=True)
+                parts = full_text.split("||BR||")
+
+                headline_text = parts[0].strip()
+                if len(parts) > 1:
+                    source_text = " ".join(p.strip() for p in parts[1:] if p.strip())
+                    if headline_text and source_text:
+                        headlines.append(f"{headline_text}\n  {source_text}")
+                    elif headline_text:
+                        headlines.append(headline_text)
+                elif headline_text:
+                    headlines.append(headline_text)
+
+            next_element = next_element.find_next_sibling()
+
+    # --- Keywords Extraction ---
+    keywords_heading = main_content.find('strong', string='Key words and phrases')
     if keywords_heading and keywords_heading.parent.name == 'p':
-         # The real heading is the parent of the strong tag in this case
-        keywords_heading = keywords_heading.parent
-
-    if keywords_heading:
-        for sibling in keywords_heading.find_next_siblings():
-            if sibling.name == 'h3':
+        current_element = keywords_heading.parent.find_next_sibling()
+        while current_element:
+            if current_element.name == 'h3': # Stop at next heading
                 break
-            if sibling.name in ['p', 'ul']:
-                keywords.append(sibling.get_text(strip=True))
+            if current_element.name in ['p', 'ul']:
+                keywords.append(current_element.get_text(strip=True))
+            current_element = current_element.find_next_sibling()
 
     return {
         'story': ' '.join(story) if story else 'N/A',
