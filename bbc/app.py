@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory, Response
+from flask import Flask, jsonify, send_from_directory, Response, request
 from flask_cors import CORS
 import os
 import json
@@ -24,6 +24,36 @@ def get_programs():
         return jsonify(data)
     except (IOError, json.JSONDecodeError) as e:
         return jsonify({"error": f"Failed to read or parse data file: {e}"}), 500
+
+
+@app.route('/api/disabled-programs', methods=['GET', 'POST'])
+def manage_disabled_programs():
+    """
+    GET: Retrieve the list of disabled program links.
+    POST: Save the list of disabled program links.
+    """
+    disabled_file = "disabled_programs.json"
+    
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            disabled_links = data.get('disabled', [])
+            with open(disabled_file, 'w', encoding='utf-8') as f:
+                json.dump({"disabled": disabled_links}, f, indent=2)
+            return jsonify({"message": "Disabled programs saved."}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    
+    # GET request
+    try:
+        if os.path.exists(disabled_file):
+            with open(disabled_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return jsonify(data), 200
+        else:
+            return jsonify({"disabled": []}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/reload-programs', methods=['POST'])
 def reload_programs():

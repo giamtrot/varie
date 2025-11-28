@@ -23,7 +23,10 @@ function ProgramReload({ onDone }) {
       setLogLines(prev => [...prev, `--- PROCESS EXIT ${e.data} ---`]);
       setRunning(false);
       es.close();
-      if (onDone) onDone();
+      // Keep the panel visible; only call onDone after a delay for UI update
+      setTimeout(() => {
+        if (onDone) onDone();
+      }, 500);
     });
 
     es.onerror = (err) => {
@@ -40,24 +43,10 @@ function ProgramReload({ onDone }) {
     };
   }, [onDone]);
 
-  const handleStop = () => {
-    const es = esRef.current;
-    try { if (es) es.close(); } catch (_) {}
-    setRunning(false);
-    if (onDone) onDone();
-  };
-
   return (
     <div className="card mb-4">
-      <div className="card-header d-flex justify-content-between align-items-center">
+      <div className="card-header">
         <span>Live Reload Stream</span>
-        <div>
-          {running ? (
-            <button className="btn btn-sm btn-danger" onClick={handleStop}>Stop</button>
-          ) : (
-            <button className="btn btn-sm btn-secondary" disabled>Stopped</button>
-          )}
-        </div>
       </div>
       <div className="card-body bg-dark text-light" style={{ maxHeight: '300px', overflow: 'auto' }}>
         <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
