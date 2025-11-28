@@ -6,6 +6,7 @@ function ProgramList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isReloading, setIsReloading] = useState(false);
+  const [reloadLog, setReloadLog] = useState(''); // New state for reload log
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);
@@ -38,19 +39,20 @@ function ProgramList() {
   
   const handleReload = () => {
     setIsReloading(true);
+    setReloadLog('Reloading programs...'); // Initial message
     fetch('http://127.0.0.1:5000/api/reload-programs', { method: 'POST' })
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          alert(`Error reloading programs: ${data.error}\n\nOutput:\n${data.output}`);
+          setReloadLog(`Error reloading programs: ${data.error}\n\nOutput:\n${data.output}`);
         } else {
-          alert(`Reload complete!\n\n--- Script Output ---\n${data.output}`);
+          setReloadLog(`Reload complete!\n\n--- Script Output ---\n${data.output}`);
         }
         setIsReloading(false);
         fetchPrograms(); // Refresh the list after reload
       })
       .catch(error => {
-        alert(`An error occurred while communicating with the server: ${error.message}`);
+        setReloadLog(`An error occurred while communicating with the server: ${error.message}`);
         setIsReloading(false);
       });
   };
@@ -73,6 +75,18 @@ function ProgramList() {
           )}
         </button>
       </div>
+
+      {reloadLog && (
+        <div className="card mb-4">
+          <div className="card-header">
+            Reload Log
+          </div>
+          <div className="card-body bg-light">
+            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{reloadLog}</pre>
+          </div>
+        </div>
+      )}
+
       <div className="list-group">
         {programs.map(program => (
           <Link 
