@@ -1,6 +1,9 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+import os
+
+DATA_FILE = "bbc_programs.json"
 
 def parse_full_content_page(full_content_url):
     """
@@ -249,10 +252,35 @@ def parse_bbc_audio_page(url, page_number=1):
 
     return programs
 
+def load_programs(filename):
+    """Loads programs from a JSON file."""
+    if not os.path.exists(filename):
+        return {}
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            programs_list = json.load(f)
+            return {p['link']: p for p in programs_list}
+    except (json.JSONDecodeError, IOError) as e:
+        print(f"Could not read or parse {filename}: {e}")
+        return {}
+
+def save_programs(filename, programs):
+    """Saves programs to a JSON file."""
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(programs, f, indent=4, ensure_ascii=False)
+    except IOError as e:
+        print(f"Could not write to {filename}: {e}")
+
 if __name__ == "__main__":
     base_url = "https://www.bbc.com/audio/brand/p05hw4bq"
     current_page = 1
     all_programs = []
+
+    print("Loading existing programs...")
+    existing_programs_map = load_programs(DATA_FILE)
+    existing_links = set(existing_programs_map.keys())
+    print(f"Found {len(existing_links)} existing programs.")
 
     while current_page <= 3: # Loop for page 1, 2, and 3
         print(f"Fetching page {current_page}...")
@@ -266,15 +294,29 @@ if __name__ == "__main__":
         current_page += 1
 
     if all_programs:
-        print(f"\nFound a total of {len(all_programs)} programs:")
-        for i, program in enumerate(all_programs):
-            print(f"\n--- Program {i+1} ---")
-            print(f"  Title: {program.get('title', 'N/A')}")
-            print(f"  Description: {program.get('description', 'N/A')}")
-            print(f"  Link: {program.get('link', 'N/A')}")
-            print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
-            print(f"  Story: {program.get('story', 'N/A')}")
-            print(f"  Headlines: {program.get('headlines', 'N/A')}")
-            print(f"  Keywords: {program.get('keywords', 'N/A')}")
+        new_programs = [p for p in all_programs if p['link'] not in existing_links]
+        
+        if new_programs:
+            print(f"\nFound {len(new_programs)} new programs:")
+            for i, program in enumerate(new_programs):
+                print(f"\n--- New Program {i+1} ---")
+                print(f"  Title: {program.get('title', 'N/A')}")
+                print(f"  Description: {program.get('description', 'N/A')}")
+                print(f"  Link: {program.get('link', 'N/A')}")
+                print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
+                print(f"  Story: {program.get('story', 'N/A')}")
+                print(f"  Headlines: {program.get('headlines', 'N/A')}")
+                print(f"  Keywords: {program.get('keywords', 'N/A')}")
+        else:
+            print("\nNo new programs found.")
+
+        # Update and save all programs
+        scraped_programs_map = {p['link']: p for p in all_programs}
+        existing_programs_map.update(scraped_programs_map)
+        
+        print(f"\nSaving {len(existing_programs_map)} programs to {DATA_FILE}...")
+        save_programs(DATA_FILE, list(existing_programs_map.values()))
+        print("Save complete.")
+
     else:
         print("Failed to parse the BBC Audio page.")
