@@ -2,6 +2,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import os
+from datetime import datetime
 
 DATA_FILE = "bbc_programs.json"
 
@@ -223,6 +224,16 @@ def parse_bbc_audio_page(url, page_number=1):
                         title = model.get('title')
                         path = model.get('path')
                         description = 'N/A'
+                        date = 'N/A'
+                        
+                        release_date_timestamp = model.get('releaseDate')
+                        if release_date_timestamp:
+                            try:
+                                # Convert timestamp from milliseconds to seconds
+                                date_obj = datetime.fromtimestamp(release_date_timestamp / 1000)
+                                date = date_obj.strftime('%d %B %Y')
+                            except (ValueError, TypeError) as e:
+                                print(f"Could not parse date timestamp {release_date_timestamp}: {e}")
                         
                         program_link = f"https://www.bbc.com{path}"
 
@@ -239,6 +250,7 @@ def parse_bbc_audio_page(url, page_number=1):
                             programs.append({
                                 'title': title,
                                 'description': description,
+                                'date': date,
                                 'link': program_link,
                                 'full_content_link': full_content_link,
                                 'story': full_content_details.get('story'),
@@ -302,6 +314,7 @@ if __name__ == "__main__":
                 print(f"\n--- New Program {i+1} ---")
                 print(f"  Title: {program.get('title', 'N/A')}")
                 print(f"  Description: {program.get('description', 'N/A')}")
+                print(f"  Date: {program.get('date', 'N/A')}")
                 print(f"  Link: {program.get('link', 'N/A')}")
                 print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
                 print(f"  Story: {program.get('story', 'N/A')}")

@@ -39,6 +39,7 @@ function ProgramList() {
           >
             <div className="d-flex w-100 justify-content-between">
               <h5 className="mb-1">{program.title}</h5>
+              <small>{program.date}</small>
             </div>
             <p className="mb-1">{program.description}</p>
           </Link>

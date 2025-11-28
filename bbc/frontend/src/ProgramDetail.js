@@ -39,6 +39,7 @@ function ProgramDetail() {
     <div className="container mt-4">
       <button onClick={() => navigate('/')} className="btn btn-secondary mb-3">Back to List</button>
       <h1 className="mb-4">{program.title}</h1>
+      <p><strong>Date:</strong> {program.date}</p>
       <p><strong>Description:</strong> {program.description}</p>
       <p><strong>Link:</strong> <a href={program.link} target="_blank" rel="noopener noreferrer">{program.link}</a></p>
       <p><strong>Full Content Link:</strong> <a href={program.full_content_link} target="_blank" rel="noopener noreferrer">{program.full_content_link}</a></p>
