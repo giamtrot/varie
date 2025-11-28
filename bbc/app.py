@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, Response
 from flask_cors import CORS
 import os
 import json
@@ -33,23 +33,89 @@ def reload_programs():
     try:
         # Ensure we're using the same python interpreter that's running the app
         python_executable = sys.executable
-        result = subprocess.run(
-            [python_executable, 'bbc_parser.py'],
-            capture_output=True,
-            text=True,
-            check=True
+
+        # Run the parser in unbuffered mode so the child process flushes output
+        cmd = [python_executable, '-u', 'bbc_parser.py']
+
+        # Use Popen and capture stdout/stderr; avoid printing to the Flask app's stdout
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
+
+        # Capture output
+        stdout, stderr = process.communicate()
+        print("Parser stdout:", stdout)
+        combined = "".join(filter(None, [stdout, stderr]))
+
+        if process.returncode != 0:
+            raise subprocess.CalledProcessError(process.returncode, cmd, stdout, stderr)
+
         return jsonify({
             "message": "Reload completed successfully.",
-            "output": result.stdout
+            "output": combined
         })
     except subprocess.CalledProcessError as e:
         return jsonify({
             "error": "Failed to execute parser script.",
-            "output": e.stdout + e.stderr
+            "output": str(e.stdout) + str(e.stderr)
         }), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/reload-programs-stream')
+def reload_programs_stream():
+    """
+    Stream the output of `bbc_parser.py` as Server-Sent Events (SSE).
+
+    Connect with a browser `EventSource('/api/reload-programs-stream')` to receive
+    real-time lines. The parser is started on connect and runs in unbuffered mode.
+    """
+    def generate():
+        python_executable = sys.executable
+        cmd = [python_executable, '-u', 'bbc_parser.py']
+
+        # Merge stderr into stdout so we stream everything in order
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True
+        )
+
+        try:
+            if process.stdout is None:
+                return
+
+            # Stream each line as an SSE `data:` event (JSON-encoded to be safe)
+            for line in iter(process.stdout.readline, ''):
+                if line == '':
+                    break
+                yield f"data: {json.dumps(line.rstrip())}\n\n"
+
+            # Ensure process has finished
+            process.wait()
+            rc = process.returncode
+            yield f"event: done\ndata: {rc}\n\n"
+
+        except GeneratorExit:
+            # Client disconnected; try to terminate the child process
+            try:
+                if process.poll() is None:
+                    process.terminate()
+            except Exception:
+                pass
+        finally:
+            try:
+                if process.poll() is None:
+                    process.terminate()
+            except Exception:
+                pass
+
+    return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

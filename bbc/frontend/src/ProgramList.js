@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import ProgramReload from './ProgramReload';
 
 function ProgramList() {
   const [programs, setPrograms] = useState([]);
@@ -7,6 +8,7 @@ function ProgramList() {
   const [error, setError] = useState(null);
   const [isReloading, setIsReloading] = useState(false);
   const [reloadLog, setReloadLog] = useState(''); // New state for reload log
+  const [showReloadStream, setShowReloadStream] = useState(false);
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);
@@ -38,23 +40,19 @@ function ProgramList() {
   }, [fetchPrograms]);
   
   const handleReload = () => {
+    // Open the streaming UI which will start the EventSource
+    setShowReloadStream(true);
     setIsReloading(true);
-    setReloadLog('Reloading programs...'); // Initial message
-    fetch('http://127.0.0.1:5000/api/reload-programs', { method: 'POST' })
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          setReloadLog(`Error reloading programs: ${data.error}\n\nOutput:\n${data.output}`);
-        } else {
-          setReloadLog(`Reload complete!\n\n--- Script Output ---\n${data.output}`);
-        }
-        setIsReloading(false);
-        fetchPrograms(); // Refresh the list after reload
-      })
-      .catch(error => {
-        setReloadLog(`An error occurred while communicating with the server: ${error.message}`);
-        setIsReloading(false);
-      });
+    setReloadLog('Opening live reload stream...');
+  };
+
+  const handleReloadDone = () => {
+    // Called when stream finishes or is stopped
+
+    setShowReloadStream(false);
+    setIsReloading(false);
+    // Refresh programs after a short delay to allow file write completion
+    setTimeout(() => fetchPrograms(), 500);
   };
 
   if (loading && programs.length === 0) return <div className="text-center mt-5">Loading programs...</div>;
@@ -62,6 +60,7 @@ function ProgramList() {
 
   return (
     <div className="container mt-4">
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>BBC Programs</h1>
         <button className="btn btn-primary" onClick={handleReload} disabled={isReloading}>
@@ -75,6 +74,10 @@ function ProgramList() {
           )}
         </button>
       </div>
+
+      {showReloadStream && (
+        <ProgramReload onDone={handleReloadDone} />
+      )}
 
       {reloadLog && (
         <div className="card mb-4">

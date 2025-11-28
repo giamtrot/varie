@@ -182,7 +182,6 @@ def get_full_content_link(program_url):
 
     return 'N/A'
 
-
 def parse_bbc_audio_page(url, page_number=1):
     """
     Fetches the content of a BBC Audio brand page for a specific page number and parses it.
@@ -206,6 +205,7 @@ def parse_bbc_audio_page(url, page_number=1):
     
     programs = []
 
+    cont = 1
     next_data_script = soup.find('script', id='__NEXT_DATA__')
     if next_data_script and next_data_script.string:
         try:
@@ -244,6 +244,8 @@ def parse_bbc_audio_page(url, page_number=1):
                                 break
                         
                         if title and path:
+                            print(f"\tParsing article {cont}")
+                            cont += 1
                             full_content_link = get_full_content_link(program_link)
                             full_content_details = parse_full_content_page(full_content_link)
                             
@@ -294,7 +296,7 @@ if __name__ == "__main__":
     existing_links = set(existing_programs_map.keys())
     print(f"Found {len(existing_links)} existing programs.")
 
-    while current_page <= 3: # Loop for page 1, 2, and 3
+    while current_page <= 1: # Loop for page 1, 2, and 3
         print(f"Fetching page {current_page}...")
         programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page)
 

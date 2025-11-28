@@ -56,7 +56,7 @@ npm install
 Build the React project for production. This will create a `build` folder in the `frontend` directory, which the Flask backend will serve.
 
 ```bash
-npm run build
+npm run build:watch
 ```
 
 ### 3. Run the Application
