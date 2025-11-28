@@ -40,7 +40,7 @@ def parse_full_content_page(full_content_url):
             if sibling.name == 'h3':  # Stop at the next heading
                 break
             if sibling.name == 'p':
-                story.append(sibling.get_text(strip=True))
+                story.append(str(sibling))
 
     # --- Headlines Extraction ---
     headlines_heading = main_content.find('h3', string='News headlines')
@@ -51,36 +51,84 @@ def parse_full_content_page(full_content_url):
                 break
 
             if next_element.name == 'p' and next_element.get_text(strip=True):
-                # Replace <br> with a unique separator
-                for br in next_element.find_all("br"):
-                    br.replace_with("||BR||")
-                
-                # Get text with spaces, then split by our separator
-                full_text = next_element.get_text(" ", strip=True)
-                parts = full_text.split("||BR||")
+                br_tag = next_element.find('br')
+                if br_tag:
+                    headline_parts_html = []
+                    source_parts_html = []
+                    after_br = False
 
-                headline_text = parts[0].strip()
-                if len(parts) > 1:
-                    source_text = " ".join(p.strip() for p in parts[1:] if p.strip())
-                    if headline_text and source_text:
-                        headlines.append(f"{headline_text}\n  {source_text}")
-                    elif headline_text:
-                        headlines.append(headline_text)
-                elif headline_text:
-                    headlines.append(headline_text)
+                    for content in next_element.contents:
+                        if content == br_tag:
+                            after_br = True
+                            continue
+                        
+                        if after_br:
+                            source_parts_html.append(str(content).strip())
+                        else:
+                            headline_parts_html.append(str(content).strip())
+                    
+                    headline_html = " ".join(part for part in headline_parts_html if part)
+                    source_html = " ".join(part for part in source_parts_html if part)
+
+                    if headline_html and source_html:
+                        headlines.append(f"{headline_html}\n  {source_html}")
+                    elif headline_html:
+                        headlines.append(headline_html)
+                    elif source_html:
+                        headlines.append(source_html) # Should not happen if headline_html is empty
+                else:
+                    headlines.append(str(next_element))
 
             next_element = next_element.find_next_sibling()
 
     # --- Keywords Extraction ---
+    # Find the "Key words and phrases" heading
     keywords_heading = main_content.find('strong', string='Key words and phrases')
+    
+    current_keyword_output = []
     if keywords_heading and keywords_heading.parent.name == 'p':
         current_element = keywords_heading.parent.find_next_sibling()
         while current_element:
-            if current_element.name == 'h3': # Stop at next heading
+            if current_element.name == 'h3': # Stop at the next main heading
                 break
-            if current_element.name in ['p', 'ul']:
-                keywords.append(current_element.get_text(strip=True))
+
+            if current_element.name == 'p':
+                # This is likely a keyword and its definition
+                temp_p_soup = BeautifulSoup(str(current_element), 'html.parser')
+                
+                keyword_html = ''
+                definition_html = ''
+
+                # Find and extract the keyword (usually in <strong>)
+                keyword_strong = temp_p_soup.find('strong')
+                if keyword_strong:
+                    keyword_html = str(keyword_strong)
+                    keyword_strong.decompose() # Remove strong tag from temp_p_soup
+                
+                # Decompose the <br> tag if present
+                br_tag = temp_p_soup.find('br')
+                if br_tag:
+                    br_tag.decompose()
+                
+                # The remaining HTML in temp_p_soup.p is the definition
+                # Use .encode_contents().decode() to get inner HTML
+                definition_html = temp_p_soup.p.encode_contents().decode().strip()
+
+                if keyword_html:
+                    current_keyword_output.append(f"\t{keyword_html}")
+                    if definition_html:
+                        current_keyword_output.append(f"\t\t{definition_html}")
+
+            elif current_element.name == 'ul':
+                # These are example sentences for the last keyword
+                for li in current_element.find_all('li'):
+                    example_html = str(li)
+                    if example_html:
+                        current_keyword_output.append(f"\t\t{example_html}")
+            
             current_element = current_element.find_next_sibling()
+
+    keywords.extend(current_keyword_output) # Add all formatted keyword strings to the main keywords list
 
     return {
         'story': ' '.join(story) if story else 'N/A',
