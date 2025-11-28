@@ -267,7 +267,7 @@ def load_programs(filename):
 def save_programs(filename, programs):
     """Saves programs to a JSON file."""
     try:
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(filename, 'w', encoding='utf-8', newline='\n') as f:
             json.dump(programs, f, indent=4, ensure_ascii=False)
     except IOError as e:
         print(f"Could not write to {filename}: {e}")
