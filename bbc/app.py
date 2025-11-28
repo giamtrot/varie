@@ -2,6 +2,8 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import json
+import subprocess
+import sys
 
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 CORS(app)
@@ -22,6 +24,32 @@ def get_programs():
         return jsonify(data)
     except (IOError, json.JSONDecodeError) as e:
         return jsonify({"error": f"Failed to read or parse data file: {e}"}), 500
+
+@app.route('/api/reload-programs', methods=['POST'])
+def reload_programs():
+    """
+    API endpoint to re-run the bbc_parser.py script.
+    """
+    try:
+        # Ensure we're using the same python interpreter that's running the app
+        python_executable = sys.executable
+        result = subprocess.run(
+            [python_executable, 'bbc_parser.py'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return jsonify({
+            "message": "Reload completed successfully.",
+            "output": result.stdout
+        })
+    except subprocess.CalledProcessError as e:
+        return jsonify({
+            "error": "Failed to execute parser script.",
+            "output": e.stdout + e.stderr
+        }), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
