@@ -3,6 +3,7 @@ import json
 from bs4 import BeautifulSoup
 import os
 from datetime import datetime
+import sys
 
 DATA_FILE = "bbc_programs.json"
 
@@ -182,7 +183,7 @@ def get_full_content_link(program_url):
 
     return 'N/A'
 
-def parse_bbc_audio_page(url, page_number=1):
+def parse_bbc_audio_page(url, page_number=1, stop_on_existing=False, existing_links=None):
     """
     Fetches the content of a BBC Audio brand page for a specific page number and parses it.
 
@@ -237,6 +238,10 @@ def parse_bbc_audio_page(url, page_number=1):
                         
                         program_link = f"https://www.bbc.com{path}"
 
+                        if stop_on_existing and existing_links and program_link in existing_links:
+                            print(f"Existing program found ({date} - {title} - {program_link}). Stopping further parsing on this page.")
+                            return programs
+                        
                         for block in model.get('blocks', []):
                             if block.get('type') == 'mediaMetadata':
                                 synopses = block.get('model', {}).get('synopses', {})
@@ -244,7 +249,7 @@ def parse_bbc_audio_page(url, page_number=1):
                                 break
                         
                         if title and path:
-                            print(f"\tParsing article {cont}")
+                            print(f"\tParsing article {cont} - {date} - {title}")
                             cont += 1
                             full_content_link = get_full_content_link(program_link)
                             full_content_details = parse_full_content_page(full_content_link)
@@ -288,6 +293,34 @@ def save_programs(filename, programs):
 
 if __name__ == "__main__":
     base_url = "https://www.bbc.com/audio/brand/p05hw4bq"
+    
+    # Parse command-line arguments
+    max_pages = -1
+    stop_on_existing = True
+    
+    if len(sys.argv) > 1:
+        try:
+            max_pages = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid argument: {sys.argv[1]}. Expected an integer. Using default of 1 page.")
+            max_pages = 1
+    
+    if len(sys.argv) > 2:
+        stop_on_existing = sys.argv[2].lower() in ('true', '1', 'yes')
+    
+    print("===============")
+    if max_pages == -1:
+        print("Parsing all pages...")
+        max_pages = float('inf')
+    else:
+        print(f"Parsing {max_pages} page(s)...")
+    
+    if stop_on_existing:
+        print("Will stop when an already-loaded program is found.")
+    else:
+        print("Will process all pages regardless of existing programs.")
+    print("===============")
+
     current_page = 1
     all_programs = []
 
@@ -296,9 +329,15 @@ if __name__ == "__main__":
     existing_links = set(existing_programs_map.keys())
     print(f"Found {len(existing_links)} existing programs.")
 
-    while current_page <= 1: # Loop for page 1, 2, and 3
+    # Preload existing programs into the list so saved output preserves order
+    # and includes previously scraped entries.
+    if existing_programs_map:
+        all_programs = list(existing_programs_map.values())
+    print("===============")
+
+    while current_page <= max_pages:
         print(f"Fetching page {current_page}...")
-        programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page)
+        programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page, stop_on_existing=stop_on_existing, existing_links=existing_links)
 
         if not programs_on_page:
             print(f"No programs found on page {current_page}. Stopping.")
@@ -329,8 +368,26 @@ if __name__ == "__main__":
         scraped_programs_map = {p['link']: p for p in all_programs}
         existing_programs_map.update(scraped_programs_map)
         
-        print(f"\nSaving {len(existing_programs_map)} programs to {DATA_FILE}...")
-        save_programs(DATA_FILE, list(existing_programs_map.values()))
+        # Sort all programs by date in descending order
+        def parse_date_key(program):
+            date_str = program.get('date', 'N/A')
+            if date_str == 'N/A':
+                return (0, datetime.min)  # Sort 'N/A' dates to the end
+            try:
+                # Parse date in format "01 December 2020"
+                parsed_date = datetime.strptime(date_str, '%d %B %Y')
+                return (1, parsed_date)
+            except (ValueError, TypeError):
+                return (0, datetime.min)  # Sort unparseable dates to the end
+        
+        programs_to_save = sorted(
+            existing_programs_map.values(),
+            key=parse_date_key,
+            reverse=True
+        )
+        
+        print(f"\nSaving {len(programs_to_save)} programs to {DATA_FILE}...")
+        save_programs(DATA_FILE, programs_to_save)
         print("Save complete.")
 
     else:
