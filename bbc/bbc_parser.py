@@ -4,8 +4,60 @@ from bs4 import BeautifulSoup
 import os
 from datetime import datetime
 import sys
+import argparse
 
-DATA_FILE = "bbc_programs.json"
+# --- Argument Parsing ---
+parser = argparse.ArgumentParser(description="BBC News-in-English-Fetcher Parser")
+parser.add_argument(
+    '--data-dir',
+    type=str,
+    help="Directory to store and access data files (e.g., bbc_programs.json)."
+)
+# Add other arguments for the parser script
+parser.add_argument('max_pages', nargs='?', default=-1, help="Max pages to parse.")
+parser.add_argument('stop_on_existing', nargs='?', default='true', help="Stop on existing program.")
+args, unknown = parser.parse_known_args()
+DATA_DIR = args.data_dir
+
+def resource_path(filename):
+    """
+    Resolve a path for runtime resources.
+
+    Order of resolution:
+    1. If a --data-dir is provided, use it.
+    2. If running from a PyInstaller bundle, check `sys._MEIPASS`.
+    3. Check the directory containing the running executable (`sys.executable`).
+    4. Check the directory containing this source file.
+    5. Check the current working directory.
+
+    If a candidate exists, return it. Otherwise return a sensible default
+    path in the executable directory so callers can create/write the file.
+    """
+    if DATA_DIR:
+        return os.path.join(DATA_DIR, filename)
+
+    exe_dir = os.path.dirname(sys.executable) if getattr(sys, 'executable', None) else os.path.abspath(os.path.dirname(__file__))
+
+    candidates = []
+    if hasattr(sys, '_MEIPASS'):
+        candidates.append(os.path.join(sys._MEIPASS, filename))
+    if exe_dir:
+        candidates.append(os.path.join(exe_dir, filename))
+    candidates.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), filename))
+    candidates.append(os.path.join(os.getcwd(), filename))
+
+    for path in candidates:
+        try:
+            if os.path.exists(path):
+                return path
+        except Exception:
+            pass
+
+    return os.path.join(exe_dir or os.path.abspath(os.path.dirname(__file__)), filename)
+
+
+
+DATA_FILE = resource_path("bbc_programs.json")
 
 def parse_full_content_page(full_content_url):
     """
@@ -294,19 +346,14 @@ def save_programs(filename, programs):
 if __name__ == "__main__":
     base_url = "https://www.bbc.com/audio/brand/p05hw4bq"
     
-    # Parse command-line arguments
-    max_pages = -1
-    stop_on_existing = True
-    
-    if len(sys.argv) > 1:
-        try:
-            max_pages = int(sys.argv[1])
-        except ValueError:
-            print(f"Invalid argument: {sys.argv[1]}. Expected an integer. Using default of 1 page.")
-            max_pages = 1
-    
-    if len(sys.argv) > 2:
-        stop_on_existing = sys.argv[2].lower() in ('true', '1', 'yes')
+    # Use parsed arguments
+    try:
+        max_pages = int(args.max_pages)
+    except ValueError:
+        print(f"Invalid argument for max_pages: {args.max_pages}. Using default of 1 page.")
+        max_pages = 1
+        
+    stop_on_existing = str(args.stop_on_existing).lower() in ('true', '1', 'yes')
     
     print("===============")
     if max_pages == -1:
