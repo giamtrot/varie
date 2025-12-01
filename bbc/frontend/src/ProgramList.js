@@ -109,11 +109,16 @@ function ProgramList() {
               'Reload Programs'
             )}
           </button>
+          {showReloadStream && (!isReloading) && (<button className="btn btn-secondary" onClick={() => setShowReloadStream(false)}>
+            Hide Log
+          </button>)}
         </div>
       </div>
 
       {showReloadStream && (
-        <ProgramReload key={reloadKey} onDone={handleReloadDone} />
+        <div>
+          <ProgramReload key={reloadKey} onDone={handleReloadDone} />
+        </div>
       )}
 
       <div className="list-group">
