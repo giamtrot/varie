@@ -13,28 +13,15 @@ parser.add_argument(
     type=str,
     help="Directory to store and access data files (e.g., bbc_programs.json)."
 )
-# Add other arguments for the parser script
 parser.add_argument('max_pages', nargs='?', default=-1, help="Max pages to parse.")
 parser.add_argument('stop_on_existing', nargs='?', default='true', help="Stop on existing program.")
-args, unknown = parser.parse_known_args()
-DATA_DIR = args.data_dir
 
-def resource_path(filename):
+def resource_path(filename, data_dir=None):
     """
     Resolve a path for runtime resources.
-
-    Order of resolution:
-    1. If a --data-dir is provided, use it.
-    2. If running from a PyInstaller bundle, check `sys._MEIPASS`.
-    3. Check the directory containing the running executable (`sys.executable`).
-    4. Check the directory containing this source file.
-    5. Check the current working directory.
-
-    If a candidate exists, return it. Otherwise return a sensible default
-    path in the executable directory so callers can create/write the file.
     """
-    if DATA_DIR:
-        return os.path.join(DATA_DIR, filename)
+    if data_dir:
+        return os.path.join(data_dir, filename)
 
     exe_dir = os.path.dirname(sys.executable) if getattr(sys, 'executable', None) else os.path.abspath(os.path.dirname(__file__))
 
@@ -55,20 +42,7 @@ def resource_path(filename):
 
     return os.path.join(exe_dir or os.path.abspath(os.path.dirname(__file__)), filename)
 
-
-
-DATA_FILE = resource_path("bbc_programs.json")
-
 def parse_full_content_page(full_content_url):
-    """
-    Fetches and parses the full content page to extract specific details.
-
-    Args:
-        full_content_url (str): The URL of the full content page.
-
-    Returns:
-        dict: A dictionary with 'story', 'headlines', and 'keywords'.
-    """
     if not full_content_url or full_content_url == 'N/A':
         return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
 
@@ -76,116 +50,68 @@ def parse_full_content_page(full_content_url):
         response = requests.get(full_content_url)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching full content page {full_content_url}: {e}")
+        yield f"Error fetching full content page {full_content_url}: {e}"
         return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Find the main content container
     main_content = soup.find('div', class_='widget-richtext')
     if not main_content:
         return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
 
-    story = []
-    headlines = []
-    keywords = []
+    story, headlines, keywords = [], [], []
 
-    # --- Story Extraction ---
     story_heading = main_content.find('h3', string='The story')
     if story_heading:
         for sibling in story_heading.find_next_siblings():
-            if sibling.name == 'h3':  # Stop at the next heading
-                break
-            if sibling.name == 'p':
-                story.append(str(sibling))
+            if sibling.name == 'h3': break
+            if sibling.name == 'p': story.append(str(sibling))
 
-    # --- Headlines Extraction ---
     headlines_heading = main_content.find('h3', string='News headlines')
     if headlines_heading:
         next_element = headlines_heading.find_next_sibling()
         while next_element:
-            if next_element.name == 'p' and 'Key words and phrases' in next_element.get_text():
-                break
-
+            if next_element.name == 'p' and 'Key words and phrases' in next_element.get_text(): break
             if next_element.name == 'p' and next_element.get_text(strip=True):
                 br_tag = next_element.find('br')
                 if br_tag:
-                    headline_parts_html = []
-                    source_parts_html = []
-                    after_br = False
-
+                    headline_parts_html, source_parts_html, after_br = [], [], False
                     for content in next_element.contents:
                         if content == br_tag:
                             after_br = True
                             continue
-                        
-                        if after_br:
-                            source_parts_html.append(str(content).strip())
-                        else:
-                            headline_parts_html.append(str(content).strip())
+                        (source_parts_html if after_br else headline_parts_html).append(str(content).strip())
                     
-                    headline_html = " ".join(part for part in headline_parts_html if part)
-                    source_html = " ".join(part for part in source_parts_html if part)
+                    headline_html = " ".join(filter(None, headline_parts_html))
+                    source_html = " ".join(filter(None, source_parts_html))
 
-                    if headline_html and source_html:
-                        headlines.append(f"{headline_html}\n  {source_html}")
-                    elif headline_html:
-                        headlines.append(headline_html)
-                    elif source_html:
-                        headlines.append(source_html) # Should not happen if headline_html is empty
+                    if headline_html and source_html: headlines.append(f"{headline_html}\n  {source_html}")
+                    elif headline_html: headlines.append(headline_html)
+                    elif source_html: headlines.append(source_html)
                 else:
                     headlines.append(str(next_element))
-
             next_element = next_element.find_next_sibling()
 
-    # --- Keywords Extraction ---
-    # Find the "Key words and phrases" heading
     keywords_heading = main_content.find('strong', string='Key words and phrases')
-    
-    current_keyword_output = []
     if keywords_heading and keywords_heading.parent.name == 'p':
         current_element = keywords_heading.parent.find_next_sibling()
         while current_element:
-            if current_element.name == 'h3': # Stop at the next main heading
-                break
-
+            if current_element.name == 'h3': break
             if current_element.name == 'p':
-                # This is likely a keyword and its definition
                 temp_p_soup = BeautifulSoup(str(current_element), 'html.parser')
-                
-                keyword_html = ''
-                definition_html = ''
-
-                # Find and extract the keyword (usually in <strong>)
+                keyword_html, definition_html = '', ''
                 keyword_strong = temp_p_soup.find('strong')
                 if keyword_strong:
                     keyword_html = str(keyword_strong)
-                    keyword_strong.decompose() # Remove strong tag from temp_p_soup
-                
-                # Decompose the <br> tag if present
-                br_tag = temp_p_soup.find('br')
-                if br_tag:
-                    br_tag.decompose()
-                
-                # The remaining HTML in temp_p_soup.p is the definition
-                # Use .encode_contents().decode() to get inner HTML
+                    keyword_strong.decompose()
+                if br_tag := temp_p_soup.find('br'): br_tag.decompose()
                 definition_html = temp_p_soup.p.encode_contents().decode().strip()
-
                 if keyword_html:
-                    current_keyword_output.append(f"\t{keyword_html}")
-                    if definition_html:
-                        current_keyword_output.append(f"\t\t{definition_html}")
-
+                    keywords.append(f"\t{keyword_html}")
+                    if definition_html: keywords.append(f"\t\t{definition_html}")
             elif current_element.name == 'ul':
-                # These are example sentences for the last keyword
                 for li in current_element.find_all('li'):
-                    example_html = str(li)
-                    if example_html:
-                        current_keyword_output.append(f"\t\t{example_html}")
-            
+                    if example_html := str(li): keywords.append(f"\t\t{example_html}")
             current_element = current_element.find_next_sibling()
-
-    keywords.extend(current_keyword_output) # Add all formatted keyword strings to the main keywords list
 
     return {
         'story': ' '.join(story) if story else 'N/A',
@@ -194,248 +120,187 @@ def parse_full_content_page(full_content_url):
     }
 
 def get_full_content_link(program_url):
-    """
-    Fetches the individual program page and extracts the link to the full content.
-
-    Args:
-        program_url (str): The URL of the individual program page.
-
-    Returns:
-        str: The URL to the full content, or 'N/A' if not found.
-    """
     try:
         response = requests.get(program_url)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching program page {program_url}: {e}")
+        yield f"Error fetching program page {program_url}: {e}"
         return 'N/A'
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    next_data_script = soup.find('script', id='__NEXT_DATA__')
-    if next_data_script and next_data_script.string:
-        try:
-            data = json.loads(next_data_script.string)
-            page_props = data.get('props', {}).get('pageProps', {})
-            
-            for key, value in page_props.get('page', {}).items():
-                if isinstance(value, dict) and 'contents' in value:
-                    for content in value.get('contents', []):
-                        if content.get('type') == 'audio-episode':
-                            for block in content.get('model', {}).get('blocks', []):
-                                if block.get('type') == 'mediaMetadata':
-                                    synopses = block.get('model', {}).get('synopses', {})
-                                    long_synopsis = synopses.get('long', '')
-                                    if "https://" in long_synopsis:
-                                        for word in long_synopsis.split():
-                                            if word.startswith("https://"):
-                                                return word.strip()
-        except (json.JSONDecodeError, KeyError, IndexError) as e:
-            print(f"Error parsing JSON on program page {program_url}: {e}")
-
+    if next_data_script := soup.find('script', id='__NEXT_DATA__'):
+        if next_data_script.string:
+            try:
+                data = json.loads(next_data_script.string)
+                page_props = data.get('props', {}).get('pageProps', {})
+                for _, value in page_props.get('page', {}).items():
+                    if isinstance(value, dict) and 'contents' in value:
+                        for content in value.get('contents', []):
+                            if content.get('type') == 'audio-episode':
+                                for block in content.get('model', {}).get('blocks', []):
+                                    if block.get('type') == 'mediaMetadata':
+                                        if "https://" in (long_synopsis := block.get('model', {}).get('synopses', {}).get('long', '')):
+                                            for word in long_synopsis.split():
+                                                if word.startswith("https://"):
+                                                    return word.strip()
+            except (json.JSONDecodeError, KeyError, IndexError) as e:
+                yield f"Error parsing JSON on program page {program_url}: {e}"
     return 'N/A'
 
 def parse_bbc_audio_page(url, page_number=1, stop_on_existing=False, existing_links=None):
-    """
-    Fetches the content of a BBC Audio brand page for a specific page number and parses it.
-
-    Args:
-        url (str): The base URL of the BBC Audio brand page.
-        page_number (int): The page number to fetch.
-
-    Returns:
-        list: A list of dictionaries, where each dictionary represents a program/episode.
-    """
     paginated_url = f"{url}?page={page_number}"
     try:
         response = requests.get(paginated_url)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching the URL {paginated_url}: {e}")
-        return None
+        yield f"Error fetching the URL {paginated_url}: {e}"
+        return
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    
     programs = []
-
     cont = 1
-    next_data_script = soup.find('script', id='__NEXT_DATA__')
-    if next_data_script and next_data_script.string:
-        try:
-            data = json.loads(next_data_script.string)
-            page_obj = data.get('props', {}).get('pageProps', {}).get('page', {})
-            
-            page_data_key = next((key for key in page_obj if 'p05hw4bq' in key), None)
-            
-            if page_data_key:
-                page_data_specific = page_obj.get(page_data_key, {})
-                contents = page_data_specific.get('contents', [])
-                
-                for item in contents:
-                    if item.get('type') == 'audio-episode':
-                        model = item.get('model', {})
-                        title = model.get('title')
-                        path = model.get('path')
-                        description = 'N/A'
-                        date = 'N/A'
-                        
-                        release_date_timestamp = model.get('releaseDate')
-                        if release_date_timestamp:
-                            try:
-                                # Convert timestamp from milliseconds to seconds
-                                date_obj = datetime.fromtimestamp(release_date_timestamp / 1000)
-                                date = date_obj.strftime('%d %B %Y')
-                            except (ValueError, TypeError) as e:
-                                print(f"Could not parse date timestamp {release_date_timestamp}: {e}")
-                        
-                        program_link = f"https://www.bbc.com{path}"
-
-                        if stop_on_existing and existing_links and program_link in existing_links:
-                            print(f"Existing program found ({date} - {title} - {program_link}). Stopping further parsing on this page.")
-                            return programs
-                        
-                        for block in model.get('blocks', []):
-                            if block.get('type') == 'mediaMetadata':
-                                synopses = block.get('model', {}).get('synopses', {})
-                                description = synopses.get('short', 'N/A')
-                                break
-                        
-                        if title and path:
-                            print(f"\tParsing article {cont} - {date} - {title}")
-                            cont += 1
-                            full_content_link = get_full_content_link(program_link)
-                            full_content_details = parse_full_content_page(full_content_link)
+    if next_data_script := soup.find('script', id='__NEXT_DATA__'):
+        if next_data_script.string:
+            try:
+                data = json.loads(next_data_script.string)
+                page_obj = data.get('props', {}).get('pageProps', {}).get('page', {})
+                page_data_key = next((key for key in page_obj if 'p05hw4bq' in key), None)
+                if page_data_key:
+                    for item in page_obj.get(page_data_key, {}).get('contents', []):
+                        if item.get('type') == 'audio-episode':
+                            model = item.get('model', {})
+                            title, path = model.get('title'), model.get('path')
+                            date = 'N/A'
+                            if release_date_timestamp := model.get('releaseDate'):
+                                try:
+                                    date = datetime.fromtimestamp(release_date_timestamp / 1000).strftime('%d %B %Y')
+                                except (ValueError, TypeError) as e:
+                                    yield f"Could not parse date timestamp {release_date_timestamp}: {e}"
                             
-                            programs.append({
-                                'title': title,
-                                'description': description,
-                                'date': date,
-                                'link': program_link,
-                                'full_content_link': full_content_link,
-                                'story': full_content_details.get('story'),
-                                'headlines': full_content_details.get('headlines'),
-                                'keywords': full_content_details.get('keywords')
-                            })
-        except (json.JSONDecodeError, KeyError) as e:
-            print(f"Error parsing JSON from __NEXT_DATA__: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred while parsing JSON data: {e}")
+                            program_link = f"https://www.bbc.com{path}"
+                            if stop_on_existing and existing_links and program_link in existing_links:
+                                yield f"Existing program found ({date} - {title} - {program_link}). Stopping."
+                                for p in programs: yield p
+                                return
 
-    return programs
+                            description = 'N/A'
+                            for block in model.get('blocks', []):
+                                if block.get('type') == 'mediaMetadata':
+                                    description = block.get('model', {}).get('synopses', {}).get('short', 'N/A')
+                                    break
+                            
+                            if title and path:
+                                yield f"\tParsing article {cont} - {date} - {title}"
+                                cont += 1
+                                full_content_link = yield from get_full_content_link(program_link)
+                                full_content_details = yield from parse_full_content_page(full_content_link)
+                                
+                                programs.append({
+                                    'title': title, 'description': description, 'date': date,
+                                    'link': program_link, 'full_content_link': full_content_link,
+                                    'story': full_content_details.get('story'),
+                                    'headlines': full_content_details.get('headlines'),
+                                    'keywords': full_content_details.get('keywords')
+                                })
+            except (json.JSONDecodeError, KeyError) as e:
+                yield f"Error parsing JSON from __NEXT_DATA__: {e}"
+            except Exception as e:
+                yield f"An unexpected error occurred: {e}"
+
+    for p in programs: yield p
 
 def load_programs(filename):
-    """Loads programs from a JSON file."""
-    if not os.path.exists(filename):
-        return {}
+    if not os.path.exists(filename): return {}
     try:
         with open(filename, 'r', encoding='utf-8') as f:
-            programs_list = json.load(f)
-            return {p['link']: p for p in programs_list}
+            return {p['link']: p for p in json.load(f)}
     except (json.JSONDecodeError, IOError) as e:
         print(f"Could not read or parse {filename}: {e}")
         return {}
 
 def save_programs(filename, programs):
-    """Saves programs to a JSON file."""
     try:
         with open(filename, 'w', encoding='utf-8', newline='\n') as f:
             json.dump(programs, f, indent=4, ensure_ascii=False)
     except IOError as e:
         print(f"Could not write to {filename}: {e}")
 
-if __name__ == "__main__":
+def run_parser(max_pages=-1, stop_on_existing=True, data_dir=None):
     base_url = "https://www.bbc.com/audio/brand/p05hw4bq"
-    
-    # Use parsed arguments
-    try:
-        max_pages = int(args.max_pages)
-    except ValueError:
-        print(f"Invalid argument for max_pages: {args.max_pages}. Using default of 1 page.")
-        max_pages = 1
-        
-    stop_on_existing = str(args.stop_on_existing).lower() in ('true', '1', 'yes')
-    
-    print("===============")
+    DATA_FILE = resource_path("bbc_programs.json", data_dir)
+
+    yield "==============="
     if max_pages == -1:
-        print("Parsing all pages...")
+        yield "Parsing all pages..."
         max_pages = float('inf')
     else:
-        print(f"Parsing {max_pages} page(s)...")
+        yield f"Parsing {max_pages} page(s)..."
     
     if stop_on_existing:
-        print("Will stop when an already-loaded program is found.")
+        yield "Will stop when an already-loaded program is found."
     else:
-        print("Will process all pages regardless of existing programs.")
-    print("===============")
+        yield "Will process all pages regardless of existing programs."
+    yield "==============="
 
-    current_page = 1
-    all_programs = []
-
-    print("Loading existing programs...")
+    yield "Loading existing programs..."
     existing_programs_map = load_programs(DATA_FILE)
     existing_links = set(existing_programs_map.keys())
-    print(f"Found {len(existing_links)} existing programs.")
+    yield f"Found {len(existing_links)} existing programs."
+    
+    all_programs = list(existing_programs_map.values()) if existing_programs_map else []
+    yield "==============="
 
-    # Preload existing programs into the list so saved output preserves order
-    # and includes previously scraped entries.
-    if existing_programs_map:
-        all_programs = list(existing_programs_map.values())
-    print("===============")
-
+    current_page = 1
+    new_programs_found = False
     while current_page <= max_pages:
-        print(f"Fetching page {current_page}...")
-        programs_on_page = parse_bbc_audio_page(base_url, page_number=current_page, stop_on_existing=stop_on_existing, existing_links=existing_links)
-
-        if not programs_on_page:
-            print(f"No programs found on page {current_page}. Stopping.")
-            break
+        yield f"Fetching page {current_page}..."
+        page_had_new = False
+        programs_on_page_generator = parse_bbc_audio_page(base_url, page_number=current_page, stop_on_existing=stop_on_existing, existing_links=existing_links)
         
-        all_programs.extend(programs_on_page)
+        stop_parsing = False
+        for program_or_message in programs_on_page_generator:
+            if isinstance(program_or_message, str):
+                yield program_or_message
+                if "Stopping." in program_or_message:
+                    stop_parsing = True
+            elif isinstance(program_or_message, dict):
+                if program_or_message['link'] not in existing_links:
+                    all_programs.append(program_or_message)
+                    existing_links.add(program_or_message['link'])
+                    page_had_new = True
+                    new_programs_found = True
+        
+        if not page_had_new and stop_on_existing:
+            yield f"No new programs found on page {current_page}. Stopping."
+            break
+
+        if stop_parsing:
+            break
+            
         current_page += 1
 
-    if all_programs:
-        new_programs = [p for p in all_programs if p['link'] not in existing_links]
+    if new_programs_found:
+        def parse_date_key(p):
+            try: return datetime.strptime(p.get('date', ''), '%d %B %Y')
+            except (ValueError, TypeError): return datetime.min
         
-        if new_programs:
-            print(f"\nFound {len(new_programs)} new programs:")
-            for i, program in enumerate(new_programs):
-                print(f"\n--- New Program {i+1} ---")
-                print(f"  Title: {program.get('title', 'N/A')}")
-                print(f"  Description: {program.get('description', 'N/A')}")
-                print(f"  Date: {program.get('date', 'N/A')}")
-                print(f"  Link: {program.get('link', 'N/A')}")
-                print(f"  Full Content Link: {program.get('full_content_link', 'N/A')}")
-                print(f"  Story: {program.get('story', 'N/A')}")
-                print(f"  Headlines: {program.get('headlines', 'N/A')}")
-                print(f"  Keywords: {program.get('keywords', 'N/A')}")
-        else:
-            print("\nNo new programs found.")
-
-        # Update and save all programs
-        scraped_programs_map = {p['link']: p for p in all_programs}
-        existing_programs_map.update(scraped_programs_map)
+        programs_to_save = sorted(all_programs, key=parse_date_key, reverse=True)
         
-        # Sort all programs by date in descending order
-        def parse_date_key(program):
-            date_str = program.get('date', 'N/A')
-            if date_str == 'N/A':
-                return (0, datetime.min)  # Sort 'N/A' dates to the end
-            try:
-                # Parse date in format "01 December 2020"
-                parsed_date = datetime.strptime(date_str, '%d %B %Y')
-                return (1, parsed_date)
-            except (ValueError, TypeError):
-                return (0, datetime.min)  # Sort unparseable dates to the end
-        
-        programs_to_save = sorted(
-            existing_programs_map.values(),
-            key=parse_date_key,
-            reverse=True
-        )
-        
-        print(f"\nSaving {len(programs_to_save)} programs to {DATA_FILE}...")
+        yield f"\nSaving {len(programs_to_save)} programs to {DATA_FILE}..."
         save_programs(DATA_FILE, programs_to_save)
-        print("Save complete.")
-
+        yield "Save complete."
     else:
-        print("Failed to parse the BBC Audio page.")
+        yield "\nNo new programs found."
+
+if __name__ == "__main__":
+    args, _ = parser.parse_known_args()
+    
+    try:
+        run_max_pages = int(args.max_pages)
+    except ValueError:
+        run_max_pages = 1
+        
+    run_stop_on_existing = str(args.stop_on_existing).lower() in ('true', '1', 'yes')
+
+    for message in run_parser(max_pages=run_max_pages, stop_on_existing=run_stop_on_existing, data_dir=args.data_dir):
+        print(message)

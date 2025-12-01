@@ -17,3 +17,4 @@ bbc/fullcontent.html
 bbc/build/*
 bbc/dist/BBCNews.exe
 bbc/dist/BBCNews/*
+bbc/__pycache__/*

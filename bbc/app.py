@@ -2,7 +2,8 @@ from flask import Flask, jsonify, send_from_directory, Response, request
 from flask_cors import CORS
 import os
 import json
-import subprocess
+from bbc_parser import run_parser
+
 import sys
 
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
@@ -15,6 +16,8 @@ def get_programs():
     """
     API endpoint to get all programs from the JSON file.
     """
+    print("Fetching data from file:", os.path.abspath(DATA_FILE))
+    
     if not os.path.exists(DATA_FILE):
         return jsonify({"error": "Data file not found."}), 404
     
@@ -38,7 +41,7 @@ def manage_disabled_programs():
         try:
             data = request.get_json()
             disabled_links = data.get('disabled', [])
-            with open(disabled_file, 'w', encoding='utf-8') as f:
+            with open(disabled_file, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump({"disabled": disabled_links}, f, indent=2)
             return jsonify({"message": "Disabled programs saved."}), 200
         except Exception as e:
@@ -55,95 +58,27 @@ def manage_disabled_programs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/reload-programs', methods=['POST'])
-def reload_programs():
-    """
-    API endpoint to re-run the bbc_parser.py script.
-    """
-    try:
-        # Ensure we're using the same python interpreter that's running the app
-        python_executable = sys.executable
-
-        # Run the parser in unbuffered mode so the child process flushes output
-        cmd = [python_executable, '-u', 'bbc_parser.py']
-
-        # Use Popen and capture stdout/stderr; avoid printing to the Flask app's stdout
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-
-        # Capture output
-        stdout, stderr = process.communicate()
-        print("Parser stdout:", stdout)
-        combined = "".join(filter(None, [stdout, stderr]))
-
-        if process.returncode != 0:
-            raise subprocess.CalledProcessError(process.returncode, cmd, stdout, stderr)
-
-        return jsonify({
-            "message": "Reload completed successfully.",
-            "output": combined
-        })
-    except subprocess.CalledProcessError as e:
-        return jsonify({
-            "error": "Failed to execute parser script.",
-            "output": str(e.stdout) + str(e.stderr)
-        }), 500
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 @app.route('/api/reload-programs-stream')
 def reload_programs_stream():
     """
-    Stream the output of `bbc_parser.py` as Server-Sent Events (SSE).
-
-    Connect with a browser `EventSource('/api/reload-programs-stream')` to receive
-    real-time lines. The parser is started on connect and runs in unbuffered mode.
+    Stream the output of the bbc_parser logic as Server-Sent Events (SSE).
     """
     def generate():
-        python_executable = sys.executable
-        cmd = [python_executable, '-u', 'bbc_parser.py']
-
-        # Merge stderr into stdout so we stream everything in order
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True
-        )
-
+        print("Starting parser stream...")
         try:
-            if process.stdout is None:
-                return
-
-            # Stream each line as an SSE `data:` event (JSON-encoded to be safe)
-            for line in iter(process.stdout.readline, ''):
-                if line == '':
-                    break
-                yield f"data: {json.dumps(line.rstrip())}\n\n"
-
-            # Ensure process has finished
-            process.wait()
-            rc = process.returncode
-            yield f"event: done\ndata: {rc}\n\n"
+            # The parser yields lines of output
+            for line in run_parser():
+                yield f"data: {json.dumps(line)}\n\n"
+            
+            # Signal completion
+            yield "event: done\ndata: 0\n\n"
 
         except GeneratorExit:
-            # Client disconnected; try to terminate the child process
-            try:
-                if process.poll() is None:
-                    process.terminate()
-            except Exception:
-                pass
-        finally:
-            try:
-                if process.poll() is None:
-                    process.terminate()
-            except Exception:
-                pass
+            # Client disconnected
+            print("Client disconnected from stream.")
+        except Exception as e:
+            print(f"An error occurred during parsing: {e}")
+            yield f"event: error\ndata: {json.dumps(str(e))}\n\n"
 
     return Response(generate(), mimetype='text/event-stream')
 
@@ -154,7 +89,7 @@ def serve(path):
     Serve the React application.
     This will serve the 'index.html' for any path not matched by the API.
     """
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
