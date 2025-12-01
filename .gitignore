@@ -16,3 +16,4 @@ macchia/src/test/WorkingDesk-performance.log
 bbc/fullcontent.html
 bbc/build/*
 bbc/dist/BBCNews.exe
+bbc/dist/BBCNews/*
