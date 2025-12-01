@@ -165,4 +165,6 @@ if __name__ == '__main__':
         print(f"Warning: {DATA_FILE} not found.")
         print("Please run the `bbc_parser.py` script first to generate the data file.")
     
-    app.run(use_reloader=True, port=5000)
+    # Disable reloader when running from a PyInstaller bundle
+    use_reloader = not getattr(sys, 'frozen', False)
+    app.run(use_reloader=use_reloader, port=5000)

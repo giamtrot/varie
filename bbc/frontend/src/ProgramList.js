@@ -61,6 +61,7 @@ function ProgramList() {
     // Called when stream finishes or is stopped
     // Keep the stream visible; just refresh the programs list
     setIsReloading(false);
+    setShowReloadStream(false);
     // Refresh programs after a short delay to allow file write completion
     setTimeout(() => fetchPrograms(), 500);
   };
