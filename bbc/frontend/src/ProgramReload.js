@@ -6,6 +6,8 @@ function ProgramReload({ onDone }) {
   const esRef = useRef(null);
 
   useEffect(() => {
+    if (!running) return;
+
     // Start EventSource on mount
     const es = new EventSource('/api/reload-programs-stream');
     esRef.current = es;
@@ -32,16 +34,16 @@ function ProgramReload({ onDone }) {
     es.onerror = (err) => {
       setLogLines(prev => [...prev, `SSE error: ${err?.message || err}`]);
       setRunning(false);
-      try { es.close(); } catch (_) {}
+      try { es.close(); } catch (_) { }
       if (onDone) onDone();
     };
 
     return () => {
       try {
         if (es && es.readyState !== EventSource.CLOSED) es.close();
-      } catch (_) {}
+      } catch (_) { }
     };
-  }, [onDone]);
+  }, [onDone, running]);
 
   return (
     <div className="card mb-4">

@@ -49,7 +49,7 @@ function ProgramList() {
       })
       .catch(error => console.error('Failed to load disabled programs:', error));
   }, [fetchPrograms]);
-  
+
   const handleReload = () => {
     // Open the streaming UI which will start the EventSource
     setShowReloadStream(true);
@@ -61,7 +61,6 @@ function ProgramList() {
     // Called when stream finishes or is stopped
     // Keep the stream visible; just refresh the programs list
     setIsReloading(false);
-    setShowReloadStream(false);
     // Refresh programs after a short delay to allow file write completion
     setTimeout(() => fetchPrograms(), 500);
   };
@@ -83,7 +82,7 @@ function ProgramList() {
         body: JSON.stringify({ disabled: Array.from(updated) })
       })
         .catch(error => console.error('Failed to save disabled programs:', error));
-      
+
       return updated;
     });
   };
@@ -121,40 +120,40 @@ function ProgramList() {
         {programs
           .filter(program => showDisabled || !disabledPrograms.has(program.link))
           .map(program => {
-          const isDisabled = disabledPrograms.has(program.link);
-          const handleClick = () => {
-            if (!isDisabled) {
-              navigate(`/program/${encodeURIComponent(program.link)}`);
-            }
-          };
-          return (
-            <div 
-              key={program.link} 
-              onClick={handleClick}
-              className={`list-group-item list-group-item-action flex-column align-items-start ${!isDisabled ? 'cursor-pointer' : ''}`}
-              style={isDisabled ? { opacity: 0.5 } : { cursor: 'pointer' }}
-            >
-              <div className="d-flex w-100 justify-content-between align-items-start">
-                <div className="flex-grow-1">
-                  <h5 className="mb-1">{program.title}</h5>
-                  <p className="mb-1">{program.description}</p>
-                </div>
-                <div className="ms-2 d-flex gap-2 align-items-center">
-                  <small>{program.date}</small>
-                  <button
-                    className={`btn btn-sm ${isDisabled ? 'btn-outline-success' : 'btn-outline-danger'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDisable(e, program.link);
-                    }}
-                  >
-                    {isDisabled ? 'Enable' : 'Disable'}
-                  </button>
+            const isDisabled = disabledPrograms.has(program.link);
+            const handleClick = () => {
+              if (!isDisabled) {
+                navigate(`/program/${encodeURIComponent(program.link)}`);
+              }
+            };
+            return (
+              <div
+                key={program.link}
+                onClick={handleClick}
+                className={`list-group-item list-group-item-action flex-column align-items-start ${!isDisabled ? 'cursor-pointer' : ''}`}
+                style={isDisabled ? { opacity: 0.5 } : { cursor: 'pointer' }}
+              >
+                <div className="d-flex w-100 justify-content-between align-items-start">
+                  <div className="flex-grow-1">
+                    <h5 className="mb-1">{program.title}</h5>
+                    <p className="mb-1">{program.description}</p>
+                  </div>
+                  <div className="ms-2 d-flex gap-2 align-items-center">
+                    <small>{program.date}</small>
+                    <button
+                      className={`btn btn-sm ${isDisabled ? 'btn-outline-success' : 'btn-outline-danger'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDisable(e, program.link);
+                      }}
+                    >
+                      {isDisabled ? 'Enable' : 'Disable'}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
