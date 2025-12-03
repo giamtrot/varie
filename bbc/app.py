@@ -3,6 +3,8 @@ from flask_cors import CORS
 import os
 import json
 from bbc_parser import run_parser
+import webbrowser
+from threading import Timer
 
 import sys
 
@@ -94,12 +96,30 @@ def serve(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
+
+def open_browser():
+    """
+    Open the default web browser to the application's URL.
+    """
+    print("Opening web browser to http://localhost:5000")
+    webbrowser.open_new("http://localhost:5000")
+
+
 if __name__ == '__main__':
     # The bbc_parser.py script should be run first to generate the bbc_programs.json file.
     if not os.path.exists(DATA_FILE):
         print(f"Warning: {DATA_FILE} not found.")
         print("Please run the `bbc_parser.py` script first to generate the data file.")
+        
+    print("Received parameters:")
+    for i, arg in enumerate(sys.argv):
+        print(f"Argument {i}: {arg}")
     
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
-    app.run(use_reloader=use_reloader, port=5000)
+    port = 5000
+    # Open the browser in a new thread after a short delay
+    if not use_reloader or os.environ.get("RUN_MAIN") == "true":
+        Timer(1, open_browser).start()
+
+    app.run(use_reloader=use_reloader, port=port)
