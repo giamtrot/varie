@@ -7,15 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Unicode Text Converter</h1>
-        <p>Scrivi nel riquadro di sinistra. Usa Ctrl+B per il grassetto, Ctrl+I per il corsivo e Ctrl+Alt+X per attivare/disattivare il font Serif.</p>
+    <h1>Bolder</h1>
+    <p class="instructions">Type below. Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+Alt+X (Serif).</p>
     <div class="controls">
         <button id="toggle-serif-btn">Toggle Serif</button>
+        <button id="copy-btn">Copy to Clipboard</button>
     </div>
     <div class="container">
-        <div id="editor" contenteditable="true" class="panel"></div>
+        <div id="editor" contenteditable="true" class="panel" placeholder="Type here..."></div>
         <div id="preview" class="panel"></div>
     </div>
-    <script src="dist/main.js"></script>
+    <script type="module" src="dist/main.js"></script>
 </body>
 </html>
