@@ -29,6 +29,22 @@ const charMaps = {
 const editor = document.getElementById('editor')!; 
 const preview = document.getElementById('preview')!; 
 const toggleSerifBtn = document.getElementById('toggle-serif-btn')!; 
+const copyBtn = document.getElementById('copy-btn');
+
+if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+        const text = preview.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = 'Copied!';
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+            }, 1000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    });
+}
 
 function isSelectionSerif(): boolean {
     const selection = window.getSelection();
