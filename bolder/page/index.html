@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode Text Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Unicode Text Converter</h1>
+        <p>Scrivi nel riquadro di sinistra. Usa Ctrl+B per il grassetto, Ctrl+I per il corsivo e Ctrl+Alt+X per attivare/disattivare il font Serif.</p>
+    <div class="controls">
+        <button id="toggle-serif-btn">Toggle Serif</button>
+    </div>
+    <div class="container">
+        <div id="editor" contenteditable="true" class="panel"></div>
+        <div id="preview" class="panel"></div>
+    </div>
+    <script src="dist/main.js"></script>
+</body>
+</html>
