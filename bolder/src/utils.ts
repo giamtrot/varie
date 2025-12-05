@@ -6,7 +6,7 @@ export const charMaps: { [key: string]: { [key: string]: string } } = {
     },
     italic: {
         'a': '𝘢', 'b': '𝘣', 'c': '𝘤', 'd': '𝘥', 'e': '𝘦', 'f': '𝘧', 'g': '𝘨', 'h': '𝘩', 'i': '𝘪', 'j': '𝘫', 'k': '𝘬', 'l': '𝘭', 'm': '𝘮', 'n': '𝘯', 'o': '𝘰', 'p': '𝘱', 'q': '𝘲', 'r': '𝘳', 's': '𝘴', 't': '𝘵', 'u': '𝘶', 'v': '𝘷', 'w': '𝘸', 'x': '𝘹', 'y': '𝘺', 'z': '𝘻',
-        'A': '𝘼', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍', 'G': '𝘎', 'H': '𝘏', 'I': '𝙄', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓', 'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙', 'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟', 'Y': '𝘠', 'Z': '𝘡'
+        'A': '𝘈', 'B': '𝘉', 'C': '𝘊', 'D': '𝘋', 'E': '𝘌', 'F': '𝘍', 'G': '𝘎', 'H': '𝘏', 'I': '𝘐', 'J': '𝘑', 'K': '𝘒', 'L': '𝘓', 'M': '𝘔', 'N': '𝘕', 'O': '𝘖', 'P': '𝘗', 'Q': '𝘘', 'R': '𝘙', 'S': '𝘚', 'T': '𝘛', 'U': '𝘜', 'V': '𝘝', 'W': '𝘞', 'X': '𝘟', 'Y': '𝘠', 'Z': '𝘡'
     },
     boldItalic: {
         'a': '𝙖', 'b': '𝙗', 'c': '𝙘', 'd': '𝙙', 'e': '𝙚', 'f': '𝙛', 'g': '𝙜', 'h': '𝙝', 'i': '𝙞', 'j': '𝙟', 'k': '𝙠', 'l': '𝙡', 'm': '𝙢', 'n': '𝙣', 'o': '𝙤', 'p': '𝙥', 'q': '𝙦', 'r': '𝙧', 's': '𝙨', 't': '𝙩', 'u': '𝙪', 'v': '𝙫', 'w': '𝙬', 'x': '𝙭', 'y': '𝙮', 'z': '𝙯',
@@ -28,76 +28,4 @@ export const charMaps: { [key: string]: { [key: string]: string } } = {
 
 export function convertText(text: string, map: { [key: string]: string }): string {
     return text.split('').map(char => map[char] || char).join('');
-}
-
-export function generateUnicodeTextFromRange(range: Range, useSerif: boolean): string {
-    const root = range.commonAncestorContainer;
-    let result = '';
-
-    function traverse(node: Node) {
-        if (!range.intersectsNode(node)) return;
-
-        if (node.nodeType === Node.TEXT_NODE) {
-            let text = node.textContent || '';
-
-            // Handle partial selection
-            if (node === range.endContainer) {
-                text = text.substring(0, range.endOffset);
-            }
-            if (node === range.startContainer) {
-                text = text.substring(range.startOffset);
-            }
-
-            // Conversion based on computed style of parent
-            const parent = node.parentElement;
-            if (parent) {
-                const style = window.getComputedStyle(parent);
-                // Check bold (number or keyword)
-                const fontWeight = style.fontWeight;
-                const isBold = fontWeight === 'bold' || parseInt(fontWeight) >= 700;
-                const isItalic = style.fontStyle === 'italic' || style.fontStyle === 'oblique';
-
-                if (useSerif) {
-                     if (isBold && isItalic) text = convertText(text, charMaps.serifBoldItalic);
-                     else if (isBold) text = convertText(text, charMaps.serifBold);
-                     else if (isItalic) text = convertText(text, charMaps.serifItalic);
-                     // If neither, existing text (normal serif not mapped, or could map to serif normal if we had it)
-                } else {
-                     if (isBold && isItalic) text = convertText(text, charMaps.boldItalic);
-                     else if (isBold) text = convertText(text, charMaps.bold);
-                     else if (isItalic) text = convertText(text, charMaps.italic);
-                }
-            }
-            result += text;
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-
-            // Block element handling for newlines
-            // Add newline before block if result is not empty and doesn't end with newline
-            const display = window.getComputedStyle(el).display;
-            const isBlock = display === 'block' || display === 'flex' || display === 'list-item' || display === 'table-row';
-
-            if (el.tagName.toLowerCase() === 'br') {
-                result += '\n';
-            } else if (isBlock) {
-                 if (result.length > 0 && !result.endsWith('\n')) {
-                     result += '\n';
-                }
-            }
-
-            node.childNodes.forEach(child => traverse(child));
-
-             // Add newline after block if needed
-             if (isBlock) {
-                 if (result.length > 0 && !result.endsWith('\n')) {
-                     result += '\n';
-                }
-            }
-        }
-    }
-
-    // Start traversal
-    traverse(root);
-
-    return result;
 }

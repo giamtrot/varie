@@ -1,4 +1,4 @@
-export const charMaps = {
+const charMaps = {
     bold: {
         'a': '𝗮', 'b': '𝗯', 'c': '𝗰', 'd': '𝗱', 'e': '𝗲', 'f': '𝗳', 'g': '𝗴', 'h': '𝗵', 'i': '𝗶', 'j': '𝗷', 'k': '𝗸', 'l': '𝗹', 'm': '𝗺', 'n': '𝗻', 'o': '𝗼', 'p': '𝗽', 'q': '𝗾', 'r': '𝗿', 's': '𝘀', 't': '𝘁', 'u': '𝘂', 'v': '𝘃', 'w': '𝘄', 'x': '𝘅', 'y': '𝘆', 'z': '𝘇',
         'A': '𝗔', 'B': '𝗕', 'C': '𝗖', 'D': '𝗗', 'E': '𝗘', 'F': '𝗙', 'G': '𝗚', 'H': '𝗛', 'I': '𝗜', 'J': '𝗝', 'K': '𝗞', 'L': '𝗟', 'M': '𝗠', 'N': '𝗡', 'O': '𝗢', 'P': '𝗣', 'Q': '𝗤', 'R': '𝗥', 'S': '𝗦', 'T': '𝗧', 'U': '𝗨', 'V': '𝗩', 'W': '𝗪', 'X': '𝗫', 'Y': '𝗬', 'Z': '𝗭',
@@ -25,6 +25,133 @@ export const charMaps = {
         'A': '𝑨', 'B': '𝑩', 'C': '𝑪', 'D': '𝑫', 'E': '𝑬', 'F': '𝑭', 'G': '𝑮', 'H': '𝑯', 'I': '𝑰', 'J': '𝑱', 'K': '𝑲', 'L': '𝑳', 'M': '𝑴', 'N': '𝑵', 'O': '𝑶', 'P': '𝑷', 'Q': '𝑸', 'R': '𝑹', 'S': '𝑺', 'T': '𝑻', 'U': '𝑼', 'V': '𝑽', 'W': '𝑾', 'X': '𝑿', 'Y': '𝒀', 'Z': '𝒁'
     }
 };
-export function convertText(text, map) {
+
+const editor = document.getElementById('editor')!; 
+const preview = document.getElementById('preview')!; 
+const toggleSerifBtn = document.getElementById('toggle-serif-btn')!; 
+
+function isSelectionSerif(): boolean {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return false;
+
+    let container = selection.getRangeAt(0).commonAncestorContainer;
+
+    while (container && container !== editor) {
+        if (container.nodeName === 'SPAN' && (container as HTMLElement).classList.contains('serif')) {
+            return true;
+        }
+        container = container.parentNode!;
+    }
+    return false;
+}
+
+function wrapSelection(className: string) {
+    document.execCommand('fontName', false, '__TEMP_FONT_NAME__');
+    const tempSpans = editor.querySelectorAll('font[face="__TEMP_FONT_NAME__"]');
+    tempSpans.forEach(tempSpan => {
+        const newSpan = document.createElement('span');
+        newSpan.className = className;
+        newSpan.innerHTML = tempSpan.innerHTML;
+        tempSpan.parentNode?.replaceChild(newSpan, tempSpan);
+    });
+    updatePreview();
+}
+
+function unwrapSelection() {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    
+    document.execCommand('fontName', false, 'inherit');
+    
+    // La parte sopra potrebbe lasciare degli span vuoti, li puliamo
+    const serifSpans = editor.querySelectorAll('span.serif');
+    serifSpans.forEach(span => {
+        if (span.innerHTML.trim() === '&nbsp;' || span.innerHTML.trim() === '') {
+            span.parentNode?.removeChild(span);
+        }
+    });
+
+    updatePreview();
+}
+
+function toggleSerifStyle() {
+    if (isSelectionSerif()) {
+        unwrapSelection();
+    } else {
+        wrapSelection('serif');
+    }
+}
+
+toggleSerifBtn.addEventListener('click', toggleSerifStyle);
+
+function convertText(text: string, map: { [key: string]: string }): string {
     return text.split('').map(char => map[char] || char).join('');
 }
+
+function processNode(node: Node): string {
+    let result = '';
+    if (node.nodeType === Node.TEXT_NODE) {
+        let text = node.textContent || '';
+        let parent = node.parentNode as HTMLElement;
+        let isBold = false;
+        let isItalic = false;
+        let isSerif = false;
+
+        while (parent && parent !== editor) {
+            const tagName = parent.tagName.toLowerCase();
+            if (tagName === 'b' || tagName === 'strong') isBold = true;
+            if (tagName === 'i' || tagName === 'em') isItalic = true;
+            if (tagName === 'span' && parent.classList.contains('serif')) isSerif = true;
+            parent = parent.parentNode as HTMLElement;
+        }
+
+        if (isSerif) {
+            if (isBold && isItalic) text = convertText(text, charMaps.serifBoldItalic);
+            else if (isBold) text = convertText(text, charMaps.serifBold);
+            else if (isItalic) text = convertText(text, charMaps.serifItalic);
+        } else {
+            if (isBold && isItalic) text = convertText(text, charMaps.boldItalic);
+            else if (isBold) text = convertText(text, charMaps.bold);
+            else if (isItalic) text = convertText(text, charMaps.italic);
+        }
+        return text;
+
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as HTMLElement;
+        const tagName = element.tagName.toLowerCase();
+
+        if (tagName === 'br' || (getComputedStyle(element).display === 'block' && element.childNodes.length > 0)) {
+             if (result.length > 0) result += '\n';
+        }
+
+        node.childNodes.forEach(child => {
+            result += processNode(child);
+        });
+
+    } else if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        node.childNodes.forEach(child => {
+            result += processNode(child);
+        });
+    }
+    return result;
+}
+
+function updatePreview() {
+    let result = '';
+    editor.childNodes.forEach(child => {
+        result += processNode(child);
+    });
+    preview.innerText = result.replace(/\n{3,}/g, '\n\n'); // Limita i newline multipli
+}
+
+editor.addEventListener('input', updatePreview);
+
+editor.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.altKey && event.key.toLowerCase() === 'x') {
+        event.preventDefault();
+        toggleSerifStyle();
+    }
+});
+
+// Esegui un primo aggiornamento in caso ci sia contenuto iniziale
+updatePreview();
