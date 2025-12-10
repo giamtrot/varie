@@ -118,7 +118,7 @@ if __name__ == '__main__':
     
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
-    port = 6000  # Default port
+    port = 4000  # Default port
     print(f"Starting Flask app on port {port} with reloader={'enabled' if use_reloader else 'disabled'}")
     
     # Open the browser in a new thread after a short delay
