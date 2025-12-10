@@ -85,6 +85,12 @@ function showDialog(convertedText: string) {
             setTimeout(() => {
                 copyBtn.textContent = 'Copy';
             }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            copyBtn.textContent = 'Error';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy';
+            }, 2000);
         });
     };
 
