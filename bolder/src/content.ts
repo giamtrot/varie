@@ -5,14 +5,78 @@ let dialogContainer: HTMLElement | null = null;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "open_dialog") {
         const selection = window.getSelection();
-        if (selection && selection.toString()) {
-            const text = selection.toString();
-            showDialog(text);
+        if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
+            const plainText = selection.toString();
+            const smartText = getSmartSelectionText(selection);
+            showDialog(smartText, plainText);
         }
     }
 });
 
-function showDialog(originalText: string) {
+function getSmartSelectionText(selection: Selection): string {
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer;
+    let result = '';
+
+    function getStyle(node: Node) {
+        if (node.nodeType !== Node.TEXT_NODE) return 'plain';
+        const parent = node.parentElement;
+        if (!parent) return 'plain';
+        const style = window.getComputedStyle(parent);
+
+        const fontWeight = style.fontWeight;
+        const isBold = fontWeight === 'bold' || parseInt(fontWeight) >= 600;
+        const isItalic = style.fontStyle === 'italic' || style.fontStyle === 'oblique';
+
+        if (isBold && isItalic) return 'boldItalic';
+        if (isBold) return 'bold';
+        if (isItalic) return 'italic';
+        return 'plain';
+    }
+
+    const processNode = (node: Node) => {
+        if (!selection.containsNode(node, true)) return;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            // Check intersection with range.
+            if (range.intersectsNode(node)) {
+                let start = 0;
+                let end = (node.textContent || '').length;
+
+                if (node === range.startContainer) start = range.startOffset;
+                if (node === range.endContainer) end = range.endOffset;
+
+                const chunk = (node.textContent || '').substring(start, end);
+                if (chunk) {
+                    const style = getStyle(node);
+                    if (style !== 'plain' && charMaps[style]) {
+                        result += convertText(chunk, charMaps[style]);
+                    } else {
+                        result += chunk;
+                    }
+                }
+            }
+        } else {
+            // Traverse children
+            node.childNodes.forEach(child => processNode(child));
+        }
+    };
+
+    // Optimisation: if container is text node
+    if (container.nodeType === Node.TEXT_NODE) {
+        let text = (container.textContent || '').substring(range.startOffset, range.endOffset);
+        const style = getStyle(container);
+        if (style !== 'plain' && charMaps[style]) {
+            return convertText(text, charMaps[style]);
+        }
+        return text;
+    }
+
+    processNode(container);
+    return result;
+}
+
+function showDialog(initialSmartText: string, plainText: string) {
     if (dialogContainer) {
         document.body.removeChild(dialogContainer);
         dialogContainer = null;
@@ -72,7 +136,7 @@ function showDialog(originalText: string) {
     ];
 
     const textarea = document.createElement('textarea');
-    textarea.value = originalText; // Init with original
+    textarea.value = initialSmartText;
     textarea.style.width = '100%';
     textarea.style.height = '150px';
     textarea.style.padding = '10px';
@@ -86,13 +150,9 @@ function showDialog(originalText: string) {
     const updateText = (styleId: string) => {
         const map = charMaps[styleId];
         if (map) {
-            textarea.value = convertText(originalText, map);
+            textarea.value = convertText(plainText, map);
         }
     };
-
-    // Default convert to Bold on open? Or leave original?
-    // Let's convert to bold by default as it is the name of the app
-    updateText('bold');
 
     styles.forEach(style => {
         const btn = document.createElement('button');
@@ -110,6 +170,20 @@ function showDialog(originalText: string) {
         btn.onclick = () => updateText(style.id);
         styleContainer.appendChild(btn);
     });
+
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = "Reset to Smart";
+    resetBtn.style.padding = '6px 12px';
+    resetBtn.style.border = '1px solid #ddd';
+    resetBtn.style.borderRadius = '4px';
+    resetBtn.style.backgroundColor = '#fff';
+    resetBtn.style.cursor = 'pointer';
+    resetBtn.style.fontSize = '13px';
+    resetBtn.onclick = () => {
+        textarea.value = initialSmartText;
+    };
+    styleContainer.appendChild(resetBtn);
+
 
     const buttonContainer = document.createElement('div');
     buttonContainer.style.display = 'flex';
