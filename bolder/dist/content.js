@@ -231,11 +231,18 @@ function showDialog(segments) {
     shadow.appendChild(wrapper);
     // Close on click outside
     container.onclick = (e) => {
-        if (e.target === container) {
-            if (dialogContainer) {
-                document.body.removeChild(dialogContainer);
-                dialogContainer = null;
-            }
+        // Since we are using Shadow DOM, e.target will report the container (host) 
+        // even if the click originated from inside the Shadow DOM (unless stopPropagation is used).
+        // However, we can check the composed path.
+        const path = e.composedPath();
+        // If the path contains the wrapper, the click was INSIDE the dialog.
+        if (path.indexOf(wrapper) >= 0) {
+            return;
+        }
+        // Otherwise, it was on the container background.
+        if (dialogContainer) {
+            document.body.removeChild(dialogContainer);
+            dialogContainer = null;
         }
     };
     document.body.appendChild(container);
