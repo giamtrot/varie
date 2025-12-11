@@ -50,9 +50,29 @@ function getSmartSegments(selection) {
                 }
             }
         }
-        else {
-            // Traverse children
+        else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node;
+            const tagName = element.tagName.toUpperCase();
+            if (tagName === 'BR') {
+                // If the BR is part of the selection (intersects), add a newline
+                if (range.intersectsNode(node)) {
+                    segments.push({ text: '\n', style: 'plain' });
+                }
+                return;
+            }
+            // Check if block (simple check)
+            const isBlock = tagName === 'P' || tagName === 'DIV' || tagName === 'LI' ||
+                tagName === 'TR' || tagName === 'H1' || tagName === 'H2' ||
+                tagName === 'H3' || tagName === 'H4' || tagName === 'H5' || tagName === 'H6';
+            // Recurse
             node.childNodes.forEach(child => processNode(child));
+            // If block, ensure newline at end (if not already there and we have content)
+            if (isBlock) {
+                const last = segments[segments.length - 1];
+                if (last && !last.text.endsWith('\n')) {
+                    segments.push({ text: '\n', style: 'plain' });
+                }
+            }
         }
     };
     // Optimisation: if container is text node
