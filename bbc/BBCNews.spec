@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['app.py', 'bbc_parser.py'],
+    ['app.py'],
     pathex=[],
     binaries=[],
     datas=[('frontend/build', 'frontend/build')],

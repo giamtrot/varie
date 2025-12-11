@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ProgramReload from './ProgramReload';
 
 function ProgramList() {
@@ -15,7 +15,7 @@ function ProgramList() {
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);
-    fetch('http://127.0.0.1:5000/api/programs')
+    fetch('/api/programs')
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,7 +41,7 @@ function ProgramList() {
   useEffect(() => {
     fetchPrograms();
     // Load disabled programs from server
-    fetch('http://127.0.0.1:5000/api/disabled-programs')
+    fetch('/api/disabled-programs')
       .then(response => response.json())
       .then(data => {
         const disabled = new Set(data.disabled || []);
@@ -76,7 +76,7 @@ function ProgramList() {
         updated.add(programLink);
       }
       // Save to server
-      fetch('http://127.0.0.1:5000/api/disabled-programs', {
+      fetch('/api/disabled-programs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ disabled: Array.from(updated) })
@@ -109,6 +109,7 @@ function ProgramList() {
               'Reload Programs'
             )}
           </button>
+          <Link to="/review" className="btn btn-info">Review</Link>
           {showReloadStream && (!isReloading) && (<button className="btn btn-secondary" onClick={() => setShowReloadStream(false)}>
             Hide Log
           </button>)}

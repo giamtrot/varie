@@ -97,12 +97,13 @@ def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 
-def open_browser():
+def open_browser(port):
     """
     Open the default web browser to the application's URL.
     """
-    print("Opening web browser to http://localhost:5000")
-    webbrowser.open_new("http://localhost:5000")
+    url = f"http://localhost:{port}"
+    print(f"Opening web browser to {url}")
+    webbrowser.open_new(url)
 
 
 if __name__ == '__main__':
@@ -117,9 +118,13 @@ if __name__ == '__main__':
     
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
-    port = 5000
+    port = 4000  # Default port
+    print(f"Starting Flask app on port {port} with reloader={'enabled' if use_reloader else 'disabled'}")
+    
     # Open the browser in a new thread after a short delay
-    if not use_reloader or os.environ.get("RUN_MAIN") == "true":
-        Timer(1, open_browser).start()
+    # The 'WERKZEUG_RUN_MAIN' environment variable is set by Werkzeug when the reloader is active,
+    # but only for the main process, not the reloader's child process.
+    if not use_reloader or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        Timer(1, open_browser, args=[port]).start()
 
     app.run(use_reloader=use_reloader, port=port)
