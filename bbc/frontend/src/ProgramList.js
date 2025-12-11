@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ProgramReload from './ProgramReload';
 
 function ProgramList() {
@@ -109,6 +109,7 @@ function ProgramList() {
               'Reload Programs'
             )}
           </button>
+          <Link to="/review" className="btn btn-info">Review</Link>
           {showReloadStream && (!isReloading) && (<button className="btn btn-secondary" onClick={() => setShowReloadStream(false)}>
             Hide Log
           </button>)}
