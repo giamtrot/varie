@@ -2,23 +2,27 @@ import { charMaps, convertText } from './utils.js';
 
 let dialogContainer: HTMLElement | null = null;
 
+interface TextSegment {
+    text: string;
+    style: 'plain' | 'bold' | 'italic' | 'boldItalic';
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "open_dialog") {
         const selection = window.getSelection();
         if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
-            const plainText = selection.toString();
-            const smartText = getSmartSelectionText(selection);
-            showDialog(smartText, plainText);
+            const segments = getSmartSegments(selection);
+            showDialog(segments);
         }
     }
 });
 
-function getSmartSelectionText(selection: Selection): string {
+function getSmartSegments(selection: Selection): TextSegment[] {
     const range = selection.getRangeAt(0);
     const container = range.commonAncestorContainer;
-    let result = '';
+    const segments: TextSegment[] = [];
 
-    function getStyle(node: Node) {
+    function getStyle(node: Node): 'plain' | 'bold' | 'italic' | 'boldItalic' {
         if (node.nodeType !== Node.TEXT_NODE) return 'plain';
         const parent = node.parentElement;
         if (!parent) return 'plain';
@@ -46,14 +50,10 @@ function getSmartSelectionText(selection: Selection): string {
                 if (node === range.startContainer) start = range.startOffset;
                 if (node === range.endContainer) end = range.endOffset;
 
-                const chunk = (node.textContent || '').substring(start, end);
-                if (chunk) {
+                const text = (node.textContent || '').substring(start, end);
+                if (text) {
                     const style = getStyle(node);
-                    if (style !== 'plain' && charMaps[style]) {
-                        result += convertText(chunk, charMaps[style]);
-                    } else {
-                        result += chunk;
-                    }
+                    segments.push({ text, style });
                 }
             }
         } else {
@@ -66,17 +66,15 @@ function getSmartSelectionText(selection: Selection): string {
     if (container.nodeType === Node.TEXT_NODE) {
         let text = (container.textContent || '').substring(range.startOffset, range.endOffset);
         const style = getStyle(container);
-        if (style !== 'plain' && charMaps[style]) {
-            return convertText(text, charMaps[style]);
-        }
-        return text;
+        segments.push({ text, style });
+        return segments;
     }
 
     processNode(container);
-    return result;
+    return segments;
 }
 
-function showDialog(initialSmartText: string, plainText: string) {
+function showDialog(segments: TextSegment[]) {
     if (dialogContainer) {
         document.body.removeChild(dialogContainer);
         dialogContainer = null;
@@ -123,20 +121,9 @@ function showDialog(initialSmartText: string, plainText: string) {
 
     const styleContainer = document.createElement('div');
     styleContainer.style.display = 'flex';
-    styleContainer.style.flexWrap = 'wrap';
     styleContainer.style.gap = '8px';
 
-    const styles = [
-        { id: "bold", title: "Bold" },
-        { id: "italic", title: "Italic" },
-        { id: "boldItalic", title: "Bold Italic" },
-        { id: "serifBold", title: "Serif Bold" },
-        { id: "serifItalic", title: "Serif Italic" },
-        { id: "serifBoldItalic", title: "Serif Bold Italic" }
-    ];
-
     const textarea = document.createElement('textarea');
-    textarea.value = initialSmartText;
     textarea.style.width = '100%';
     textarea.style.height = '150px';
     textarea.style.padding = '10px';
@@ -147,42 +134,74 @@ function showDialog(initialSmartText: string, plainText: string) {
     textarea.style.boxSizing = 'border-box';
     textarea.style.marginBottom = '10px';
 
-    const updateText = (styleId: string) => {
-        const map = charMaps[styleId];
-        if (map) {
-            textarea.value = convertText(plainText, map);
+    const renderText = (useSerif: boolean) => {
+        let result = '';
+        segments.forEach(seg => {
+            if (seg.style === 'plain') {
+                result += seg.text;
+                return;
+            }
+
+            let mapKey = seg.style; // bold, italic, boldItalic
+            if (useSerif) {
+                // Map 'bold' -> 'serifBold', etc.
+                if (mapKey === 'bold') mapKey = 'serifBold';
+                else if (mapKey === 'italic') mapKey = 'serifItalic';
+                else if (mapKey === 'boldItalic') mapKey = 'serifBoldItalic';
+            }
+
+            const map = charMaps[mapKey];
+            if (map) {
+                result += convertText(seg.text, map);
+            } else {
+                result += seg.text;
+            }
+        });
+        textarea.value = result;
+    };
+
+    // Initial Render: Sans-Serif
+    renderText(false);
+
+    // Buttons
+    const btnSans = document.createElement('button');
+    btnSans.textContent = "Sans-Serif";
+    btnSans.style.padding = '6px 12px';
+    btnSans.style.border = '1px solid #ddd';
+    btnSans.style.borderRadius = '4px';
+    btnSans.style.backgroundColor = '#e2e6ea'; // Selected state initial
+    btnSans.style.cursor = 'pointer';
+    btnSans.style.fontWeight = 'bold';
+
+    const btnSerif = document.createElement('button');
+    btnSerif.textContent = "Serif";
+    btnSerif.style.padding = '6px 12px';
+    btnSerif.style.border = '1px solid #ddd';
+    btnSerif.style.borderRadius = '4px';
+    btnSerif.style.backgroundColor = '#f8f9fa';
+    btnSerif.style.cursor = 'pointer';
+    btnSerif.style.fontFamily = 'serif';
+
+    const updateActiveBtn = (isSerif: boolean) => {
+        if (isSerif) {
+            btnSerif.style.backgroundColor = '#e2e6ea';
+            btnSerif.style.fontWeight = 'bold';
+            btnSans.style.backgroundColor = '#f8f9fa';
+            btnSans.style.fontWeight = 'normal';
+        } else {
+            btnSans.style.backgroundColor = '#e2e6ea';
+            btnSans.style.fontWeight = 'bold';
+            btnSerif.style.backgroundColor = '#f8f9fa';
+            btnSerif.style.fontWeight = 'normal';
         }
+        renderText(isSerif);
     };
 
-    styles.forEach(style => {
-        const btn = document.createElement('button');
-        btn.textContent = style.title;
-        btn.style.padding = '6px 12px';
-        btn.style.border = '1px solid #ddd';
-        btn.style.borderRadius = '4px';
-        btn.style.backgroundColor = '#f8f9fa';
-        btn.style.cursor = 'pointer';
-        btn.style.fontSize = '13px';
+    btnSans.onclick = () => updateActiveBtn(false);
+    btnSerif.onclick = () => updateActiveBtn(true);
 
-        btn.addEventListener('mouseenter', () => btn.style.backgroundColor = '#e2e6ea');
-        btn.addEventListener('mouseleave', () => btn.style.backgroundColor = '#f8f9fa');
-
-        btn.onclick = () => updateText(style.id);
-        styleContainer.appendChild(btn);
-    });
-
-    const resetBtn = document.createElement('button');
-    resetBtn.textContent = "Reset to Smart";
-    resetBtn.style.padding = '6px 12px';
-    resetBtn.style.border = '1px solid #ddd';
-    resetBtn.style.borderRadius = '4px';
-    resetBtn.style.backgroundColor = '#fff';
-    resetBtn.style.cursor = 'pointer';
-    resetBtn.style.fontSize = '13px';
-    resetBtn.onclick = () => {
-        textarea.value = initialSmartText;
-    };
-    styleContainer.appendChild(resetBtn);
+    styleContainer.appendChild(btnSans);
+    styleContainer.appendChild(btnSerif);
 
 
     const buttonContainer = document.createElement('div');
