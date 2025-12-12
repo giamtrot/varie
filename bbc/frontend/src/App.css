@@ -1,0 +1,8 @@
+/* Increase indentation for list items in keywords section */
+.keywords-content ul {
+  padding-left: 40px;
+}
+
+.keywords-content li {
+  margin-left: 20px;
+}

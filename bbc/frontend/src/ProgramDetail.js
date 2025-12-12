@@ -106,7 +106,7 @@ function ProgramDetail() {
         </div>
         <div className="card-body">
           {program.headlines !== 'N/A' ? (
-            <div dangerouslySetInnerHTML={{ __html: program.headlines.replace(/\n\s\s/g, '<br>&nbsp;&nbsp;') }}></div>
+            <div dangerouslySetInnerHTML={{ __html: program.headlines.replace(/\n/g, '<br>') }}></div>
           ) : (
             <p>No headlines available.</p>
           )}
@@ -119,7 +119,7 @@ function ProgramDetail() {
         </div>
         <div className="card-body">
           {program.keywords !== 'N/A' ? (
-            <div dangerouslySetInnerHTML={{ __html: program.keywords.replace(/\n\s\s\t/g, '<br>&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n\s\s/g, '<br>&nbsp;&nbsp;') }}></div>
+            <div className="keywords-content" dangerouslySetInnerHTML={{ __html: program.keywords.replace(/\n/g, '<br>') }}></div>
           ) : (
             <p>No keywords available.</p>
           )}
