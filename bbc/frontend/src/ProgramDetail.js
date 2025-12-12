@@ -7,6 +7,7 @@ function ProgramDetail() {
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
     fetch('/api/programs')
@@ -29,7 +30,41 @@ function ProgramDetail() {
         setError(error);
         setLoading(false);
       });
+
+    // Load disabled programs status
+    fetch('/api/disabled-programs')
+      .then(response => response.json())
+      .then(data => {
+        const disabled = data.disabled || [];
+        setIsDisabled(disabled.includes(decodeURIComponent(programLink)));
+      })
+      .catch(error => console.error('Failed to load disabled programs:', error));
   }, [programLink]);
+
+  const toggleDisable = () => {
+    fetch('/api/disabled-programs')
+      .then(response => response.json())
+      .then(data => {
+        const disabled = new Set(data.disabled || []);
+        const decodedLink = decodeURIComponent(programLink);
+
+        if (disabled.has(decodedLink)) {
+          disabled.delete(decodedLink);
+        } else {
+          disabled.add(decodedLink);
+        }
+
+        return fetch('/api/disabled-programs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ disabled: Array.from(disabled) })
+        });
+      })
+      .then(() => {
+        setIsDisabled(!isDisabled);
+      })
+      .catch(error => console.error('Failed to toggle disabled status:', error));
+  };
 
   if (loading) return <div className="text-center mt-5">Loading program details...</div>;
   if (error) return <div className="alert alert-danger mt-5" role="alert">Error: {error.message}</div>;
@@ -37,7 +72,15 @@ function ProgramDetail() {
 
   return (
     <div className="container mt-4">
-      <button onClick={() => navigate('/')} className="btn btn-secondary mb-3">Back to List</button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <button onClick={() => navigate('/')} className="btn btn-secondary">Back to List</button>
+        <button
+          className={`btn ${isDisabled ? 'btn-outline-success' : 'btn-outline-danger'}`}
+          onClick={toggleDisable}
+        >
+          {isDisabled ? 'Enable Program' : 'Disable Program'}
+        </button>
+      </div>
       <h1 className="mb-4">{program.title}</h1>
       <p><strong>Date:</strong> {program.date}</p>
       <p><strong>Description:</strong> {program.description}</p>
