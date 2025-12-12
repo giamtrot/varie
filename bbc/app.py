@@ -105,11 +105,11 @@ def serve_review(path):
     return send_from_directory(app.static_folder, "index.html") 
 
 
-def open_browser(port):
+def open_browser(port, path=""):
     """
     Open the default web browser to the application's URL.
     """
-    url = f"http://localhost:{port}"
+    url = f"http://localhost:{port}{path}"
     print(f"Opening web browser to {url}")
     webbrowser.open_new(url)
 
@@ -124,6 +124,11 @@ if __name__ == '__main__':
     for i, arg in enumerate(sys.argv):
         print(f"Argument {i}: {arg}")
     
+    # Check if arg 1 ends with "review"
+    browser_path = ""
+    if len(sys.argv) > 1 and sys.argv[1].endswith("review"):
+        browser_path = "/review"
+    
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
     port = 4000  # Default port
@@ -133,6 +138,6 @@ if __name__ == '__main__':
     # The 'WERKZEUG_RUN_MAIN' environment variable is set by Werkzeug when the reloader is active,
     # but only for the main process, not the reloader's child process.
     if not use_reloader or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        Timer(1, open_browser, args=[port]).start()
+        Timer(1, open_browser, args=[port, browser_path]).start()
 
     app.run(use_reloader=use_reloader, port=port)
