@@ -84,17 +84,25 @@ def reload_programs_stream():
 
     return Response(generate(), mimetype='text/event-stream')
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route("/program/<path:dummy>")
+def serve_path_dummy(dummy):
+    print(f"Serving SPA for /program/{dummy}")
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/", defaults={"path": ""})
 def serve(path):
-    """
-    Serve the React application.
-    This will serve the 'index.html' for any path not matched by the API.
-    """
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+    print("Serving SPA for /")
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def serve_path(path):
+    print("Serving SPA for /<path:path>")
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/review", defaults={"path": ""})
+def serve_review(path):
+    print("Serving SPA for /review")
+    return send_from_directory(app.static_folder, "index.html") 
 
 
 def open_browser(port):
