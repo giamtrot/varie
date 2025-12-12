@@ -60,6 +60,101 @@ def manage_disabled_programs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/review-keywords')
+def get_review_keywords():
+    """
+    API endpoint to get 3 random keywords from disabled programs.
+    Returns keyword text, explanation, and example.
+    """
+    import re
+    import random
+    
+    disabled_file = "disabled_programs.json"
+    
+    try:
+        # Load disabled programs list
+        disabled_links = []
+        if os.path.exists(disabled_file):
+            with open(disabled_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                disabled_links = data.get('disabled', [])
+        
+        if not disabled_links:
+            return jsonify({"keywords": [], "message": "No disabled programs found"}), 200
+        
+        # Load all programs
+        if not os.path.exists(DATA_FILE):
+            return jsonify({"error": "Data file not found."}), 404
+        
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            all_programs = json.load(f)
+        
+        # Filter only disabled programs
+        disabled_programs = [p for p in all_programs if p.get('link') in disabled_links]
+        
+        # Extract all keywords from disabled programs
+        all_keywords = []
+        for program in disabled_programs:
+            keywords_html = program.get('keywords', '')
+            if keywords_html and keywords_html != 'N/A':
+                # Split by keyword entries (each starts with \t<strong>)
+                keyword_entries = re.split(r'\n\t(?=<strong>)', keywords_html)
+                
+                for entry in keyword_entries:
+                    if not entry.strip():
+                        continue
+                    
+                    # Extract keyword text
+                    keyword_match = re.search(r'<strong>(.*?)</strong>', entry)
+                    if not keyword_match:
+                        continue
+                    
+                    keyword_text = re.sub(r'<br\s*/?>', '', keyword_match.group(1)).strip()
+                    
+                    # Extract explanation (text between first </strong> and <li>)
+                    explanation_match = re.search(r'</strong>\s*\n\s*\t*(.*?)\s*(?:<li>|$)', entry, re.DOTALL)
+                    explanation = explanation_match.group(1).strip() if explanation_match else ''
+                    
+                    # Extract example (text inside <li> tags)
+                    example_match = re.search(r'<li>(.*?)</li>', entry, re.DOTALL)
+                    if example_match:
+                        example = example_match.group(1).strip()
+                        # Remove <strong> tags from example but keep the text
+                        example = re.sub(r'</?strong>', '', example)
+                        example = re.sub(r'<br\s*/?>', '', example)
+                    else:
+                        example = ''
+                    
+                    if keyword_text:
+                        all_keywords.append({
+                            'text': keyword_text,
+                            'explanation': explanation,
+                            'example': example,
+                            'programTitle': program.get('title', ''),
+                            'programLink': program.get('link', '')
+                        })
+        
+        # Remove duplicates based on keyword text
+        unique_keywords = []
+        seen_texts = set()
+        for kw in all_keywords:
+            if kw['text'] not in seen_texts:
+                unique_keywords.append(kw)
+                seen_texts.add(kw['text'])
+        
+        # Select 3 random keywords
+        if len(unique_keywords) >= 3:
+            selected_keywords = random.sample(unique_keywords, 3)
+        else:
+            selected_keywords = unique_keywords
+        
+        return jsonify({"keywords": selected_keywords}), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 @app.route('/api/reload-programs-stream')
 def reload_programs_stream():
     """
