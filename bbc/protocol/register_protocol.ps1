@@ -100,27 +100,27 @@ function Set-User-ProtocolRegistryKeys {
 # --- Main Script Body ---
 
 # Self-elevate the script if in global mode and not running as an administrator
-if ($Mode -eq "global" -and -NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Warning "Administrator privileges are required for global installation. Attempting to re-launch as administrator..."
-    try {
-        $argumentList = @(
-            "-NoProfile",
-            "-ExecutionPolicy", "Bypass",
-            "-File", "`"$PSCommandPath`"",
-            "-Mode", "`"$Mode`"",
-            "-ProtocolName", "`"$ProtocolName`"",
-            "-ProtocolDescription", "`"$ProtocolDescription`"",
-            "-ExeName", "`"$ExeName`""
-        )
-        Start-Process PowerShell.exe -Verb RunAs -ArgumentList $argumentList
-        exit
-    }
-    catch {
-        Write-Error "Failed to re-launch as administrator. Please run this script from an elevated PowerShell prompt for global installation."
-        Read-Host "An error occurred. Press Enter to exit"
-        exit 1
-    }
-}
+# if ($Mode -eq "global" -and -NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+#     Write-Warning "Administrator privileges are required for global installation. Attempting to re-launch as administrator..."
+#     try {
+#         $argumentList = @(
+#             "-NoProfile",
+#             "-ExecutionPolicy", "Bypass",
+#             "-File", "`"$PSCommandPath`"",
+#             "-Mode", "`"$Mode`"",
+#             "-ProtocolName", "`"$ProtocolName`"",
+#             "-ProtocolDescription", "`"$ProtocolDescription`"",
+#             "-ExeName", "`"$ExeName`""
+#         )
+#         Start-Process PowerShell.exe -Verb RunAs -ArgumentList $argumentList
+#         exit
+#     }
+#     catch {
+#         Write-Error "Failed to re-launch as administrator. Please run this script from an elevated PowerShell prompt for global installation."
+#         Read-Host "An error occurred. Press Enter to exit"
+#         exit 1
+#     }
+# }
 
 # Get the directory where this script is located
 $scriptRoot = $PSScriptRoot

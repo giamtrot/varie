@@ -8,10 +8,14 @@ from threading import Timer
 
 import sys
 
+# Get the directory where the executable/script was launched (argument 0)
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 CORS(app)
 
-DATA_FILE = "bbc_programs.json"
+# Use absolute path for data file
+DATA_FILE = os.path.join(SCRIPT_DIR, "bbc_programs.json")
 
 @app.route('/api/programs')
 def get_programs():
@@ -210,6 +214,13 @@ def open_browser(port, path=""):
 
 
 if __name__ == '__main__':
+    # Print running path on startup
+    print("="*60)
+    print("BBC Programs Application Starting...")
+    print(f"Running from: {SCRIPT_DIR}")
+    print(f"Data file path: {DATA_FILE}")
+    print("="*60)
+    
     # The bbc_parser.py script should be run first to generate the bbc_programs.json file.
     if not os.path.exists(DATA_FILE):
         print(f"Warning: {DATA_FILE} not found.")
