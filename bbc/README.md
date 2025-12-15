@@ -104,7 +104,7 @@ pip install pyinstaller
 From the project root (where `app.py` and `BBCNews.spec` are located), run:
 
 ```cmd
-pyinstaller --clean BBCNews.spec
+pyinstaller --clean BBCNews.spec --noconfirm 
 ```
 
 This spec file automatically bundles:

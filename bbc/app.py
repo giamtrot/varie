@@ -11,7 +11,11 @@ import sys
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 CORS(app)
 
-DATA_FILE = "bbc_programs.json"
+# Get the parent folder from sys.argv[0] and construct path to dist/bbc_programs.json
+# When running as .exe: sys.argv[0] = .../dist/BBCNews/BBCNews.exe
+# We need to go up 2 levels: BBCNews.exe -> BBCNews -> dist
+SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+DATA_FILE = os.path.join(SCRIPT_DIR, "bbc_programs.json")
 
 @app.route('/api/programs')
 def get_programs():
