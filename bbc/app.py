@@ -11,11 +11,27 @@ import sys
 app = Flask(__name__, static_folder='frontend/build', static_url_path='')
 CORS(app)
 
-# Get the parent folder from sys.argv[0] and construct path to dist/bbc_programs.json
-# When running as .exe: sys.argv[0] = .../dist/BBCNews/BBCNews.exe
-# We need to go up 2 levels: BBCNews.exe -> BBCNews -> dist
-SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
-DATA_FILE = os.path.join(SCRIPT_DIR, "bbc_programs.json")
+# Parse command-line arguments for optional data file parameter
+import argparse
+
+# Create parser but don't use parse_args() yet to avoid conflicts with other args
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument('--data-file', type=str, help='Path to the data file (bbc_programs.json)')
+
+# Parse known args to extract --data-file if present
+known_args, _ = parser.parse_known_args()
+
+# Determine data file path
+if known_args.data_file:
+    # Use the provided data file path
+    DATA_FILE = os.path.abspath(known_args.data_file)
+    SCRIPT_DIR = os.path.dirname(DATA_FILE)
+else:
+    # Get the parent folder from sys.argv[0] and construct path to dist/bbc_programs.json
+    # When running as .exe: sys.argv[0] = .../dist/BBCNews/BBCNews.exe
+    # We need to go up 2 levels: BBCNews.exe -> BBCNews -> dist
+    SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+    DATA_FILE = os.path.join(SCRIPT_DIR, "bbc_programs.json")
 
 @app.route('/api/programs')
 def get_programs():
@@ -41,7 +57,7 @@ def manage_disabled_programs():
     GET: Retrieve the list of disabled program links.
     POST: Save the list of disabled program links.
     """
-    disabled_file = "disabled_programs.json"
+    disabled_file = os.path.join(SCRIPT_DIR, "disabled_programs.json")
     
     if request.method == 'POST':
         try:
@@ -51,6 +67,7 @@ def manage_disabled_programs():
                 json.dump({"disabled": disabled_links}, f, indent=2)
             return jsonify({"message": "Disabled programs saved."}), 200
         except Exception as e:
+            print(f"Error saving disabled programs: {e}")
             return jsonify({"error": str(e)}), 500
     
     # GET request
@@ -62,6 +79,7 @@ def manage_disabled_programs():
         else:
             return jsonify({"disabled": []}), 200
     except Exception as e:
+        print(f"Error loading disabled programs: {e}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/review-keywords')
@@ -73,7 +91,7 @@ def get_review_keywords():
     import re
     import random
     
-    disabled_file = "disabled_programs.json"
+    disabled_file = os.path.join(SCRIPT_DIR, "disabled_programs.json")
     
     try:
         # Load disabled programs list
@@ -249,7 +267,7 @@ if __name__ == '__main__':
     
     
     # Check if the port is already in use
-    if is_port_in_use(port):
+    if not use_reloader and is_port_in_use(port):
         print(f"Port {port} is already in use. Another Flask server is likely running.")
         print("Opening browser to existing server instead of starting a new one.")
         open_browser(port, browser_path)
