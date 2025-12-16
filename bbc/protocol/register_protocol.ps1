@@ -128,7 +128,7 @@ Write-Host "Script running from: $scriptRoot"
 Write-Host "Installation Mode: $Mode"
 
 # Construct the full path to the executable
-$exePath = Join-Path -Path $scriptRoot -ChildPath "dist\$ExeName"
+$exePath = $ExeName
 
 # Check if the executable exists
 if (-NOT (Test-Path -Path $exePath -PathType Leaf)) {

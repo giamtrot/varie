@@ -11,7 +11,7 @@ To register the `bbcnews://` protocol handler, run the `register_protocol.ps1` s
 You can run it with default values:
 
 ```powershell
-.\register_protocol.ps1
+.\protocol\register_protocol.ps1
 ```
 
 Or, specify custom parameters:
@@ -21,6 +21,11 @@ Or, specify custom parameters:
 ```
 
 The script will automatically attempt to elevate itself if not run as an administrator.
+
+```powershell
+.\protocol\register_protocol.ps1 -ExeName C:\RGiammario\prg\github\varie\bbc\dist\BBCNews\BBCNews.exe
+.\protocol\register_protocol.ps1 -ExeName C:\RGiammario\prg\github\varie\bbc\dist\BBCNews\BBCNews.exe -Mode user
+```
 
 ### Uninstallation
 
