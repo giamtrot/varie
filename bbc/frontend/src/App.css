@@ -6,6 +6,12 @@
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: white;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.vibrant-card .card-body {
+  padding: 1.5rem;
 }
 
 .vibrant-card:hover {
