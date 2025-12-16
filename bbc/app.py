@@ -168,7 +168,7 @@ def reload_programs_stream():
         print("Starting parser stream...")
         try:
             # The parser yields lines of output
-            for line in run_parser():
+            for line in run_parser(data_dir=os.path.dirname(DATA_FILE)):
                 yield f"data: {json.dumps(line)}\n\n"
             
             # Signal completion
@@ -260,4 +260,4 @@ if __name__ == '__main__':
         if not use_reloader or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
             Timer(3, open_browser, args=[port, browser_path]).start()
     
-    app.run(use_reloader=use_reloader, port=port)
+        app.run(use_reloader=use_reloader, port=port)

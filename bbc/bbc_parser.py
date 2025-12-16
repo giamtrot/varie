@@ -228,6 +228,7 @@ def save_programs(filename, programs):
 def run_parser(max_pages=-1, stop_on_existing=True, data_dir=None):
     base_url = "https://www.bbc.com/audio/brand/p05hw4bq"
     DATA_FILE = resource_path("bbc_programs.json", data_dir)
+    yield f"Using data file: {DATA_FILE}"
 
     yield "==============="
     if max_pages == -1:
