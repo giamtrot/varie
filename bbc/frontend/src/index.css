@@ -1,0 +1,87 @@
+/* Import Google Fonts - Poppins for friendly, rounded typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* CSS Custom Properties - Vibrant Color Palette */
+:root {
+    /* Gradient backgrounds */
+    --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #ffdee9 50%, #ffd6e8 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+
+    /* Pastel card colors */
+    --card-blue: linear-gradient(135deg, #a8edea 0%, #d4f1f4 100%);
+    --card-pink: linear-gradient(135deg, #ffd6e8 0%, #ffe5ec 100%);
+    --card-mint: linear-gradient(135deg, #c3f0ca 0%, #e0f7e9 100%);
+    --card-lavender: linear-gradient(135deg, #e0c3fc 0%, #f0e5ff 100%);
+    --card-peach: linear-gradient(135deg, #ffd4a3 0%, #ffe8cc 100%);
+
+    /* Gradient buttons */
+    --btn-gradient-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --btn-gradient-pink: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --btn-gradient-orange: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --btn-gradient-purple: linear-gradient(135deg, #a8edea 0%, #667eea 100%);
+    --btn-gradient-teal: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+
+    /* Text colors */
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.18);
+
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+/* Global Styles */
+* {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+/* Container enhancements */
+.container {
+    max-width: 1200px;
+    padding: 2rem 1rem;
+}
+
+/* Headings with playful styling */
+h1 {
+    font-weight: 700;
+    color: #6b46c1;
+    text-shadow: 2px 2px 4px rgba(107, 70, 193, 0.1);
+    letter-spacing: -0.5px;
+}
+
+h5 {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}

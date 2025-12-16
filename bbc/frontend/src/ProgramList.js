@@ -94,30 +94,30 @@ function ProgramList() {
     <div className="container mt-4">
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>BBC Programs</h1>
+        <h1>🎬 BBC Programs</h1>
         <div className="d-flex gap-2">
-          <button className="btn btn-secondary" onClick={() => setShowDisabled(!showDisabled)}>
-            {showDisabled ? 'Hide Disabled' : 'Show Disabled'}
+          <button className="btn btn-gradient btn-gradient-purple" onClick={() => setShowDisabled(!showDisabled)}>
+            {showDisabled ? '👁️ Hide Disabled' : '👁️ Show Disabled'}
           </button>
-          <button className="btn btn-primary" onClick={handleReload} disabled={isReloading}>
+          <button className="btn btn-gradient btn-gradient-blue" onClick={handleReload} disabled={isReloading}>
             {isReloading ? (
               <>
                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Reloading...
+                🔄 Reloading...
               </>
             ) : (
-              'Reload Programs'
+              '🔄 Reload Programs'
             )}
           </button>
-          <Link to="/review" className="btn btn-info">Review</Link>
-          {showReloadStream && (!isReloading) && (<button className="btn btn-secondary" onClick={() => setShowReloadStream(false)}>
-            Hide Log
+          <Link to="/review" className="btn btn-gradient btn-gradient-pink">✨ Review</Link>
+          {showReloadStream && (!isReloading) && (<button className="btn btn-gradient btn-gradient-teal" onClick={() => setShowReloadStream(false)}>
+            📋 Hide Log
           </button>)}
         </div>
       </div>
 
       {showReloadStream && (
-        <div>
+        <div className="reload-stream-box">
           <ProgramReload key={reloadKey} onDone={handleReloadDone} />
         </div>
       )}
@@ -136,24 +136,24 @@ function ProgramList() {
               <div
                 key={program.link}
                 onClick={handleClick}
-                className={`list-group-item list-group-item-action flex-column align-items-start ${!isDisabled ? 'cursor-pointer' : ''}`}
-                style={isDisabled ? { opacity: 0.5 } : { cursor: 'pointer' }}
+                className={`program-list-item list-group-item list-group-item-action flex-column align-items-start ${isDisabled ? 'disabled' : ''}`}
+                style={!isDisabled ? { cursor: 'pointer' } : {}}
               >
                 <div className="d-flex w-100 justify-content-between align-items-start">
                   <div className="flex-grow-1">
-                    <h5 className="mb-1">{program.title}</h5>
-                    <p className="mb-1">{program.description}</p>
+                    <h5 className="mb-1">📺 {program.title}</h5>
+                    <p className="mb-1 text-secondary">{program.description}</p>
                   </div>
                   <div className="ms-2 d-flex gap-2 align-items-center">
-                    <small>{program.date}</small>
+                    <small className="text-muted">📅 {program.date}</small>
                     <button
-                      className={`btn btn-sm ${isDisabled ? 'btn-outline-success' : 'btn-outline-danger'}`}
+                      className={`btn btn-sm btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleDisable(e, program.link);
                       }}
                     >
-                      {isDisabled ? 'Enable' : 'Disable'}
+                      {isDisabled ? '✅ Enable' : '🚫 Disable'}
                     </button>
                   </div>
                 </div>

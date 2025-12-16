@@ -73,23 +73,25 @@ function ProgramDetail() {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <button onClick={() => navigate('/')} className="btn btn-secondary">Back to List</button>
+        <button onClick={() => navigate('/')} className="btn btn-gradient btn-gradient-purple">← Back to List</button>
         <button
-          className={`btn ${isDisabled ? 'btn-outline-success' : 'btn-outline-danger'}`}
+          className={`btn btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}
           onClick={toggleDisable}
         >
-          {isDisabled ? 'Enable Program' : 'Disable Program'}
+          {isDisabled ? '✅ Enable Program' : '🚫 Disable Program'}
         </button>
       </div>
-      <h1 className="mb-4">{program.title}</h1>
-      <p><strong>Date:</strong> {program.date}</p>
-      <p><strong>Description:</strong> {program.description}</p>
-      <p><strong>Link:</strong> <a href={program.link} target="_blank" rel="noopener noreferrer">{program.link}</a></p>
-      <p><strong>Full Content Link:</strong> <a href={program.full_content_link} target="_blank" rel="noopener noreferrer">{program.full_content_link}</a></p>
+      <h1 className="mb-4">📺 {program.title}</h1>
+      <div className="vibrant-card vibrant-card-lavender p-3 mb-4">
+        <p className="mb-2"><strong>📅 Date:</strong> {program.date}</p>
+        <p className="mb-2"><strong>📝 Description:</strong> {program.description}</p>
+        <p className="mb-2"><strong>🔗 Link:</strong> <a href={program.link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">{program.link}</a></p>
+        <p className="mb-0"><strong>📄 Full Content:</strong> <a href={program.full_content_link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">{program.full_content_link}</a></p>
+      </div>
 
-      <div className="card mt-4">
-        <div className="card-header">
-          Story
+      <div className="vibrant-card vibrant-card-blue mt-4">
+        <div className="card-header-gradient">
+          📖 Story
         </div>
         <div className="card-body">
           {program.story !== 'N/A' ? (
@@ -100,9 +102,9 @@ function ProgramDetail() {
         </div>
       </div>
 
-      <div className="card mt-4">
-        <div className="card-header">
-          Headlines
+      <div className="vibrant-card vibrant-card-pink mt-4">
+        <div className="card-header-gradient">
+          📰 Headlines
         </div>
         <div className="card-body">
           {program.headlines !== 'N/A' ? (
@@ -113,9 +115,9 @@ function ProgramDetail() {
         </div>
       </div>
 
-      <div className="card mt-4 mb-5">
-        <div className="card-header">
-          Keywords
+      <div className="vibrant-card vibrant-card-mint mt-4 mb-5">
+        <div className="card-header-gradient">
+          🔑 Keywords
         </div>
         <div className="card-body">
           {program.keywords !== 'N/A' ? (

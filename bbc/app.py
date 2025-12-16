@@ -213,7 +213,8 @@ def is_port_in_use(port):
         try:
             s.bind(('localhost', port))
             return False
-        except OSError:
+        except OSError as e:
+            print(f"Port {port} bind error. Error: {e}")    
             return True
 
 
@@ -243,6 +244,7 @@ if __name__ == '__main__':
     
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
+    # use_reloader = False
     port = 4000  # Default port
     
     

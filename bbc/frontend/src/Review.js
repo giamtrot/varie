@@ -43,16 +43,16 @@ function Review() {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Review Keywords</h1>
+        <h1>✨ Review Keywords</h1>
         <div>
           <button
-            className="btn btn-secondary me-2"
+            className="btn btn-gradient btn-gradient-blue me-2"
             onClick={loadRandomKeywords}
           >
             🔄 Get New Keywords
           </button>
           <button
-            className="btn btn-primary"
+            className="btn btn-gradient btn-gradient-purple"
             onClick={() => navigate('/')}
           >
             ← Back to Index
@@ -71,39 +71,45 @@ function Review() {
       ) : (
         <div>
           <div className="alert alert-info mb-4">
-            Here are 3 randomly selected keywords from disabled programs for review.
+            💡 Here are 3 randomly selected keywords from disabled programs for review.
           </div>
 
           <div className="row">
-            {keywords.map((keyword, index) => (
-              <div key={index} className="col-md-12 mb-4">
-                <div className="card border-primary">
-                  <div className="card-header bg-primary text-white">
-                    <div className="d-flex align-items-center">
-                      <span className="badge bg-light text-primary me-2">{index + 1}</span>
-                      <h5 className="mb-0">{keyword.text}</h5>
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div className="mb-3">
-                      <h6 className="text-muted">Definition:</h6>
-                      <p className="mb-0">{keyword.explanation}</p>
-                    </div>
-                    {keyword.example && (
-                      <div className="mb-3">
-                        <h6 className="text-muted">Example:</h6>
-                        <p className="mb-0 fst-italic">"{keyword.example}"</p>
+            {keywords.map((keyword, index) => {
+              // Cycle through different card colors
+              const cardColors = ['vibrant-card-blue', 'vibrant-card-pink', 'vibrant-card-mint'];
+              const cardColor = cardColors[index % cardColors.length];
+
+              return (
+                <div key={index} className="col-md-12 mb-4">
+                  <div className={`vibrant-card ${cardColor}`}>
+                    <div className="card-header-gradient">
+                      <div className="d-flex align-items-center">
+                        <span className="badge-number me-3">{index + 1}</span>
+                        <h5 className="mb-0 text-white">🔑 {keyword.text}</h5>
                       </div>
-                    )}
-                    <div>
-                      <small className="text-muted">
-                        <strong>Source:</strong> {keyword.programTitle}
-                      </small>
+                    </div>
+                    <div className="card-body">
+                      <div className="mb-3">
+                        <h6 className="text-muted">📖 Definition:</h6>
+                        <p className="mb-0">{keyword.explanation}</p>
+                      </div>
+                      {keyword.example && (
+                        <div className="mb-3">
+                          <h6 className="text-muted">💬 Example:</h6>
+                          <p className="mb-0 fst-italic">"{keyword.example}"</p>
+                        </div>
+                      )}
+                      <div>
+                        <small className="text-muted">
+                          <strong>📺 Source:</strong> {keyword.programTitle}
+                        </small>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
