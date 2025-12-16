@@ -204,6 +204,19 @@ def serve_review(path):
     return send_from_directory(app.static_folder, "index.html") 
 
 
+def is_port_in_use(port):
+    """
+    Check if a port is already in use.
+    """
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.bind(('localhost', port))
+            return False
+        except OSError:
+            return True
+
+
 def open_browser(port, path=""):
     """
     Open the default web browser to the application's URL.
@@ -225,18 +238,26 @@ if __name__ == '__main__':
     
     # Check if arg 1 ends with "review"
     browser_path = ""
-    if len(sys.argv) > 1 and sys.argv[1].endswith("review"):
+    if len(sys.argv) > 1 and ( sys.argv[1].endswith("review") or sys.argv[1].endswith("review/")):
         browser_path = "/review"
     
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
     port = 4000  # Default port
-    print(f"Starting Flask app on port {port} with reloader={'enabled' if use_reloader else 'disabled'}")
     
-    # Open the browser in a new thread after a short delay
-    # The 'WERKZEUG_RUN_MAIN' environment variable is set by Werkzeug when the reloader is active,
-    # but only for the main process, not the reloader's child process.
-    if not use_reloader or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        Timer(1, open_browser, args=[port, browser_path]).start()
-
+    
+    # Check if the port is already in use
+    if is_port_in_use(port):
+        print(f"Port {port} is already in use. Another Flask server is likely running.")
+        print("Opening browser to existing server instead of starting a new one.")
+        open_browser(port, browser_path)
+    else:
+        print(f"Starting Flask app on port {port} with reloader={'enabled' if use_reloader else 'disabled'}")
+        
+        # Open the browser in a new thread after a short delay
+        # The 'WERKZEUG_RUN_MAIN' environment variable is set by Werkzeug when the reloader is active,
+        # but only for the main process, not the reloader's child process.
+        if not use_reloader or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+            Timer(3, open_browser, args=[port, browser_path]).start()
+    
     app.run(use_reloader=use_reloader, port=port)
