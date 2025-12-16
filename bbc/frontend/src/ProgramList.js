@@ -136,7 +136,7 @@ function ProgramList() {
               <div
                 key={program.link}
                 onClick={handleClick}
-                className={`program-list-item list-group-item list-group-item-action flex-column align-items-start ${isDisabled ? 'disabled' : ''}`}
+                className={`program-list-item list-group-item list-group-item-action flex-column align-items-start`}
                 style={!isDisabled ? { cursor: 'pointer' } : {}}
               >
                 <div className="d-flex w-100 justify-content-between align-items-start">

@@ -58,16 +58,21 @@ def manage_disabled_programs():
     POST: Save the list of disabled program links.
     """
     disabled_file = os.path.join(SCRIPT_DIR, "disabled_programs.json")
+    print(f"Disabled programs file path: {os.path.abspath(disabled_file)}")
     
     if request.method == 'POST':
         try:
             data = request.get_json()
             disabled_links = data.get('disabled', [])
+            print(f"Saving {len(disabled_links)} disabled programs to {disabled_file}")
             with open(disabled_file, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump({"disabled": disabled_links}, f, indent=2)
+            print("Successfully saved disabled programs")
             return jsonify({"message": "Disabled programs saved."}), 200
         except Exception as e:
             print(f"Error saving disabled programs: {e}")
+            import traceback
+            traceback.print_exc()
             return jsonify({"error": str(e)}), 500
     
     # GET request
@@ -75,11 +80,15 @@ def manage_disabled_programs():
         if os.path.exists(disabled_file):
             with open(disabled_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+            print(f"Loaded {len(data.get('disabled', []))} disabled programs")
             return jsonify(data), 200
         else:
+            print(f"Disabled programs file does not exist, returning empty list")
             return jsonify({"disabled": []}), 200
     except Exception as e:
         print(f"Error loading disabled programs: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/review-keywords')
