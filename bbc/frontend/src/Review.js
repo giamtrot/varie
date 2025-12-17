@@ -7,7 +7,7 @@ function Review() {
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   useEffect(() => {
     loadRandomKeywords();
@@ -48,7 +48,7 @@ function Review() {
         <h1>✨ Review Keywords</h1>
         <div className="d-flex gap-2">
           <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
-            {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            🎨 Theme: {themeName}
           </button>
           <button
             className="btn btn-gradient btn-gradient-blue"

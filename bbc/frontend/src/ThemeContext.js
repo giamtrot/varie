@@ -2,6 +2,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+// Define all available themes
+const THEMES = ['vibrant', 'midnight-ocean', 'sunset-noir', 'cyberpunk-neon'];
+
+const THEME_NAMES = {
+  'vibrant': 'Vibrant Cards',
+  'midnight-ocean': 'Midnight Ocean',
+  'sunset-noir': 'Sunset Noir',
+  'cyberpunk-neon': 'Cyberpunk Neon'
+};
+
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -24,13 +34,18 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'vibrant' ? 'glassmorphism' : 'vibrant');
+    setTheme(prevTheme => {
+      const currentIndex = THEMES.indexOf(prevTheme);
+      const nextIndex = (currentIndex + 1) % THEMES.length;
+      return THEMES[nextIndex];
+    });
   };
 
   const value = {
     theme,
     toggleTheme,
-    isDark: theme === 'glassmorphism'
+    isDark: theme !== 'vibrant',
+    themeName: THEME_NAMES[theme]
   };
 
   return (

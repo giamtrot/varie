@@ -9,7 +9,7 @@ function ProgramDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   useEffect(() => {
     fetch('/api/programs')
@@ -78,7 +78,7 @@ function ProgramDetail() {
         <button onClick={() => navigate('/')} className="btn btn-gradient btn-gradient-purple">← Back to List</button>
         <div className="d-flex gap-2">
           <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
-            {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            🎨 Theme: {themeName}
           </button>
           <button
             className={`btn btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}

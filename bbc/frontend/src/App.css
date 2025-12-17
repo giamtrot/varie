@@ -10,13 +10,16 @@
   margin-right: 1rem;
 }
 
-/* Glassmorphism effect for dark theme */
-[data-theme="glassmorphism"] .vibrant-card {
+/* Glassmorphism effect for all dark themes */
+[data-theme="midnight-ocean"] .vibrant-card,
+[data-theme="sunset-noir"] .vibrant-card,
+[data-theme="cyberpunk-neon"] .vibrant-card {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 
 
 .vibrant-card .card-body {
@@ -138,8 +141,10 @@
   overflow: hidden;
 }
 
-/* Glassmorphism effect for dark theme */
-[data-theme="glassmorphism"] .program-list-item {
+/* Glassmorphism effect for all dark themes */
+[data-theme="midnight-ocean"] .program-list-item,
+[data-theme="sunset-noir"] .program-list-item,
+[data-theme="cyberpunk-neon"] .program-list-item {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -208,13 +213,15 @@
   border-left: 4px solid #667eea;
 }
 
-/* Glassmorphism effect for dark theme */
-[data-theme="glassmorphism"] .reload-stream-box {
+/* Glassmorphism effect for all dark themes */
+[data-theme="midnight-ocean"] .reload-stream-box,
+[data-theme="sunset-noir"] .reload-stream-box,
+[data-theme="cyberpunk-neon"] .reload-stream-box {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 4px solid #b24bf3;
+  border-left: 4px solid var(--btn-gradient-purple);
 }
 
 

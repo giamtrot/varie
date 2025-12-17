@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Theme Previews - BBC Programs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-preview {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .theme-preview:hover {
+            transform: translateY(-8px);
+        }
+
+        .theme-header {
+            padding: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .theme-content {
+            padding: 2rem;
+            min-height: 500px;
+        }
+
+        .card {
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Option 1: Midnight Ocean */
+        .midnight-ocean {
+            background: linear-gradient(135deg, #0a192f 0%, #1e3a5f 50%, #2c5f7f 100%);
+        }
+
+        .midnight-ocean .theme-header {
+            background: linear-gradient(135deg, #00d9ff 0%, #00a3cc 100%);
+            color: white;
+        }
+
+        .midnight-ocean .card {
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 217, 255, 0.2);
+            color: #e0f7ff;
+        }
+
+        .midnight-ocean .btn {
+            background: linear-gradient(135deg, #00d9ff 0%, #40e0d0 100%);
+            color: white;
+        }
+
+        .midnight-ocean h3 {
+            color: #7fffd4;
+            margin-bottom: 1rem;
+        }
+
+        .midnight-ocean p {
+            color: #b8e6f0;
+        }
+
+        /* Option 2: Sunset Noir */
+        .sunset-noir {
+            background: linear-gradient(135deg, #1a0033 0%, #2d1b3d 50%, #4a1942 100%);
+        }
+
+        .sunset-noir .theme-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8c42 100%);
+            color: white;
+        }
+
+        .sunset-noir .card {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 140, 66, 0.3);
+            box-shadow: 0 4px 16px rgba(255, 107, 107, 0.2);
+            color: #ffe8d6;
+        }
+
+        .sunset-noir .btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #f4a261 100%);
+            color: white;
+        }
+
+        .sunset-noir h3 {
+            color: #ff8c42;
+            margin-bottom: 1rem;
+        }
+
+        .sunset-noir p {
+            color: #f4d4c4;
+        }
+
+        /* Option 3: Cyberpunk Neon */
+        .cyberpunk-neon {
+            background: linear-gradient(135deg, #0d0221 0%, #1a0b2e 50%, #240046 100%);
+        }
+
+        .cyberpunk-neon .theme-header {
+            background: linear-gradient(135deg, #ff006e 0%, #00f5ff 100%);
+            color: white;
+        }
+
+        .cyberpunk-neon .card {
+            background: rgba(255, 0, 110, 0.08);
+            border: 1px solid rgba(0, 245, 255, 0.4);
+            box-shadow: 0 4px 16px rgba(255, 0, 110, 0.3), 0 0 20px rgba(0, 245, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .cyberpunk-neon .btn {
+            background: linear-gradient(135deg, #ff006e 0%, #00f5ff 100%);
+            color: white;
+        }
+
+        .cyberpunk-neon h3 {
+            color: #00f5ff;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+        }
+
+        .cyberpunk-neon p {
+            color: #e0e0e0;
+        }
+
+        .small-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Dark Theme Options for BBC Programs</h1>
+        
+        <div class="theme-grid">
+            <!-- Option 1: Midnight Ocean -->
+            <div class="theme-preview midnight-ocean">
+                <div class="theme-header">
+                    🌊 Option 1: Midnight Ocean
+                </div>
+                <div class="theme-content">
+                    <div class="card">
+                        <h3>📺 BBC News at Six</h3>
+                        <p>The latest national and international news stories from the BBC News team.</p>
+                        <p class="small-text">📅 2024-12-16</p>
+                        <div class="badge" style="background: rgba(0, 217, 255, 0.2); color: #7fffd4; border: 1px solid rgba(127, 255, 212, 0.3);">Featured</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🎬 Panorama</h3>
+                        <p>Current affairs programme, featuring interviews and investigative reports.</p>
+                        <p class="small-text">📅 2024-12-15</p>
+                    </div>
+                    
+                    <button class="btn">🔄 Reload Programs</button>
+                    <button class="btn">✨ Review</button>
+                    
+                    <p style="margin-top: 2rem; text-align: center; color: #7fffd4; font-size: 0.9rem;">
+                        <strong>Vibe:</strong> Professional, calming, oceanic
+                    </p>
+                </div>
+            </div>
+
+            <!-- Option 2: Sunset Noir -->
+            <div class="theme-preview sunset-noir">
+                <div class="theme-header">
+                    🌆 Option 2: Sunset Noir
+                </div>
+                <div class="theme-content">
+                    <div class="card">
+                        <h3>📺 BBC News at Six</h3>
+                        <p>The latest national and international news stories from the BBC News team.</p>
+                        <p class="small-text">📅 2024-12-16</p>
+                        <div class="badge" style="background: rgba(255, 107, 107, 0.2); color: #ff8c42; border: 1px solid rgba(255, 140, 66, 0.3);">Featured</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🎬 Panorama</h3>
+                        <p>Current affairs programme, featuring interviews and investigative reports.</p>
+                        <p class="small-text">📅 2024-12-15</p>
+                    </div>
+                    
+                    <button class="btn">🔄 Reload Programs</button>
+                    <button class="btn">✨ Review</button>
+                    
+                    <p style="margin-top: 2rem; text-align: center; color: #ff8c42; font-size: 0.9rem;">
+                        <strong>Vibe:</strong> Warm, sophisticated, evening ambiance
+                    </p>
+                </div>
+            </div>
+
+            <!-- Option 3: Cyberpunk Neon -->
+            <div class="theme-preview cyberpunk-neon">
+                <div class="theme-header">
+                    ⚡ Option 3: Cyberpunk Neon
+                </div>
+                <div class="theme-content">
+                    <div class="card">
+                        <h3>📺 BBC News at Six</h3>
+                        <p>The latest national and international news stories from the BBC News team.</p>
+                        <p class="small-text">📅 2024-12-16</p>
+                        <div class="badge" style="background: rgba(255, 0, 110, 0.2); color: #00f5ff; border: 1px solid rgba(0, 245, 255, 0.4);">Featured</div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🎬 Panorama</h3>
+                        <p>Current affairs programme, featuring interviews and investigative reports.</p>
+                        <p class="small-text">📅 2024-12-15</p>
+                    </div>
+                    
+                    <button class="btn">🔄 Reload Programs</button>
+                    <button class="btn">✨ Review</button>
+                    
+                    <p style="margin-top: 2rem; text-align: center; color: #00f5ff; font-size: 0.9rem;">
+                        <strong>Vibe:</strong> Futuristic, high-energy, cyberpunk
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+            <h2 style="margin-bottom: 1rem; color: #333;">Which theme do you prefer?</h2>
+            <p style="color: #666; margin-bottom: 1rem;">Let me know which option you'd like (1, 2, or 3) and I'll implement it!</p>
+            <p style="color: #999; font-size: 0.9rem;">💡 Tip: Hover over each preview to see the hover effect</p>
+        </div>
+    </div>
+</body>
+</html>

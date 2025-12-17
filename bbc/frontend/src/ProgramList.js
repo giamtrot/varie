@@ -13,7 +13,7 @@ function ProgramList() {
   const [disabledPrograms, setDisabledPrograms] = useState(new Set());
   const [showDisabled, setShowDisabled] = useState(false);
   const navigate = useNavigate();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);
@@ -99,7 +99,7 @@ function ProgramList() {
         <h1>🎬 BBC Programs</h1>
         <div className="d-flex gap-2">
           <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
-            {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            🎨 Theme: {themeName}
           </button>
           <button className="btn btn-gradient btn-gradient-purple" onClick={() => setShowDisabled(!showDisabled)}>
             {showDisabled ? '👁️ Hide Disabled' : '👁️ Show Disabled'}
