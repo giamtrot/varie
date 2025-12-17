@@ -238,3 +238,43 @@ html {
 [data-theme="cyberpunk-neon"] small {
     color: var(--text-muted) !important;
 }
+
+/* Dark theme overrides for card content (Headlines, Keywords, etc.) */
+[data-theme="midnight-ocean"] .card-body,
+[data-theme="sunset-noir"] .card-body,
+[data-theme="cyberpunk-neon"] .card-body {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body div,
+[data-theme="sunset-noir"] .card-body div,
+[data-theme="cyberpunk-neon"] .card-body div {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body span,
+[data-theme="sunset-noir"] .card-body span,
+[data-theme="cyberpunk-neon"] .card-body span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body ul,
+[data-theme="midnight-ocean"] .card-body li,
+[data-theme="sunset-noir"] .card-body ul,
+[data-theme="sunset-noir"] .card-body li,
+[data-theme="cyberpunk-neon"] .card-body ul,
+[data-theme="cyberpunk-neon"] .card-body li {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body strong,
+[data-theme="sunset-noir"] .card-body strong,
+[data-theme="cyberpunk-neon"] .card-body strong {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body a,
+[data-theme="sunset-noir"] .card-body a,
+[data-theme="cyberpunk-neon"] .card-body a {
+    color: var(--text-secondary) !important;
+}
