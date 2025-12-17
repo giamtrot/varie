@@ -200,3 +200,41 @@ h5 {
 html {
     scroll-behavior: smooth;
 }
+
+/* Dark theme text overrides for better readability */
+[data-theme="midnight-ocean"] h1,
+[data-theme="sunset-noir"] h1,
+[data-theme="cyberpunk-neon"] h1 {
+    color: var(--text-primary) !important;
+    text-shadow: 2px 2px 8px rgba(0, 217, 255, 0.3);
+}
+
+[data-theme="midnight-ocean"] h5,
+[data-theme="sunset-noir"] h5,
+[data-theme="cyberpunk-neon"] h5 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .text-secondary,
+[data-theme="sunset-noir"] .text-secondary,
+[data-theme="cyberpunk-neon"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="midnight-ocean"] .text-muted,
+[data-theme="sunset-noir"] .text-muted,
+[data-theme="cyberpunk-neon"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="midnight-ocean"] p,
+[data-theme="sunset-noir"] p,
+[data-theme="cyberpunk-neon"] p {
+    color: var(--text-primary);
+}
+
+[data-theme="midnight-ocean"] small,
+[data-theme="sunset-noir"] small,
+[data-theme="cyberpunk-neon"] small {
+    color: var(--text-muted) !important;
+}
