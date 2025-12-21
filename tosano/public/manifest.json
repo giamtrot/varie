@@ -1,0 +1,26 @@
+{
+	"name": "Tosano Utility",
+	"version": "1.0",
+	"manifest_version": 3,
+	"content_scripts": [
+		{
+			"matches": [
+				"https://www.latuaspesa.com/*"
+			],
+			"js": [
+				"loader.js"
+			]
+		}
+	],
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"host_permissions": [
+		"https://www.latuaspesa.com/*"
+	],
+	"permissions": [
+		"history",
+		"scripting"
+	]
+}
