@@ -14,10 +14,24 @@ log("after start")
 function start() {
 
 	log("Starting Sort")
+	setInterval(() => {
+		checkSort()
+	}, 1000);
+}
 
+function checkSort() {
+	log("Checking Sort")
 	// Load sort menu
 	const sortArea = Array.from(document.querySelectorAll("span")).findLast(it => it.textContent === "Ordina per");
 	log("Found sort area:", sortArea);
+	if (!sortArea) return
+
+	const sortInput = sortArea?.parentNode?.querySelector("input[type='text']")?.previousSibling as HTMLDivElement;
+	log("Found sort input:", sortInput);
+	if (sortInput?.textContent === "Prezzo al kg crescente") {
+		log("Already sorted")
+		return
+	}
 
 	const sortButton = sortArea?.parentNode?.querySelector("div[role='button']") as HTMLDivElement;
 	log("Found sort button:", sortButton);
