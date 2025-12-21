@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from './ThemeContext';
 import ProgramReload from './ProgramReload';
 
 function ProgramList() {
@@ -12,6 +13,7 @@ function ProgramList() {
   const [disabledPrograms, setDisabledPrograms] = useState(new Set());
   const [showDisabled, setShowDisabled] = useState(false);
   const navigate = useNavigate();
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);
@@ -96,6 +98,9 @@ function ProgramList() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>🎬 BBC Programs</h1>
         <div className="d-flex gap-2">
+          <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
+            🎨 Theme: {themeName}
+          </button>
           <button className="btn btn-gradient btn-gradient-purple" onClick={() => setShowDisabled(!showDisabled)}>
             {showDisabled ? '👁️ Hide Disabled' : '👁️ Show Disabled'}
           </button>

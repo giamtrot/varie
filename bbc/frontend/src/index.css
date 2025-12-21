@@ -1,7 +1,7 @@
 /* Import Google Fonts - Poppins for friendly, rounded typography */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* CSS Custom Properties - Vibrant Color Palette */
+/* CSS Custom Properties - Vibrant Color Palette (Default Theme) */
 :root {
     /* Gradient backgrounds */
     --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #ffdee9 50%, #ffd6e8 100%);
@@ -38,6 +38,121 @@
     --radius-lg: 16px;
     --radius-xl: 20px;
 }
+
+/* OPTION 1: Midnight Ocean Theme - Professional & Calming */
+[data-theme="midnight-ocean"] {
+    /* Deep navy blue to teal gradient backgrounds */
+    --bg-gradient: linear-gradient(135deg, #0a192f 0%, #112240 50%, #1e3a5f 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #0a192f 0%, #1e3a5f 100%);
+
+    /* Ocean-inspired card colors with cyan glow */
+    --card-blue: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(64, 224, 208, 0.15) 100%);
+    --card-pink: linear-gradient(135deg, rgba(127, 255, 212, 0.1) 0%, rgba(0, 217, 255, 0.15) 100%);
+    --card-mint: linear-gradient(135deg, rgba(64, 224, 208, 0.1) 0%, rgba(127, 255, 212, 0.15) 100%);
+    --card-lavender: linear-gradient(135deg, rgba(0, 191, 255, 0.1) 0%, rgba(64, 224, 208, 0.15) 100%);
+    --card-peach: linear-gradient(135deg, rgba(72, 209, 204, 0.1) 0%, rgba(0, 217, 255, 0.15) 100%);
+
+    /* Ocean-inspired gradient buttons */
+    --btn-gradient-blue: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+    --btn-gradient-pink: linear-gradient(135deg, #40e0d0 0%, #00bfae 100%);
+    --btn-gradient-orange: linear-gradient(135deg, #7fffd4 0%, #20b2aa 100%);
+    --btn-gradient-purple: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+    --btn-gradient-teal: linear-gradient(135deg, #48d1cc 0%, #00ced1 100%);
+
+    /* Light cyan/white text for ocean theme */
+    --text-primary: #e6f7ff;
+    --text-secondary: #b3e5fc;
+    --text-muted: #81d4fa;
+
+    /* Cyan glowing shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 217, 255, 0.2);
+    --shadow-md: 0 4px 16px rgba(0, 217, 255, 0.3);
+    --shadow-lg: 0 8px 24px rgba(0, 217, 255, 0.4);
+    --shadow-hover: 0 12px 32px rgba(0, 217, 255, 0.5);
+
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+/* OPTION 2: Sunset Noir Theme - Warm & Sophisticated */
+[data-theme="sunset-noir"] {
+    /* Deep purple to warm gradient backgrounds */
+    --bg-gradient: linear-gradient(135deg, #1a0033 0%, #2d1b3d 50%, #4a1942 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #1a0033 0%, #3d1f47 100%);
+
+    /* Warm sunset-inspired card colors */
+    --card-blue: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(244, 162, 97, 0.15) 100%);
+    --card-pink: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(255, 107, 107, 0.15) 100%);
+    --card-mint: linear-gradient(135deg, rgba(244, 162, 97, 0.1) 0%, rgba(255, 140, 66, 0.15) 100%);
+    --card-lavender: linear-gradient(135deg, rgba(231, 111, 81, 0.1) 0%, rgba(244, 162, 97, 0.15) 100%);
+    --card-peach: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(255, 179, 71, 0.15) 100%);
+
+    /* Warm sunset gradient buttons */
+    --btn-gradient-blue: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    --btn-gradient-pink: linear-gradient(135deg, #ff8c42 0%, #ff6b6b 100%);
+    --btn-gradient-orange: linear-gradient(135deg, #f4a261 0%, #e76f51 100%);
+    --btn-gradient-purple: linear-gradient(135deg, #d946a6 0%, #c2255c 100%);
+    --btn-gradient-teal: linear-gradient(135deg, #ffb347 0%, #ff8c42 100%);
+
+    /* Warm white/cream text */
+    --text-primary: #fff5eb;
+    --text-secondary: #ffe4cc;
+    --text-muted: #ffd4a3;
+
+    /* Warm orange/pink glowing shadows */
+    --shadow-sm: 0 2px 8px rgba(244, 162, 97, 0.2);
+    --shadow-md: 0 4px 16px rgba(244, 162, 97, 0.3);
+    --shadow-lg: 0 8px 24px rgba(244, 162, 97, 0.4);
+    --shadow-hover: 0 12px 32px rgba(244, 162, 97, 0.5);
+
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+/* OPTION 3: Cyberpunk Neon Theme - Bold & Futuristic */
+[data-theme="cyberpunk-neon"] {
+    /* Very dark blue-black gradient backgrounds */
+    --bg-gradient: linear-gradient(135deg, #0d0221 0%, #1a0b2e 50%, #0f0514 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #0d0221 0%, #1a0b2e 100%);
+
+    /* High-contrast neon card colors */
+    --card-blue: linear-gradient(135deg, rgba(0, 245, 255, 0.15) 0%, rgba(0, 245, 255, 0.2) 100%);
+    --card-pink: linear-gradient(135deg, rgba(255, 0, 110, 0.15) 0%, rgba(255, 0, 110, 0.2) 100%);
+    --card-mint: linear-gradient(135deg, rgba(204, 255, 0, 0.15) 0%, rgba(204, 255, 0, 0.2) 100%);
+    --card-lavender: linear-gradient(135deg, rgba(138, 43, 226, 0.15) 0%, rgba(138, 43, 226, 0.2) 100%);
+    --card-peach: linear-gradient(135deg, rgba(255, 20, 147, 0.15) 0%, rgba(255, 105, 180, 0.2) 100%);
+
+    /* Bold neon gradient buttons */
+    --btn-gradient-blue: linear-gradient(135deg, #00f5ff 0%, #00bfff 100%);
+    --btn-gradient-pink: linear-gradient(135deg, #ff006e 0%, #ff1493 100%);
+    --btn-gradient-orange: linear-gradient(135deg, #ff6ec7 0%, #ff1493 100%);
+    --btn-gradient-purple: linear-gradient(135deg, #8a2be2 0%, #9d4edd 100%);
+    --btn-gradient-teal: linear-gradient(135deg, #ccff00 0%, #7fff00 100%);
+
+    /* Bright white with neon highlights */
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #b0b0b0;
+
+    /* Multi-color neon glowing shadows */
+    --shadow-sm: 0 2px 8px rgba(255, 0, 110, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 245, 255, 0.4);
+    --shadow-lg: 0 8px 24px rgba(255, 0, 110, 0.5);
+    --shadow-hover: 0 12px 32px rgba(0, 245, 255, 0.6);
+
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
 
 /* Global Styles */
 * {
@@ -84,4 +199,82 @@ h5 {
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
+}
+
+/* Dark theme text overrides for better readability */
+[data-theme="midnight-ocean"] h1,
+[data-theme="sunset-noir"] h1,
+[data-theme="cyberpunk-neon"] h1 {
+    color: var(--text-primary) !important;
+    text-shadow: 2px 2px 8px rgba(0, 217, 255, 0.3);
+}
+
+[data-theme="midnight-ocean"] h5,
+[data-theme="sunset-noir"] h5,
+[data-theme="cyberpunk-neon"] h5 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .text-secondary,
+[data-theme="sunset-noir"] .text-secondary,
+[data-theme="cyberpunk-neon"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="midnight-ocean"] .text-muted,
+[data-theme="sunset-noir"] .text-muted,
+[data-theme="cyberpunk-neon"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="midnight-ocean"] p,
+[data-theme="sunset-noir"] p,
+[data-theme="cyberpunk-neon"] p {
+    color: var(--text-primary);
+}
+
+[data-theme="midnight-ocean"] small,
+[data-theme="sunset-noir"] small,
+[data-theme="cyberpunk-neon"] small {
+    color: var(--text-muted) !important;
+}
+
+/* Dark theme overrides for card content (Headlines, Keywords, etc.) */
+[data-theme="midnight-ocean"] .card-body,
+[data-theme="sunset-noir"] .card-body,
+[data-theme="cyberpunk-neon"] .card-body {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body div,
+[data-theme="sunset-noir"] .card-body div,
+[data-theme="cyberpunk-neon"] .card-body div {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body span,
+[data-theme="sunset-noir"] .card-body span,
+[data-theme="cyberpunk-neon"] .card-body span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body ul,
+[data-theme="midnight-ocean"] .card-body li,
+[data-theme="sunset-noir"] .card-body ul,
+[data-theme="sunset-noir"] .card-body li,
+[data-theme="cyberpunk-neon"] .card-body ul,
+[data-theme="cyberpunk-neon"] .card-body li {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body strong,
+[data-theme="sunset-noir"] .card-body strong,
+[data-theme="cyberpunk-neon"] .card-body strong {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="midnight-ocean"] .card-body a,
+[data-theme="sunset-noir"] .card-body a,
+[data-theme="cyberpunk-neon"] .card-body a {
+    color: var(--text-secondary) !important;
 }

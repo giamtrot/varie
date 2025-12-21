@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from './ThemeContext';
 
 function Review() {
   const navigate = useNavigate();
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   useEffect(() => {
     loadRandomKeywords();
@@ -44,9 +46,12 @@ function Review() {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>✨ Review Keywords</h1>
-        <div>
+        <div className="d-flex gap-2">
+          <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
+            🎨 Theme: {themeName}
+          </button>
           <button
-            className="btn btn-gradient btn-gradient-blue me-2"
+            className="btn btn-gradient btn-gradient-blue"
             onClick={loadRandomKeywords}
           >
             🔄 Get New Keywords

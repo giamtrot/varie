@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTheme } from './ThemeContext';
 
 function ProgramDetail() {
   const { programLink } = useParams();
@@ -8,6 +9,7 @@ function ProgramDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { theme, toggleTheme, isDark, themeName } = useTheme();
 
   useEffect(() => {
     fetch('/api/programs')
@@ -74,12 +76,17 @@ function ProgramDetail() {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <button onClick={() => navigate('/')} className="btn btn-gradient btn-gradient-purple">← Back to List</button>
-        <button
-          className={`btn btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}
-          onClick={toggleDisable}
-        >
-          {isDisabled ? '✅ Enable Program' : '🚫 Disable Program'}
-        </button>
+        <div className="d-flex gap-2">
+          <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
+            🎨 Theme: {themeName}
+          </button>
+          <button
+            className={`btn btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}
+            onClick={toggleDisable}
+          >
+            {isDisabled ? '✅ Enable Program' : '🚫 Disable Program'}
+          </button>
+        </div>
       </div>
       <h1 className="mb-4">📺 {program.title}</h1>
       <div className="vibrant-card vibrant-card-lavender p-3 mb-4">
