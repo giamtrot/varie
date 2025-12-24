@@ -89,6 +89,9 @@ function ProgramList() {
     });
   };
 
+  const totalPrograms = programs.length;
+  const enabledPrograms = programs.filter(p => !disabledPrograms.has(p.link)).length;
+
   if (loading && programs.length === 0) return <div className="text-center mt-5">Loading programs...</div>;
   if (error) return <div className="alert alert-danger mt-5" role="alert">Error: {error.message}</div>;
 
@@ -96,7 +99,17 @@ function ProgramList() {
     <div className="container mt-4">
 
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>🎬 BBC Programs</h1>
+        <div>
+          <h1>🎬 BBC Programs</h1>
+          <div className="d-flex gap-2 align-items-center mt-1">
+            <span className="badge bg-primary-gradient">
+              ✅ {enabledPrograms} Enabled
+            </span>
+            <span className="badge bg-secondary-gradient">
+              📊 {totalPrograms} Total
+            </span>
+          </div>
+        </div>
         <div className="d-flex gap-2">
           <button className="btn btn-gradient btn-gradient-purple" onClick={toggleTheme}>
             🎨 Theme: {themeName}

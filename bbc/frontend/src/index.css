@@ -276,5 +276,24 @@ html {
 [data-theme="midnight-ocean"] .card-body a,
 [data-theme="sunset-noir"] .card-body a,
 [data-theme="cyberpunk-neon"] .card-body a {
-    color: var(--text-secondary) !important;
+color: var(--text-secondary) !important;
+}
+
+/* Badge Styles */
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.bg-secondary-gradient {
+    background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
 }

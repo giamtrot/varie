@@ -20,6 +20,7 @@ import argparse
 # Create parser but don't use parse_args() yet to avoid conflicts with other args
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('--data-file', type=str, help='Path to the data file (bbc_programs.json)')
+parser.add_argument('--port', type=int, default=4000, help='Port to run the server on (default: 4000)')
 
 # Parse known args to extract --data-file if present
 known_args, _ = parser.parse_known_args()
@@ -282,7 +283,7 @@ if __name__ == '__main__':
     # Disable reloader when running from a PyInstaller bundle
     use_reloader = not getattr(sys, 'frozen', False)
     # use_reloader = False
-    port = 4000  # Default port
+    port = known_args.port
     
     
     # Check if the port is already in use
