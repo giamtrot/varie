@@ -37,14 +37,39 @@ function ProgramDetail() {
 
   const parsedHeadlines = useMemo(() => {
     if (!program || !program.headlines || program.headlines === 'N/A') return [];
-    const lines = program.headlines.split('\n').map(l => l.trim()).filter(l => l !== '');
+    // Split by newline and filter out empty lines
+    const rawLines = program.headlines.split('\n').map(l => l.trim()).filter(l => l !== '');
     const result = [];
-    for (let i = 0; i < lines.length; i += 2) {
-      if (lines[i]) {
+
+    let i = 0;
+    while (i < rawLines.length) {
+      const currentLine = rawLines[i];
+      // Check if this line contains its own source via <br/> or <br>
+      if (currentLine.includes('<br/>') || currentLine.includes('<br>')) {
+        const parts = currentLine.split(/<br\s*\/?>/i);
         result.push({
-          text: lines[i],
-          source: lines[i + 1] || ''
+          text: parts[0].trim(),
+          source: parts[1] ? parts[1].trim() : ''
         });
+        i++;
+      } else {
+        // If it doesn't have <br/>, it might be a headline with the source on the next line
+        const nextLine = rawLines[i + 1];
+        // If next line exists and doesn't have its own source/looks like a source line
+        if (nextLine && !nextLine.includes('<br/>') && !nextLine.includes('<br>')) {
+          result.push({
+            text: currentLine,
+            source: nextLine
+          });
+          i += 2;
+        } else {
+          // Just a headline without a clear source line
+          result.push({
+            text: currentLine,
+            source: ''
+          });
+          i++;
+        }
       }
     }
     return result;
