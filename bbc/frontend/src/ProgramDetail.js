@@ -11,6 +11,12 @@ function ProgramDetail() {
   const [isDisabled, setIsDisabled] = useState(false);
   const { theme, toggleTheme, isDark, themeName } = useTheme();
 
+  const [isEditingHeadlines, setIsEditingHeadlines] = useState(false);
+  const [isEditingKeywords, setIsEditingKeywords] = useState(false);
+  const [editedHeadlines, setEditedHeadlines] = useState('');
+  const [editedKeywords, setEditedKeywords] = useState('');
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
     fetch('/api/programs')
       .then(response => {
@@ -23,6 +29,8 @@ function ProgramDetail() {
         const foundProgram = data.find(p => p.link === decodeURIComponent(programLink));
         if (foundProgram) {
           setProgram(foundProgram);
+          setEditedHeadlines(foundProgram.headlines);
+          setEditedKeywords(foundProgram.keywords);
         } else {
           setError(new Error("Program not found."));
         }
@@ -68,6 +76,34 @@ function ProgramDetail() {
       .catch(error => console.error('Failed to toggle disabled status:', error));
   };
 
+  const handleSave = (field) => {
+    setSaving(true);
+    const body = { link: program.link };
+    if (field === 'headlines') body.headlines = editedHeadlines;
+    if (field === 'keywords') body.keywords = editedKeywords;
+
+    fetch('/api/update-program', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to update program');
+        return response.json();
+      })
+      .then(() => {
+        setProgram(prev => ({ ...prev, ...body }));
+        if (field === 'headlines') setIsEditingHeadlines(false);
+        if (field === 'keywords') setIsEditingKeywords(false);
+        setSaving(false);
+      })
+      .catch(error => {
+        console.error('Update error:', error);
+        alert('Failed to save changes.');
+        setSaving(false);
+      });
+  };
+
   if (loading) return <div className="text-center mt-5">Loading program details...</div>;
   if (error) return <div className="alert alert-danger mt-5" role="alert">Error: {error.message}</div>;
   if (!program) return <div className="alert alert-warning mt-5" role="alert">Program data is not available.</div>;
@@ -110,27 +146,71 @@ function ProgramDetail() {
       </div>
 
       <div className="vibrant-card vibrant-card-pink mt-4">
-        <div className="card-header-gradient">
-          📰 Headlines
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
+          <span>📰 Headlines</span>
+          {!isEditingHeadlines && (
+            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingHeadlines(true)}>✏️ Edit</button>
+          )}
         </div>
         <div className="card-body">
-          {program.headlines !== 'N/A' ? (
-            <div dangerouslySetInnerHTML={{ __html: program.headlines.replace(/\n/g, '<br>') }}></div>
+          {isEditingHeadlines ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="10"
+                value={editedHeadlines}
+                onChange={(e) => setEditedHeadlines(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('headlines')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingHeadlines(false); setEditedHeadlines(program.headlines); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
           ) : (
-            <p>No headlines available.</p>
+            program.headlines !== 'N/A' ? (
+              <div dangerouslySetInnerHTML={{ __html: program.headlines.replace(/\n/g, '<br>') }}></div>
+            ) : (
+              <p>No headlines available.</p>
+            )
           )}
         </div>
       </div>
 
       <div className="vibrant-card vibrant-card-mint mt-4 mb-5">
-        <div className="card-header-gradient">
-          🔑 Keywords
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
+          <span>🔑 Keywords</span>
+          {!isEditingKeywords && (
+            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingKeywords(true)}>✏️ Edit</button>
+          )}
         </div>
         <div className="card-body">
-          {program.keywords !== 'N/A' ? (
-            <div className="keywords-content" dangerouslySetInnerHTML={{ __html: program.keywords.replace(/\n/g, '<br>') }}></div>
+          {isEditingKeywords ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="15"
+                value={editedKeywords}
+                onChange={(e) => setEditedKeywords(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('keywords')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingKeywords(false); setEditedKeywords(program.keywords); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
           ) : (
-            <p>No keywords available.</p>
+            program.keywords !== 'N/A' ? (
+              <div className="keywords-content" dangerouslySetInnerHTML={{ __html: program.keywords.replace(/\n/g, '<br>') }}></div>
+            ) : (
+              <p>No keywords available.</p>
+            )
           )}
         </div>
       </div>

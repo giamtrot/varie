@@ -37,6 +37,48 @@ else:
     SCRIPT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
     DATA_FILE = os.path.join(SCRIPT_DIR, "bbc_programs.json")
 
+@app.route('/api/update-program', methods=['POST'])
+def update_program():
+    """
+    API endpoint to update a program's headlines or keywords.
+    Expects link, headlines, and/or keywords in the request body.
+    """
+    try:
+        data = request.get_json()
+        link = data.get('link')
+        if not link:
+            return jsonify({"error": "Program link is required."}), 400
+        
+        if not os.path.exists(DATA_FILE):
+            return jsonify({"error": "Data file not found."}), 404
+        
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            all_programs = json.load(f)
+        
+        # Find and update the program
+        found = False
+        for program in all_programs:
+            if program.get('link') == link:
+                if 'headlines' in data:
+                    program['headlines'] = data['headlines']
+                if 'keywords' in data:
+                    program['keywords'] = data['keywords']
+                found = True
+                break
+        
+        if not found:
+            return jsonify({"error": "Program not found."}), 404
+            
+        with open(DATA_FILE, 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(all_programs, f, indent=2, ensure_ascii=False)
+            
+        return jsonify({"message": "Program updated successfully."}), 200
+        
+    except Exception as e:
+        print(f"Error updating program: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/programs')
 def get_programs():
     """

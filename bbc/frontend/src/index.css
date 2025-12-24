@@ -276,7 +276,34 @@ html {
 [data-theme="midnight-ocean"] .card-body a,
 [data-theme="sunset-noir"] .card-body a,
 [data-theme="cyberpunk-neon"] .card-body a {
-color: var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
+}
+
+.editing-textarea {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.editing-textarea:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    color: var(--text-primary);
+    outline: none;
+}
+
+[data-theme="midnight-ocean"] .editing-textarea,
+[data-theme="sunset-noir"] .editing-textarea,
+[data-theme="cyberpunk-neon"] .editing-textarea {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Badge Styles */
