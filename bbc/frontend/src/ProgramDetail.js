@@ -18,13 +18,35 @@ function ProgramDetail() {
   const [editedKeywords, setEditedKeywords] = useState('');
   const [saving, setSaving] = useState(false);
   const [currentlySpeaking, setCurrentlySpeaking] = useState(null);
+  const [showTTSSettings, setShowTTSSettings] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState([]);
+  const [ttsSettings, setTtsSettings] = useState(speechUtils.settings);
 
   useEffect(() => {
     speechUtils.onStateChange = (speaking) => {
       if (!speaking) setCurrentlySpeaking(null);
     };
+
+    const loadVoices = () => {
+      const voices = speechUtils.getVoices();
+      if (voices.length > 0) {
+        setAvailableVoices(voices);
+      }
+    };
+
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
     return () => speechUtils.stop();
   }, []);
+
+  const handleUpdateTTSSetting = (key, value) => {
+    const newSettings = { ...ttsSettings, [key]: value };
+    setTtsSettings(newSettings);
+    speechUtils.updateSettings({ [key]: value });
+  };
 
   const handleSpeak = (id, text) => {
     if (currentlySpeaking === id) {
@@ -182,6 +204,13 @@ function ProgramDetail() {
             🎨 Theme: {themeName}
           </button>
           <button
+            className={`btn btn-gradient ${showTTSSettings ? 'btn-gradient-blue' : 'btn-gradient-purple'}`}
+            onClick={() => setShowTTSSettings(!showTTSSettings)}
+            title="Speech Settings"
+          >
+            ⚙️ Speech Settings
+          </button>
+          <button
             className={`btn btn-gradient ${isDisabled ? 'btn-gradient-teal' : 'btn-gradient-orange'}`}
             onClick={toggleDisable}
           >
@@ -194,6 +223,54 @@ function ProgramDetail() {
           )}
         </div>
       </div>
+
+      {showTTSSettings && (
+        <div className="tts-settings-panel">
+          <div className="tts-settings-title">
+            <span>🔊 Text-to-Speech Settings</span>
+            <button className="btn btn-sm btn-outline-light" onClick={() => setShowTTSSettings(false)}>✕</button>
+          </div>
+          <div className="tts-settings-grid">
+            <div className="tts-setting-item">
+              <label>Voice</label>
+              <select
+                value={ttsSettings.voiceURI}
+                onChange={(e) => handleUpdateTTSSetting('voiceURI', e.target.value)}
+              >
+                <option value="">Default Voice</option>
+                {availableVoices.map(v => (
+                  <option key={v.voiceURI} value={v.voiceURI}>
+                    {v.name} ({v.lang})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="tts-setting-item">
+              <label>Speed: {ttsSettings.rate}x</label>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={ttsSettings.rate}
+                onChange={(e) => handleUpdateTTSSetting('rate', parseFloat(e.target.value))}
+              />
+            </div>
+            <div className="tts-setting-item">
+              <label>Pitch: {ttsSettings.pitch}</label>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                step="0.1"
+                value={ttsSettings.pitch}
+                onChange={(e) => handleUpdateTTSSetting('pitch', parseFloat(e.target.value))}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="d-flex align-items-center mb-4">
         <h1 className="mb-0">📺 {program.title}</h1>
         <button

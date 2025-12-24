@@ -7,6 +7,24 @@ class SpeechUtils {
         this.utterance = null;
         this.isSpeakingState = false;
         this.onStateChange = null;
+
+        // Load persisted settings
+        this.settings = {
+            voiceURI: localStorage.getItem('tts_voice') || '',
+            rate: parseFloat(localStorage.getItem('tts_rate')) || 1.0,
+            pitch: parseFloat(localStorage.getItem('tts_pitch')) || 1.0
+        };
+    }
+
+    getVoices() {
+        return this.synth.getVoices();
+    }
+
+    updateSettings(newSettings) {
+        this.settings = { ...this.settings, ...newSettings };
+        if (newSettings.voiceURI !== undefined) localStorage.setItem('tts_voice', this.settings.voiceURI);
+        if (newSettings.rate !== undefined) localStorage.setItem('tts_rate', this.settings.rate.toString());
+        if (newSettings.pitch !== undefined) localStorage.setItem('tts_pitch', this.settings.pitch.toString());
     }
 
     speak(text, onEnd = null) {
@@ -18,12 +36,19 @@ class SpeechUtils {
 
         this.utterance = new SpeechSynthesisUtterance(cleanText);
 
-        // Attempt to find a good English voice
-        const voices = this.synth.getVoices();
-        const enVoice = voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
-        if (enVoice) {
-            this.utterance.voice = enVoice;
+        // Apply settings
+        const voices = this.getVoices();
+        const selectedVoice = voices.find(v => v.voiceURI === this.settings.voiceURI);
+        if (selectedVoice) {
+            this.utterance.voice = selectedVoice;
+        } else {
+            // Fallback selection if no URI matches
+            const enVoice = voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
+            if (enVoice) this.utterance.voice = enVoice;
         }
+
+        this.utterance.rate = this.settings.rate;
+        this.utterance.pitch = this.settings.pitch;
 
         this.utterance.onstart = () => {
             this.isSpeakingState = true;
