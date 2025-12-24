@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
+import speechUtils from './SpeechUtils';
 
 function ProgramDetail() {
   const { programLink } = useParams();
@@ -16,6 +17,45 @@ function ProgramDetail() {
   const [editedHeadlines, setEditedHeadlines] = useState('');
   const [editedKeywords, setEditedKeywords] = useState('');
   const [saving, setSaving] = useState(false);
+  const [currentlySpeaking, setCurrentlySpeaking] = useState(null);
+
+  useEffect(() => {
+    speechUtils.onStateChange = (speaking) => {
+      if (!speaking) setCurrentlySpeaking(null);
+    };
+    return () => speechUtils.stop();
+  }, []);
+
+  const handleSpeak = (id, text) => {
+    if (currentlySpeaking === id) {
+      speechUtils.stop();
+    } else {
+      setCurrentlySpeaking(id);
+      speechUtils.speak(text, () => setCurrentlySpeaking(null));
+    }
+  };
+
+  const parsedHeadlines = useMemo(() => {
+    if (!program || !program.headlines || program.headlines === 'N/A') return [];
+    const lines = program.headlines.split('\n').map(l => l.trim()).filter(l => l !== '');
+    const result = [];
+    for (let i = 0; i < lines.length; i += 2) {
+      if (lines[i]) {
+        result.push({
+          text: lines[i],
+          source: lines[i + 1] || ''
+        });
+      }
+    }
+    return result;
+  }, [program]);
+
+  const parsedKeywords = useMemo(() => {
+    if (!program || !program.keywords || program.keywords === 'N/A') return [];
+    // Split by the pattern that marks a new keyword entry
+    const entries = program.keywords.split(/\n\t(?=<strong>)/).map(e => e.trim()).filter(e => e !== '');
+    return entries;
+  }, [program]);
 
   useEffect(() => {
     fetch('/api/programs')
@@ -122,19 +162,51 @@ function ProgramDetail() {
           >
             {isDisabled ? '✅ Enable Program' : '🚫 Disable Program'}
           </button>
+          {currentlySpeaking && (
+            <button className="btn btn-danger" onClick={() => speechUtils.stop()}>
+              ⏹️ Stop Audio
+            </button>
+          )}
         </div>
       </div>
-      <h1 className="mb-4">📺 {program.title}</h1>
+      <div className="d-flex align-items-center mb-4">
+        <h1 className="mb-0">📺 {program.title}</h1>
+        <button
+          className={`tts-btn ${currentlySpeaking === 'title' ? 'active' : ''}`}
+          onClick={() => handleSpeak('title', program.title)}
+          title="Listen to Title"
+        >
+          {currentlySpeaking === 'title' ? '⏹️' : '🔊'}
+        </button>
+      </div>
       <div className="vibrant-card vibrant-card-lavender p-3 mb-4">
         <p className="mb-2"><strong>📅 Date:</strong> {program.date}</p>
-        <p className="mb-2"><strong>📝 Description:</strong> {program.description}</p>
+        <p className="mb-2 d-flex align-items-center">
+          <strong>📝 Description:</strong> {program.description}
+          <button
+            className={`tts-btn ${currentlySpeaking === 'desc' ? 'active' : ''}`}
+            onClick={() => handleSpeak('desc', program.description)}
+            title="Listen to Description"
+          >
+            {currentlySpeaking === 'desc' ? '⏹️' : '🔊'}
+          </button>
+        </p>
         <p className="mb-2"><strong>🔗 Link:</strong> <a href={program.link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">{program.link}</a></p>
         <p className="mb-0"><strong>📄 Full Content:</strong> <a href={program.full_content_link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">{program.full_content_link}</a></p>
       </div>
 
       <div className="vibrant-card vibrant-card-blue mt-4">
         <div className="card-header-gradient">
-          📖 Story
+          <span>📖 Story</span>
+          {program.story !== 'N/A' && (
+            <button
+              className={`tts-btn ${currentlySpeaking === 'story' ? 'active' : ''}`}
+              onClick={() => handleSpeak('story', program.story)}
+              title="Listen to Story"
+            >
+              {currentlySpeaking === 'story' ? '⏹️' : '🔊'}
+            </button>
+          )}
         </div>
         <div className="card-body">
           {program.story !== 'N/A' ? (
@@ -171,8 +243,21 @@ function ProgramDetail() {
               </div>
             </div>
           ) : (
-            program.headlines !== 'N/A' ? (
-              <div dangerouslySetInnerHTML={{ __html: program.headlines.replace(/\n/g, '<br>') }}></div>
+            parsedHeadlines.length > 0 ? (
+              <div>
+                {parsedHeadlines.map((h, index) => (
+                  <div key={index} className="headline-item d-flex justify-content-between align-items-start">
+                    <div dangerouslySetInnerHTML={{ __html: `${h.text}${h.source ? `<br><small class="text-muted">${h.source}</small>` : ''}` }}></div>
+                    <button
+                      className={`tts-btn ${currentlySpeaking === `headline-${index}` ? 'active' : ''}`}
+                      onClick={() => handleSpeak(`headline-${index}`, `${h.text} from ${h.source}`)}
+                      title="Listen to Headline"
+                    >
+                      {currentlySpeaking === `headline-${index}` ? '⏹️' : '🔊'}
+                    </button>
+                  </div>
+                ))}
+              </div>
             ) : (
               <p>No headlines available.</p>
             )
@@ -206,8 +291,21 @@ function ProgramDetail() {
               </div>
             </div>
           ) : (
-            program.keywords !== 'N/A' ? (
-              <div className="keywords-content" dangerouslySetInnerHTML={{ __html: program.keywords.replace(/\n/g, '<br>') }}></div>
+            parsedKeywords.length > 0 ? (
+              <div className="keywords-content">
+                {parsedKeywords.map((kw, index) => (
+                  <div key={index} className="keyword-entry d-flex justify-content-between align-items-start">
+                    <div dangerouslySetInnerHTML={{ __html: kw }}></div>
+                    <button
+                      className={`tts-btn ${currentlySpeaking === `keyword-${index}` ? 'active' : ''}`}
+                      onClick={() => handleSpeak(`keyword-${index}`, kw)}
+                      title="Listen to Keyword"
+                    >
+                      {currentlySpeaking === `keyword-${index}` ? '⏹️' : '🔊'}
+                    </button>
+                  </div>
+                ))}
+              </div>
             ) : (
               <p>No keywords available.</p>
             )
