@@ -459,3 +459,34 @@ html {
     background: #4a5568;
     color: white;
 }
+
+/* Floating Selection TTS Button */
+.selection-tts-bubble {
+    position: fixed;
+    z-index: 9999;
+    background: #f5576c;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    animation: bubbleUp 0.2s ease-out;
+    pointer-events: auto;
+}
+
+.selection-tts-bubble:hover {
+    transform: scale(1.05);
+    background: #f12711;
+}
+
+@keyframes bubbleUp {
+    from { opacity: 0; transform: translateY(10px) scale(0.8); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+

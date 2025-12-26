@@ -21,6 +21,7 @@ function ProgramDetail() {
   const [showTTSSettings, setShowTTSSettings] = useState(false);
   const [availableVoices, setAvailableVoices] = useState([]);
   const [ttsSettings, setTtsSettings] = useState(speechUtils.settings);
+  const [selectionInfo, setSelectionInfo] = useState({ text: '', x: 0, y: 0, visible: false });
 
   useEffect(() => {
     // Fetch settings from server
@@ -51,6 +52,42 @@ function ProgramDetail() {
     return () => speechUtils.stop();
   }, []);
 
+  useEffect(() => {
+    const handleMouseUp = () => {
+      setTimeout(() => {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+
+        if (text && text.length > 0) {
+          const range = selection.getRangeAt(0);
+          const rect = range.getBoundingClientRect();
+
+          setSelectionInfo({
+            text,
+            x: rect.left + (rect.width / 2),
+            y: rect.top - 10,
+            visible: true
+          });
+        } else {
+          setSelectionInfo(prev => ({ ...prev, visible: false }));
+        }
+      }, 0);
+    };
+
+    const handleMouseDown = (e) => {
+      // Don't hide if clicking the bubble itself
+      if (e.target.closest('.selection-tts-bubble')) return;
+      setSelectionInfo(prev => ({ ...prev, visible: false }));
+    };
+
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, []);
+
   const handleUpdateTTSSetting = (key, value) => {
     const newSettings = { ...ttsSettings, [key]: value };
     setTtsSettings(newSettings);
@@ -70,6 +107,15 @@ function ProgramDetail() {
     } else {
       setCurrentlySpeaking(id);
       speechUtils.speak(text, () => setCurrentlySpeaking(null));
+    }
+  };
+
+  const handleSpeakSelection = () => {
+    if (selectionInfo.text) {
+      handleSpeak('selection', selectionInfo.text);
+      setSelectionInfo(prev => ({ ...prev, visible: false }));
+      // Clear browser selection to avoid confusion
+      window.getSelection().removeAllRanges();
     }
   };
 
@@ -213,6 +259,19 @@ function ProgramDetail() {
 
   return (
     <div className="container mt-4">
+      {selectionInfo.visible && (
+        <button
+          className="selection-tts-bubble"
+          style={{
+            left: `${selectionInfo.x}px`,
+            top: `${selectionInfo.y}px`,
+            transform: 'translateX(-50%) translateY(-100%)'
+          }}
+          onClick={handleSpeakSelection}
+        >
+          🔊 Speak Selection
+        </button>
+      )}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <button onClick={() => navigate('/')} className="btn btn-gradient btn-gradient-purple">← Back to List</button>
         <div className="d-flex gap-2">
