@@ -23,6 +23,15 @@ function ProgramDetail() {
   const [ttsSettings, setTtsSettings] = useState(speechUtils.settings);
 
   useEffect(() => {
+    // Fetch settings from server
+    fetch('/api/tts-settings')
+      .then(response => response.json())
+      .then(data => {
+        setTtsSettings(data);
+        speechUtils.setSettings(data);
+      })
+      .catch(error => console.error('Failed to load TTS settings:', error));
+
     speechUtils.onStateChange = (speaking) => {
       if (!speaking) setCurrentlySpeaking(null);
     };
@@ -46,6 +55,13 @@ function ProgramDetail() {
     const newSettings = { ...ttsSettings, [key]: value };
     setTtsSettings(newSettings);
     speechUtils.updateSettings({ [key]: value });
+
+    // Save to server
+    fetch('/api/tts-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newSettings)
+    }).catch(error => console.error('Failed to save TTS settings:', error));
   };
 
   const handleSpeak = (id, text) => {

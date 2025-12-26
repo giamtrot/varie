@@ -8,12 +8,16 @@ class SpeechUtils {
         this.isSpeakingState = false;
         this.onStateChange = null;
 
-        // Load persisted settings
+        // Default settings
         this.settings = {
-            voiceURI: localStorage.getItem('tts_voice') || '',
-            rate: parseFloat(localStorage.getItem('tts_rate')) || 1.0,
-            pitch: parseFloat(localStorage.getItem('tts_pitch')) || 1.0
+            voiceURI: '',
+            rate: 1.0,
+            pitch: 1.0
         };
+    }
+
+    setSettings(newSettings) {
+        this.settings = { ...this.settings, ...newSettings };
     }
 
     getVoices() {
@@ -22,9 +26,6 @@ class SpeechUtils {
 
     updateSettings(newSettings) {
         this.settings = { ...this.settings, ...newSettings };
-        if (newSettings.voiceURI !== undefined) localStorage.setItem('tts_voice', this.settings.voiceURI);
-        if (newSettings.rate !== undefined) localStorage.setItem('tts_rate', this.settings.rate.toString());
-        if (newSettings.pitch !== undefined) localStorage.setItem('tts_pitch', this.settings.pitch.toString());
     }
 
     speak(text, onEnd = null) {

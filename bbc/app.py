@@ -137,6 +137,41 @@ def manage_disabled_programs():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/tts-settings', methods=['GET', 'POST'])
+def manage_tts_settings():
+    """
+    GET: Retrieve the TTS settings.
+    POST: Save the TTS settings.
+    """
+    settings_file = os.path.join(SCRIPT_DIR, "tts_settings.json")
+    
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            with open(settings_file, 'w', encoding='utf-8', newline='\n') as f:
+                json.dump(data, f, indent=2)
+            return jsonify({"message": "TTS settings saved."}), 200
+        except Exception as e:
+            print(f"Error saving TTS settings: {e}")
+            return jsonify({"error": str(e)}), 500
+    
+    # GET request
+    try:
+        if os.path.exists(settings_file):
+            with open(settings_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return jsonify(data), 200
+        else:
+            # Default settings
+            return jsonify({
+                "voiceURI": "",
+                "rate": 1.0,
+                "pitch": 1.0
+            }), 200
+    except Exception as e:
+        print(f"Error loading TTS settings: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/review-keywords')
 def get_review_keywords():
     """
