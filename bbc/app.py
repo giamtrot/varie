@@ -63,6 +63,8 @@ def update_program():
                     program['headlines'] = data['headlines']
                 if 'keywords' in data:
                     program['keywords'] = data['keywords']
+                if 'story' in data:
+                    program['story'] = data['story']
                 found = True
                 break
         

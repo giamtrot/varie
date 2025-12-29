@@ -14,8 +14,10 @@ function ProgramDetail() {
 
   const [isEditingHeadlines, setIsEditingHeadlines] = useState(false);
   const [isEditingKeywords, setIsEditingKeywords] = useState(false);
+  const [isEditingStory, setIsEditingStory] = useState(false);
   const [editedHeadlines, setEditedHeadlines] = useState('');
   const [editedKeywords, setEditedKeywords] = useState('');
+  const [editedStory, setEditedStory] = useState('');
   const [saving, setSaving] = useState(false);
   const [currentlySpeaking, setCurrentlySpeaking] = useState(null);
   const [showTTSSettings, setShowTTSSettings] = useState(false);
@@ -180,6 +182,7 @@ function ProgramDetail() {
           setProgram(foundProgram);
           setEditedHeadlines(foundProgram.headlines);
           setEditedKeywords(foundProgram.keywords);
+          setEditedStory(foundProgram.story);
         } else {
           setError(new Error("Program not found."));
         }
@@ -230,6 +233,7 @@ function ProgramDetail() {
     const body = { link: program.link };
     if (field === 'headlines') body.headlines = editedHeadlines;
     if (field === 'keywords') body.keywords = editedKeywords;
+    if (field === 'story') body.story = editedStory;
 
     fetch('/api/update-program', {
       method: 'POST',
@@ -244,6 +248,7 @@ function ProgramDetail() {
         setProgram(prev => ({ ...prev, ...body }));
         if (field === 'headlines') setIsEditingHeadlines(false);
         if (field === 'keywords') setIsEditingKeywords(false);
+        if (field === 'story') setIsEditingStory(false);
         setSaving(false);
       })
       .catch(error => {
@@ -359,7 +364,7 @@ function ProgramDetail() {
       <div className="vibrant-card vibrant-card-lavender p-3 mb-4">
         <p className="mb-2"><strong>📅 Date:</strong> {program.date}</p>
         <p className="mb-2 d-flex align-items-center">
-          <strong>📝 Description:</strong> {program.description}
+          <strong>📝 Description:&nbsp;</strong> {program.description}
           <button
             className={`tts-btn ${currentlySpeaking === 'desc' ? 'active' : ''}`}
             onClick={() => handleSpeak('desc', program.description)}
@@ -373,23 +378,47 @@ function ProgramDetail() {
       </div>
 
       <div className="vibrant-card vibrant-card-blue mt-4">
-        <div className="card-header-gradient">
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
           <span>📖 Story</span>
-          {program.story !== 'N/A' && (
-            <button
-              className={`tts-btn ${currentlySpeaking === 'story' ? 'active' : ''}`}
-              onClick={() => handleSpeak('story', program.story)}
-              title="Listen to Story"
-            >
-              {currentlySpeaking === 'story' ? '⏹️' : '🔊'}
-            </button>
-          )}
+          <div className="d-flex align-items-center gap-2">
+            {!isEditingStory && (
+              <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingStory(true)}>✏️ Edit</button>
+            )}
+            {program.story !== 'N/A' && (
+              <button
+                className={`tts-btn ${currentlySpeaking === 'story' ? 'active' : ''}`}
+                onClick={() => handleSpeak('story', program.story)}
+                title="Listen to Story"
+              >
+                {currentlySpeaking === 'story' ? '⏹️' : '🔊'}
+              </button>
+            )}
+          </div>
         </div>
         <div className="card-body">
-          {program.story !== 'N/A' ? (
-            <div dangerouslySetInnerHTML={{ __html: program.story }}></div>
+          {isEditingStory ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="15"
+                value={editedStory}
+                onChange={(e) => setEditedStory(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('story')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingStory(false); setEditedStory(program.story); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
           ) : (
-            <p>No story available.</p>
+            program.story !== 'N/A' ? (
+              <div dangerouslySetInnerHTML={{ __html: program.story }}></div>
+            ) : (
+              <p>No story available.</p>
+            )
           )}
         </div>
       </div>
