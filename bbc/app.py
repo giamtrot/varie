@@ -2,7 +2,7 @@ from flask import Flask, jsonify, send_from_directory, Response, request
 from flask_cors import CORS
 import os
 import json
-from bbc_parser import run_parser
+from bbc_parser import run_parser, parse_full_content_page
 import webbrowser
 from threading import Timer
 
@@ -78,6 +78,67 @@ def update_program():
         
     except Exception as e:
         print(f"Error updating program: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/load-full-content', methods=['POST'])
+def load_full_content():
+    """
+    API endpoint to load a program's content from its full content link.
+    Expects link in the request body.
+    """
+    try:
+        data = request.get_json()
+        link = data.get('link')
+        if not link:
+            return jsonify({"error": "Program link is required."}), 400
+        
+        if not os.path.exists(DATA_FILE):
+            return jsonify({"error": "Data file not found."}), 404
+        
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            all_programs = json.load(f)
+        
+        # Find the program
+        target_program = next((p for p in all_programs if p.get('link') == link), None)
+        
+        if not target_program:
+            return jsonify({"error": "Program not found."}), 404
+            
+        full_content_url = target_program.get('full_content_link')
+        if not full_content_url or full_content_url == 'N/A':
+            return jsonify({"error": "Full content link not available for this program."}), 400
+
+        # Parse the full content page
+        generator = parse_full_content_page(full_content_url)
+        details = {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
+        try:
+            while True:
+                item = next(generator)
+                if isinstance(item, str):
+                    print(f"Parser message: {item}")
+        except StopIteration as e:
+            # The return value of the generator is in e.value
+            if isinstance(e.value, dict):
+                details = e.value
+        
+        # Update the program
+        target_program['story'] = details.get('story', 'N/A')
+        target_program['headlines'] = details.get('headlines', 'N/A')
+        target_program['keywords'] = details.get('keywords', 'N/A')
+        
+        with open(DATA_FILE, 'w', encoding='utf-8', newline='\n') as f:
+            json.dump(all_programs, f, indent=2, ensure_ascii=False)
+            
+        return jsonify({
+            "message": "Content loaded successfully.",
+            "story": target_program['story'],
+            "headlines": target_program['headlines'],
+            "keywords": target_program['keywords']
+        }), 200
+        
+    except Exception as e:
+        print(f"Error loading full content: {e}")
         return jsonify({"error": str(e)}), 500
 
 

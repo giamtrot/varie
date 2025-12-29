@@ -54,63 +54,53 @@ def parse_full_content_page(full_content_url):
         return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
 
     soup = BeautifulSoup(response.text, 'html.parser')
-    main_content = soup.find('div', class_='widget-richtext')
-    if not main_content:
+    all_widgets = soup.find_all('div', class_='widget-richtext')
+    
+    if not all_widgets:
         return {'story': 'N/A', 'headlines': 'N/A', 'keywords': 'N/A'}
+
+    def find_heading(text_to_find):
+        for widget in all_widgets:
+            # Try to find the heading exactly or partially in the text
+            found = widget.find(['h3', 'p', 'strong'], string=lambda s: s and text_to_find in s)
+            if not found:
+                found = next((h for h in widget.find_all(['h3', 'p', 'strong']) if text_to_find in h.get_text()), None)
+            
+            if found:
+                # If we found a strong tag inside a header, return the header
+                if found.name == 'strong' and found.parent and found.parent.name in ['h3', 'p']:
+                    return found.parent
+                return found
+        return None
 
     story, headlines, keywords = [], [], []
 
-    story_heading = main_content.find('h3', string='The story')
+    # Story
+    story_heading = find_heading('The story')
     if story_heading:
         for sibling in story_heading.find_next_siblings():
-            if sibling.name == 'h3': break
-            if sibling.name == 'p': story.append(str(sibling))
+            if sibling.name in ['h3', 'p', 'strong'] and any(x in sibling.get_text() for x in ['News headlines', 'Key words and phrases', 'To do']): break
+            if sibling.name in ['p', 'ul']: story.append(str(sibling))
 
-    headlines_heading = main_content.find('h3', string='News headlines')
+    # Headlines
+    headlines_heading = find_heading('News headlines')
     if headlines_heading:
         next_element = headlines_heading.find_next_sibling()
         while next_element:
-            if next_element.name == 'p' and 'Key words and phrases' in next_element.get_text(): break
-            if next_element.name == 'p' and next_element.get_text(strip=True):
-                br_tag = next_element.find('br')
-                if br_tag:
-                    headline_parts_html, source_parts_html, after_br = [], [], False
-                    for content in next_element.contents:
-                        if content == br_tag:
-                            after_br = True
-                            continue
-                        (source_parts_html if after_br else headline_parts_html).append(str(content).strip())
-                    
-                    headline_html = " ".join(filter(None, headline_parts_html))
-                    source_html = " ".join(filter(None, source_parts_html))
-
-                    if headline_html and source_html: headlines.append(f"{headline_html}\n  {source_html}")
-                    elif headline_html: headlines.append(headline_html)
-                    elif source_html: headlines.append(source_html)
-                else:
-                    headlines.append(str(next_element))
+            if next_element.name in ['h3', 'p', 'strong'] and any(x in next_element.get_text() for x in ['The story', 'Key words and phrases', 'To do']): break
+            if next_element.name in ['p', 'ul'] and next_element.get_text(strip=True):
+                headlines.append(str(next_element))
             next_element = next_element.find_next_sibling()
 
-    keywords_heading = main_content.find('strong', string='Key words and phrases')
-    if keywords_heading and keywords_heading.parent.name == 'p':
-        current_element = keywords_heading.parent.find_next_sibling()
+    # Keywords
+    keywords_heading = find_heading('Key words and phrases')
+    if keywords_heading:
+        # Check if the heading itself contains some keyword (sometimes happens)
+        current_element = keywords_heading.find_next_sibling()
         while current_element:
-            if current_element.name == 'h3': break
-            if current_element.name == 'p':
-                temp_p_soup = BeautifulSoup(str(current_element), 'html.parser')
-                keyword_html, definition_html = '', ''
-                keyword_strong = temp_p_soup.find('strong')
-                if keyword_strong:
-                    keyword_html = str(keyword_strong)
-                    keyword_strong.decompose()
-                if br_tag := temp_p_soup.find('br'): br_tag.decompose()
-                definition_html = temp_p_soup.p.encode_contents().decode().strip()
-                if keyword_html:
-                    keywords.append(f"\t{keyword_html}")
-                    if definition_html: keywords.append(f"\t\t{definition_html}")
-            elif current_element.name == 'ul':
-                for li in current_element.find_all('li'):
-                    if example_html := str(li): keywords.append(f"\t\t{example_html}")
+            if current_element.name in ['h3', 'p', 'strong'] and any(x in current_element.get_text() for x in ['The story', 'News headlines', 'To do']): break
+            if current_element.name in ['p', 'ul']:
+                keywords.append(str(current_element))
             current_element = current_element.find_next_sibling()
 
     return {

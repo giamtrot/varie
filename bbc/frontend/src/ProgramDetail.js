@@ -258,6 +258,41 @@ function ProgramDetail() {
       });
   };
 
+  const handleLoadFullContent = () => {
+    if (!window.confirm('This will overwrite current story, headlines, and keywords with content from the full content link. Continue?')) {
+      return;
+    }
+
+    setSaving(true);
+    fetch('/api/load-full-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ link: program.link })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to load full content');
+        return response.json();
+      })
+      .then(data => {
+        setProgram(prev => ({
+          ...prev,
+          story: data.story,
+          headlines: data.headlines,
+          keywords: data.keywords
+        }));
+        setEditedStory(data.story);
+        setEditedHeadlines(data.headlines);
+        setEditedKeywords(data.keywords);
+        setSaving(false);
+        alert('Content loaded successfully!');
+      })
+      .catch(error => {
+        console.error('Load error:', error);
+        alert('Failed to load content from full content link.');
+        setSaving(false);
+      });
+  };
+
   if (loading) return <div className="text-center mt-5">Loading program details...</div>;
   if (error) return <div className="alert alert-danger mt-5" role="alert">Error: {error.message}</div>;
   if (!program) return <div className="alert alert-warning mt-5" role="alert">Program data is not available.</div>;
@@ -295,6 +330,14 @@ function ProgramDetail() {
             onClick={toggleDisable}
           >
             {isDisabled ? '✅ Enable Program' : '🚫 Disable Program'}
+          </button>
+          <button
+            className="btn btn-gradient btn-gradient-blue"
+            onClick={handleLoadFullContent}
+            disabled={saving || !program.full_content_link || program.full_content_link === 'N/A'}
+            title="Fetch content from BBC website"
+          >
+            {saving ? '⏳ Loading...' : '🔄 Load Full Content'}
           </button>
           {currentlySpeaking && (
             <button className="btn btn-danger" onClick={() => speechUtils.stop()}>
