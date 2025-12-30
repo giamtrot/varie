@@ -155,8 +155,15 @@
 
 
 /* Global Styles */
-* {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.btn,
+.vibrant-card,
+.tts-btn,
+.editing-textarea,
+.tts-settings-panel,
+.selection-tts-bubble,
+.headline-item,
+.keyword-entry {
+    transition: opacity 0.3s ease, background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 body {
@@ -396,6 +403,7 @@ html {
 .headline-item:last-child {
     border-bottom: none;
 }
+
 /* TTS Settings Panel */
 .tts-settings-panel {
     background: rgba(255, 255, 255, 0.1);
@@ -415,8 +423,15 @@ html {
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tts-settings-title {
@@ -446,7 +461,8 @@ html {
     color: var(--text-secondary);
 }
 
-.tts-setting-item select, .tts-setting-item input[type="range"] {
+.tts-setting-item select,
+.tts-setting-item input[type="range"] {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-sm);
@@ -486,7 +502,13 @@ html {
 }
 
 @keyframes bubbleUp {
-    from { opacity: 0; transform: translateY(10px) scale(0.8); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.8);
+    }
 
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

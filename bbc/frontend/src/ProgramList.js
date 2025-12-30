@@ -13,7 +13,7 @@ function ProgramList() {
   const [disabledPrograms, setDisabledPrograms] = useState(new Set());
   const [showDisabled, setShowDisabled] = useState(false);
   const navigate = useNavigate();
-  const { theme, toggleTheme, isDark, themeName } = useTheme();
+  const { toggleTheme, themeName } = useTheme();
 
   const fetchPrograms = useCallback(() => {
     setLoading(true);

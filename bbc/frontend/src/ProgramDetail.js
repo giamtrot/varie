@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 import speechUtils from './SpeechUtils';
+
+// Memoized sub-components to ensure the dangerouslySetInnerHTML nodes don't re-render 
+// and lose text selection unless the content actually changes.
+const MemoizedContent = memo(({ html, className }) => {
+  return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+});
 
 function ProgramDetail() {
   const { programLink } = useParams();
@@ -10,7 +16,7 @@ function ProgramDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
-  const { theme, toggleTheme, isDark, themeName } = useTheme();
+  const { toggleTheme, themeName } = useTheme();
 
   const [isEditingHeadlines, setIsEditingHeadlines] = useState(false);
   const [isEditingKeywords, setIsEditingKeywords] = useState(false);
@@ -25,6 +31,26 @@ function ProgramDetail() {
   const [ttsSettings, setTtsSettings] = useState(speechUtils.settings);
   const [selectionInfo, setSelectionInfo] = useState({ text: '', x: 0, y: 0, visible: false });
 
+  // Stabilize speech logic
+  const handleSpeak = useCallback((id, text) => {
+    if (currentlySpeaking === id) {
+      speechUtils.stop();
+      setCurrentlySpeaking(null);
+    } else {
+      setCurrentlySpeaking(id);
+      speechUtils.speak(text, () => {
+        setCurrentlySpeaking(null);
+      });
+    }
+  }, [currentlySpeaking]);
+
+  const handleSpeakSelection = useCallback(() => {
+    if (selectionInfo.text) {
+      handleSpeak('selection', selectionInfo.text);
+      setSelectionInfo(prev => ({ ...prev, visible: false }));
+    }
+  }, [selectionInfo.text, handleSpeak]);
+
   useEffect(() => {
     // Fetch settings from server
     fetch('/api/tts-settings')
@@ -34,10 +60,6 @@ function ProgramDetail() {
         speechUtils.setSettings(data);
       })
       .catch(error => console.error('Failed to load TTS settings:', error));
-
-    speechUtils.onStateChange = (speaking) => {
-      if (!speaking) setCurrentlySpeaking(null);
-    };
 
     const loadVoices = () => {
       const voices = speechUtils.getVoices();
@@ -77,8 +99,8 @@ function ProgramDetail() {
     };
 
     const handleMouseDown = (e) => {
-      // Don't hide if clicking the bubble itself
       if (e.target.closest('.selection-tts-bubble')) return;
+      if (e.detail > 1) return;
       setSelectionInfo(prev => ({ ...prev, visible: false }));
     };
 
@@ -90,70 +112,38 @@ function ProgramDetail() {
     };
   }, []);
 
-  const handleUpdateTTSSetting = (key, value) => {
-    const newSettings = { ...ttsSettings, [key]: value };
-    setTtsSettings(newSettings);
-    speechUtils.updateSettings({ [key]: value });
-
-    // Save to server
-    fetch('/api/tts-settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newSettings)
-    }).catch(error => console.error('Failed to save TTS settings:', error));
-  };
-
-  const handleSpeak = (id, text) => {
-    if (currentlySpeaking === id) {
-      speechUtils.stop();
-    } else {
-      setCurrentlySpeaking(id);
-      speechUtils.speak(text, () => setCurrentlySpeaking(null));
-    }
-  };
-
-  const handleSpeakSelection = () => {
-    if (selectionInfo.text) {
-      handleSpeak('selection', selectionInfo.text);
-      setSelectionInfo(prev => ({ ...prev, visible: false }));
-      // Clear browser selection to avoid confusion
-      window.getSelection().removeAllRanges();
-    }
-  };
+  const handleUpdateTTSSetting = useCallback((key, value) => {
+    setTtsSettings(prev => {
+      const newSettings = { ...prev, [key]: value };
+      speechUtils.updateSettings({ [key]: value });
+      // Save to server
+      fetch('/api/tts-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSettings)
+      }).catch(error => console.error('Failed to save TTS settings:', error));
+      return newSettings;
+    });
+  }, []);
 
   const parsedHeadlines = useMemo(() => {
     if (!program || !program.headlines || program.headlines === 'N/A') return [];
-    // Split by newline and filter out empty lines
     const rawLines = program.headlines.split('\n').map(l => l.trim()).filter(l => l !== '');
     const result = [];
-
     let i = 0;
     while (i < rawLines.length) {
       const currentLine = rawLines[i];
-      // Check if this line contains its own source via <br/> or <br>
       if (currentLine.includes('<br/>') || currentLine.includes('<br>')) {
         const parts = currentLine.split(/<br\s*\/?>/i);
-        result.push({
-          text: parts[0].trim(),
-          source: parts[1] ? parts[1].trim() : ''
-        });
+        result.push({ text: parts[0].trim(), source: parts[1] ? parts[1].trim() : '' });
         i++;
       } else {
-        // If it doesn't have <br/>, it might be a headline with the source on the next line
         const nextLine = rawLines[i + 1];
-        // If next line exists and doesn't have its own source/looks like a source line
         if (nextLine && !nextLine.includes('<br/>') && !nextLine.includes('<br>')) {
-          result.push({
-            text: currentLine,
-            source: nextLine
-          });
+          result.push({ text: currentLine, source: nextLine });
           i += 2;
         } else {
-          // Just a headline without a clear source line
-          result.push({
-            text: currentLine,
-            source: ''
-          });
+          result.push({ text: currentLine, source: '' });
           i++;
         }
       }
@@ -163,17 +153,13 @@ function ProgramDetail() {
 
   const parsedKeywords = useMemo(() => {
     if (!program || !program.keywords || program.keywords === 'N/A') return [];
-    // Split by the pattern that marks a new keyword entry
-    const entries = program.keywords.split(/\n\t(?=<strong>)/).map(e => e.trim()).filter(e => e !== '');
-    return entries;
+    return program.keywords.split(/\n\t(?=<strong>)/).map(e => e.trim()).filter(e => e !== '');
   }, [program]);
 
   useEffect(() => {
     fetch('/api/programs')
       .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
       })
       .then(data => {
@@ -193,7 +179,6 @@ function ProgramDetail() {
         setLoading(false);
       });
 
-    // Load disabled programs status
     fetch('/api/disabled-programs')
       .then(response => response.json())
       .then(data => {
@@ -203,32 +188,25 @@ function ProgramDetail() {
       .catch(error => console.error('Failed to load disabled programs:', error));
   }, [programLink]);
 
-  const toggleDisable = () => {
+  const toggleDisable = useCallback(() => {
     fetch('/api/disabled-programs')
       .then(response => response.json())
       .then(data => {
         const disabled = new Set(data.disabled || []);
         const decodedLink = decodeURIComponent(programLink);
-
-        if (disabled.has(decodedLink)) {
-          disabled.delete(decodedLink);
-        } else {
-          disabled.add(decodedLink);
-        }
-
+        if (disabled.has(decodedLink)) disabled.delete(decodedLink);
+        else disabled.add(decodedLink);
         return fetch('/api/disabled-programs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ disabled: Array.from(disabled) })
         });
       })
-      .then(() => {
-        setIsDisabled(!isDisabled);
-      })
+      .then(() => setIsDisabled(prev => !prev))
       .catch(error => console.error('Failed to toggle disabled status:', error));
-  };
+  }, [programLink]);
 
-  const handleSave = (field) => {
+  const handleSave = useCallback((field) => {
     setSaving(true);
     const body = { link: program.link };
     if (field === 'headlines') body.headlines = editedHeadlines;
@@ -256,13 +234,12 @@ function ProgramDetail() {
         alert('Failed to save changes.');
         setSaving(false);
       });
-  };
+  }, [program, editedHeadlines, editedKeywords, editedStory]);
 
-  const handleLoadFullContent = () => {
+  const handleLoadFullContent = useCallback(() => {
     if (!window.confirm('This will overwrite current story, headlines, and keywords with content from the full content link. Continue?')) {
       return;
     }
-
     setSaving(true);
     fetch('/api/load-full-content', {
       method: 'POST',
@@ -274,12 +251,7 @@ function ProgramDetail() {
         return response.json();
       })
       .then(data => {
-        setProgram(prev => ({
-          ...prev,
-          story: data.story,
-          headlines: data.headlines,
-          keywords: data.keywords
-        }));
+        setProgram(prev => ({ ...prev, story: data.story, headlines: data.headlines, keywords: data.keywords }));
         setEditedStory(data.story);
         setEditedHeadlines(data.headlines);
         setEditedKeywords(data.keywords);
@@ -291,7 +263,164 @@ function ProgramDetail() {
         alert('Failed to load content from full content link.');
         setSaving(false);
       });
-  };
+  }, [program]);
+
+  const storyComponent = useMemo(() => {
+    if (!program) return null;
+    return (
+      <div className="vibrant-card vibrant-card-blue mt-4">
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
+          <span>📖 Story</span>
+          <div className="d-flex align-items-center gap-2">
+            {!isEditingStory && (
+              <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingStory(true)}>✏️ Edit</button>
+            )}
+            {program.story !== 'N/A' && (
+              <button
+                className={`tts-btn ${currentlySpeaking === 'story' ? 'active' : ''}`}
+                onClick={() => handleSpeak('story', program.story)}
+                title="Listen to Story"
+              >
+                {currentlySpeaking === 'story' ? '⏹️' : '🔊'}
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="card-body">
+          {isEditingStory ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="15"
+                value={editedStory}
+                onChange={(e) => setEditedStory(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('story')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingStory(false); setEditedStory(program.story); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            program.story !== 'N/A' ? (
+              <MemoizedContent html={program.story} />
+            ) : (
+              <p>No story available.</p>
+            )
+          )}
+        </div>
+      </div>
+    );
+  }, [program, isEditingStory, editedStory, saving, currentlySpeaking, handleSpeak, handleSave]);
+
+  const headlinesComponent = useMemo(() => {
+    if (!program) return null;
+    return (
+      <div className="vibrant-card vibrant-card-pink mt-4">
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
+          <span>📰 Headlines</span>
+          {!isEditingHeadlines && (
+            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingHeadlines(true)}>✏️ Edit</button>
+          )}
+        </div>
+        <div className="card-body">
+          {isEditingHeadlines ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="10"
+                value={editedHeadlines}
+                onChange={(e) => setEditedHeadlines(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('headlines')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingHeadlines(false); setEditedHeadlines(program.headlines); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            parsedHeadlines.length > 0 ? (
+              <div>
+                {parsedHeadlines.map((h, index) => (
+                  <div key={index} className="headline-item d-flex justify-content-between align-items-start">
+                    <MemoizedContent html={`${h.text}${h.source ? `<br><small class="text-muted">${h.source}</small>` : ''}`} />
+                    <button
+                      className={`tts-btn ${currentlySpeaking === `headline-${index}` ? 'active' : ''}`}
+                      onClick={() => handleSpeak(`headline-${index}`, `${h.text} from ${h.source}`)}
+                      title="Listen to Headline"
+                    >
+                      {currentlySpeaking === `headline-${index}` ? '⏹️' : '🔊'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No headlines available.</p>
+            )
+          )}
+        </div>
+      </div>
+    );
+  }, [program, parsedHeadlines, isEditingHeadlines, editedHeadlines, saving, currentlySpeaking, handleSpeak, handleSave]);
+
+  const keywordsComponent = useMemo(() => {
+    if (!program) return null;
+    return (
+      <div className="vibrant-card vibrant-card-mint mt-4 mb-5">
+        <div className="card-header-gradient d-flex justify-content-between align-items-center">
+          <span>🔑 Keywords</span>
+          {!isEditingKeywords && (
+            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingKeywords(true)}>✏️ Edit</button>
+          )}
+        </div>
+        <div className="card-body">
+          {isEditingKeywords ? (
+            <div>
+              <textarea
+                className="form-control editing-textarea mb-2"
+                rows="15"
+                value={editedKeywords}
+                onChange={(e) => setEditedKeywords(e.target.value)}
+              />
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('keywords')} disabled={saving}>
+                  {saving ? 'Saving...' : '💾 Save'}
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingKeywords(false); setEditedKeywords(program.keywords); }} disabled={saving}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            parsedKeywords.length > 0 ? (
+              <div className="keywords-content">
+                {parsedKeywords.map((kw, index) => (
+                  <div key={index} className="keyword-entry d-flex justify-content-between align-items-start">
+                    <MemoizedContent html={kw} />
+                    <button
+                      className={`tts-btn ${currentlySpeaking === `keyword-${index}` ? 'active' : ''}`}
+                      onClick={() => handleSpeak(`keyword-${index}`, kw)}
+                      title="Listen to Keyword"
+                    >
+                      {currentlySpeaking === `keyword-${index}` ? '⏹️' : '🔊'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No keywords available.</p>
+            )
+          )}
+        </div>
+      </div>
+    );
+  }, [program, parsedKeywords, isEditingKeywords, editedKeywords, saving, currentlySpeaking, handleSpeak, handleSave]);
 
   if (loading) return <div className="text-center mt-5">Loading program details...</div>;
   if (error) return <div className="alert alert-danger mt-5" role="alert">Error: {error.message}</div>;
@@ -307,6 +436,7 @@ function ProgramDetail() {
             top: `${selectionInfo.y}px`,
             transform: 'translateX(-50%) translateY(-100%)'
           }}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={handleSpeakSelection}
         >
           🔊 Speak Selection
@@ -420,147 +550,9 @@ function ProgramDetail() {
         <p className="mb-0"><strong>📄 Full Content:</strong> <a href={program.full_content_link} target="_blank" rel="noopener noreferrer" className="text-decoration-none">{program.full_content_link}</a></p>
       </div>
 
-      <div className="vibrant-card vibrant-card-blue mt-4">
-        <div className="card-header-gradient d-flex justify-content-between align-items-center">
-          <span>📖 Story</span>
-          <div className="d-flex align-items-center gap-2">
-            {!isEditingStory && (
-              <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingStory(true)}>✏️ Edit</button>
-            )}
-            {program.story !== 'N/A' && (
-              <button
-                className={`tts-btn ${currentlySpeaking === 'story' ? 'active' : ''}`}
-                onClick={() => handleSpeak('story', program.story)}
-                title="Listen to Story"
-              >
-                {currentlySpeaking === 'story' ? '⏹️' : '🔊'}
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="card-body">
-          {isEditingStory ? (
-            <div>
-              <textarea
-                className="form-control editing-textarea mb-2"
-                rows="15"
-                value={editedStory}
-                onChange={(e) => setEditedStory(e.target.value)}
-              />
-              <div className="d-flex gap-2">
-                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('story')} disabled={saving}>
-                  {saving ? 'Saving...' : '💾 Save'}
-                </button>
-                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingStory(false); setEditedStory(program.story); }} disabled={saving}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            program.story !== 'N/A' ? (
-              <div dangerouslySetInnerHTML={{ __html: program.story }}></div>
-            ) : (
-              <p>No story available.</p>
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="vibrant-card vibrant-card-pink mt-4">
-        <div className="card-header-gradient d-flex justify-content-between align-items-center">
-          <span>📰 Headlines</span>
-          {!isEditingHeadlines && (
-            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingHeadlines(true)}>✏️ Edit</button>
-          )}
-        </div>
-        <div className="card-body">
-          {isEditingHeadlines ? (
-            <div>
-              <textarea
-                className="form-control editing-textarea mb-2"
-                rows="10"
-                value={editedHeadlines}
-                onChange={(e) => setEditedHeadlines(e.target.value)}
-              />
-              <div className="d-flex gap-2">
-                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('headlines')} disabled={saving}>
-                  {saving ? 'Saving...' : '💾 Save'}
-                </button>
-                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingHeadlines(false); setEditedHeadlines(program.headlines); }} disabled={saving}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            parsedHeadlines.length > 0 ? (
-              <div>
-                {parsedHeadlines.map((h, index) => (
-                  <div key={index} className="headline-item d-flex justify-content-between align-items-start">
-                    <div dangerouslySetInnerHTML={{ __html: `${h.text}${h.source ? `<br><small class="text-muted">${h.source}</small>` : ''}` }}></div>
-                    <button
-                      className={`tts-btn ${currentlySpeaking === `headline-${index}` ? 'active' : ''}`}
-                      onClick={() => handleSpeak(`headline-${index}`, `${h.text} from ${h.source}`)}
-                      title="Listen to Headline"
-                    >
-                      {currentlySpeaking === `headline-${index}` ? '⏹️' : '🔊'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No headlines available.</p>
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="vibrant-card vibrant-card-mint mt-4 mb-5">
-        <div className="card-header-gradient d-flex justify-content-between align-items-center">
-          <span>🔑 Keywords</span>
-          {!isEditingKeywords && (
-            <button className="btn btn-sm btn-outline-light" onClick={() => setIsEditingKeywords(true)}>✏️ Edit</button>
-          )}
-        </div>
-        <div className="card-body">
-          {isEditingKeywords ? (
-            <div>
-              <textarea
-                className="form-control editing-textarea mb-2"
-                rows="15"
-                value={editedKeywords}
-                onChange={(e) => setEditedKeywords(e.target.value)}
-              />
-              <div className="d-flex gap-2">
-                <button className="btn btn-sm btn-gradient btn-gradient-blue" onClick={() => handleSave('keywords')} disabled={saving}>
-                  {saving ? 'Saving...' : '💾 Save'}
-                </button>
-                <button className="btn btn-sm btn-secondary" onClick={() => { setIsEditingKeywords(false); setEditedKeywords(program.keywords); }} disabled={saving}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            parsedKeywords.length > 0 ? (
-              <div className="keywords-content">
-                {parsedKeywords.map((kw, index) => (
-                  <div key={index} className="keyword-entry d-flex justify-content-between align-items-start">
-                    <div dangerouslySetInnerHTML={{ __html: kw }}></div>
-                    <button
-                      className={`tts-btn ${currentlySpeaking === `keyword-${index}` ? 'active' : ''}`}
-                      onClick={() => handleSpeak(`keyword-${index}`, kw)}
-                      title="Listen to Keyword"
-                    >
-                      {currentlySpeaking === `keyword-${index}` ? '⏹️' : '🔊'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No keywords available.</p>
-            )
-          )}
-        </div>
-      </div>
+      {storyComponent}
+      {headlinesComponent}
+      {keywordsComponent}
     </div>
   );
 }

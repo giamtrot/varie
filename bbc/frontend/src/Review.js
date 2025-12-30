@@ -7,7 +7,7 @@ function Review() {
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { theme, toggleTheme, isDark, themeName } = useTheme();
+  const { toggleTheme, themeName } = useTheme();
 
   useEffect(() => {
     loadRandomKeywords();
