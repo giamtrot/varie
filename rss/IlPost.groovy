@@ -30,6 +30,12 @@ def urls = [
     "https://www.ilpost.it/podcasts/tienimi_morning/",
     "https://www.ilpost.it/podcasts/futuro-presente/",
     "https://www.ilpost.it/podcasts/canto-di-natale/",
+    "https://www.ilpost.it/podcasts/timbuctu/",
+    "https://www.ilpost.it/podcasts/sikter/",
+    "https://www.ilpost.it/podcasts/viaggio-a-tokyo/",
+    "https://www.ilpost.it/podcasts/charlie-smith-sofri/",
+    "https://www.ilpost.it/podcasts/costellazioni/",
+    "https://www.ilpost.it/podcasts/amare-parole/",
 ]
 
 def apis = [
