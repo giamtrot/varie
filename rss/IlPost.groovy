@@ -36,6 +36,7 @@ def urls = [
     "https://www.ilpost.it/podcasts/charlie-smith-sofri/",
     "https://www.ilpost.it/podcasts/costellazioni/",
     "https://www.ilpost.it/podcasts/amare-parole/",
+    "https://www.ilpost.it/podcasts/generazione/",
 ]
 
 def apis = [
