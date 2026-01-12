@@ -37,6 +37,7 @@ def urls = [
     "https://www.ilpost.it/podcasts/costellazioni/",
     "https://www.ilpost.it/podcasts/amare-parole/",
     "https://www.ilpost.it/podcasts/generazione/",
+    "https://www.ilpost.it/podcasts/wild-baricco-podcast", 
 ]
 
 def apis = [
