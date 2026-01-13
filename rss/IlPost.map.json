@@ -288,6 +288,12 @@
         "podcast": "L'ombelico di un mondo"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2023/baricco-integrale.mp3",
+        "title": "Wild Baricco",
+        "date": "2023-12-08T00:00:00Z",
+        "podcast": "Wild Baricco"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2023/12/08/1702031117-altre_indagini_904_pt1_v3.mp3",
         "title": "Grande galleria dell&#8217;Appennino &#8211; 23 dicembre 1984 &#8211; Prima parte",
         "date": "2023-12-10T08:27:42+01:00",
@@ -7066,5 +7072,17 @@
         "title": "Ep 210 &#8211; Finalmente libero",
         "date": "2026-01-12T00:00:00Z",
         "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2026/01/12/1768241205-Generazione-PT2-V3.mp3",
+        "title": "Ep. 2 &#8211; Sibling cap",
+        "date": "2026-01-12T00:00:00Z",
+        "podcast": "Generazione"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/12/1768232556-19203033-tienimi-bordone-puntata-1427-siamo-buoni-ma-continua-a-piacerci-l-a-team.mp3",
+        "title": "Siamo buoni, ma continua a piacerci l\u2019A-Team",
+        "date": "2026-01-13T00:00:00Z",
+        "podcast": "Tienimi Bordone"
     }
 ]
