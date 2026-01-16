@@ -7158,6 +7158,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/16/1768551969-wilson_260115_v4_-14lufs.mp3",
+        "title": "Il bullismo degli adulti",
+        "date": "2026-01-15T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2026/01/15/1768493990-93922222-tienimi-bordone-puntata-1430-sirat-un-bel-film-per-stomaci-forti-e-un-pessimo-bond-spaziale.mp3",
         "title": "Sir\u0101t, un bel film per stomaci forti, e un pessimo Bond spaziale",
         "date": "2026-01-16T00:00:00Z",
@@ -7174,5 +7180,11 @@
         "title": "Ep. 1125 \u2013 Chi non ride alle barzellette di Trump e le altre storie di oggi",
         "date": "2026-01-16T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/15/1768477338-cvus_260116_v1_-14lufs.mp3",
+        "title": "Leonardo DNA Vinci",
+        "date": "2026-01-16T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
     }
 ]
