@@ -7104,6 +7104,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/18/1768780344-203939333-tienimi-bordone-puntata-1427-siamo-buoni-ma-continua-a-piacerci-l-ateam-corretto.mp3",
+        "title": "Siamo buoni, ma continua a piacerci l\u2019A-Team",
+        "date": "2026-01-13T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2026/01/13/1768338657-20202222-tienimi-bordone-puntata-1428-e-se-avesse-ragione-michael-burry-anche-questa-volta.mp3",
         "title": "E se avesse ragione Michael Burry anche questa volta?",
         "date": "2026-01-14T00:00:00Z",
@@ -7198,5 +7204,23 @@
         "title": "Morning Weekend &#8211; Distopie groenlandesi e altre storie",
         "date": "2026-01-17T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2026/01/15/1768496344-amare_parole_260118_v2_-14lufs-1.mp3",
+        "title": "Ep. 138 &#8211; Due considerazioni sul mancinismo",
+        "date": "2026-01-18T00:00:00Z",
+        "podcast": "Amare Parole"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/18/1768779815-19203333-tienimi-bordone-Puntata-1431-stiamo-diventando-vegamente-paranoici-ma-non-e-la-prima-volta.mp3",
+        "title": "Stiamo diventando vagamente paranoici, ma non e\u0300 la prima volta",
+        "date": "2026-01-19T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2026/01/18/1768752666-timbuctu_260119_v1_-14lufs.mp3",
+        "title": "Ep. 406 &#8211; La Groenlandia e altri ghiacci che si sciolgono",
+        "date": "2026-01-19T00:00:00Z",
+        "podcast": "Timbuctu"
     }
 ]
