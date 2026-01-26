@@ -6408,6 +6408,12 @@
         "podcast": "Timbuctu"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/12/09/1765310233-Altre-IndaginI-Regeni-PT1-V3.mp3",
+        "title": "Il Cairo, 25 gennaio 2016 &#8211; Prima parte",
+        "date": "2025-12-10T00:00:00Z",
+        "podcast": "Altre Indagini"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2025/12/09/1765322759-Altre-Indagini-Regeni-PT2-V3-ms.mp3",
         "title": "Il Cairo, 25 gennaio 2016 &#8211; Seconda parte",
         "date": "2025-12-10T01:00:00Z",
@@ -6421,6 +6427,12 @@
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2025/12/07/1767786768-Altre-Indagini-Regeni-PT2-V6.mp3",
+        "title": "Il Cairo, 25 gennaio 2016 &#8211; Seconda parte",
+        "date": "2025-12-10T01:00:00Z",
+        "podcast": "Altre Indagini"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/12/07/1767786768-Altre-Indagini-Regeni-PT2-V6.mp3",
         "title": "Il Cairo, 25 gennaio 2016 &#8211; Seconda parte",
         "date": "2025-12-10T01:00:00Z",
         "podcast": "Altre Indagini"
@@ -7378,5 +7390,23 @@
         "title": "Morning Weekend &#8211; Vent\u2019anni da un disco che sembra uscito l\u2019altroieri, e altre storie",
         "date": "2026-01-24T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/23/1769181995-amare_parole_260125_v1_-14lufs.mp3",
+        "title": "Ep. 139 &#8211; Ode alle parole nuove",
+        "date": "2026-01-25T00:00:00Z",
+        "podcast": "Amare Parole"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/01/25/1769376704-19229333-tienimi-bordone-puntata-1436-un-altro-aereo-abbandonato-e-marty-supreme-una-altro-film-con-thimotee-chalamet.mp3",
+        "title": "Un altro aereo abbandonato e Marty Supreme, un altro film con Timothe\u0301e Chalamet",
+        "date": "2026-01-26T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2026/01/25/1769333239-timbuctu_260126_v1_-14lufs.mp3",
+        "title": "Ep. 409 &#8211; La memoria del lavoro",
+        "date": "2026-01-26T00:00:00Z",
+        "podcast": "Timbuctu"
     }
 ]
