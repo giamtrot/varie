@@ -1536,6 +1536,12 @@
         "podcast": "Tienimi Bordone"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/17/1744879730-una-mattina-1943-trailer-v2.mp3",
+        "title": "Un trailer, aspettando il 25 aprile",
+        "date": "2025-04-17T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/17/1744899117-cvus_250418_v1_-16lufs.mp3",
         "title": "Le tortuose e inattese origini dell\u2019Ozempic",
         "date": "2025-04-18T00:00:00Z",
@@ -1772,6 +1778,36 @@
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/28/1745860459-Una-Mattina-1943-PT3-V5_-16lufs.mp3",
         "title": "3. Ufficiali (e) antifascisti",
+        "date": "2025-04-25T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/28/1745855654-Una-Mattina-1943-PT5-V4.mp3",
+        "title": "1943 &#8211; 5. La prima citt\u00e0 a liberarsi da sola",
+        "date": "2025-04-25T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/28/1745855188-Una-Mattina-1943-PT4-V4_-16lufs.mp3",
+        "title": "1943 &#8211; 4. In montagna a sparare",
+        "date": "2025-04-25T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/28/1745860459-Una-Mattina-1943-PT3-V5_-16lufs.mp3",
+        "title": "1943 &#8211; 3. Ufficiali (e) antifascisti",
+        "date": "2025-04-25T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/24/1745501359-Una-Mattina-1943-PT2-V4_-16lufs.mp3",
+        "title": "1943 &#8211; 2. Un paese occupato",
+        "date": "2025-04-25T00:00:00Z",
+        "podcast": "Una mattina"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2025/04/24/1745499759-Una-Mattina-1943-PT1-V3.mp3",
+        "title": "1943 &#8211; 1. I giorni in cui inizi\u00f2 tutto",
         "date": "2025-04-25T00:00:00Z",
         "podcast": "Una mattina"
     },
@@ -7918,5 +7954,11 @@
         "title": "Ep. 1143 \u2013 Ascoltare disegnando e le altre storie di oggi",
         "date": "2026-02-11T00:00:00Z",
         "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/02/11/1770807698-globo_260211_-14LUFS_v3.mp3",
+        "title": "Non \u00e8 un buon momento per essere un generale cinese, con Simone Dossi",
+        "date": "2026-02-11T00:00:00Z",
+        "podcast": "Globo"
     }
 ]
