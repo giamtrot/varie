@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
     - cron: "*/10 6-7 * * 1-6"    # Runs every 10 minutes between 6 AM and 8 AM UTC (Daylight saving time) - Monday to Saturday
-    - cron: "*/10 15-16 * * 1-5"  # Runs every 10 minutes between 15 PM and 15 PM UTC (Daylight saving time) - Monday to Friday
+    - cron: "*/10 15-18 * * 1-5"  # Runs every 10 minutes between 15 PM and 15 PM UTC (Daylight saving time) - Monday to Friday
     
 
 permissions:
