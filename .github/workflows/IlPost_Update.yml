@@ -5,6 +5,7 @@ on:
   schedule:
     - cron: "*/10 6-7 * * 1-6"    # Runs every 10 minutes between 6 AM and 8 AM UTC (Daylight saving time) - Monday to Saturday
     - cron: "*/10 15-18 * * 1-5"  # Runs every 10 minutes between 15 PM and 15 PM UTC (Daylight saving time) - Monday to Friday
+    - cron: "0 8-23 * * 0-7" # Runs every hour between 9 AM and 23 PM UTC (Daylight saving time) - Sunday to Saturdady
     
 
 permissions:
