@@ -27,7 +27,7 @@ final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "
 "idiecigiornichesconvolseroilmondo", "imieipremi", "itremoschettieri", "ivecchieigiovani",
 "ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo",
 "ildisperso", "ilfondodellabottiglia", "ilgiocodeiregni", "ilgiornodelgiudizio", "ilgiuocodelleperledivetro", "ilgrandebob", "ilmaestroemargherita", 
-"iquarantagiornidelmussadagh", "ilmantello", "ilmisterodiedwindrood", "ilmonaco", "ilnaso", "ilnomedellarosa", "ilpaesedicuccagna", "ilpiacere", "ilpranzodibabette", 
+"iquarantagiornidelmussadagh", "ilmantello", "ilmonaco", "ilnaso", "ilnomedellarosa", "ilpaesedicuccagna", "ilpiacere", "ilpranzodibabette", 
 "ilritratto", "ilrossoeilnero", "ilsentierodeinididiragno", "ilsergentenellaneve", "ilsoccombente", "jakobvongunten", "janeeyre", "julesejim", "liguana", 
 "limperatorediportugallia", "lagentesegreto", "ledera", "leducazionesentimentale", "loraditutti", "labellaestate", "lagnesevaamorire", "lalineadombra", 
 "lalunaeifalo", "lamortediivanilich", "laparete",
