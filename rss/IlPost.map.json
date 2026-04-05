@@ -390,6 +390,12 @@
         "podcast": "Un podcast su Sanremo"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/03/1712153394-sigmund_cosenza_v4_-16lufs.mp3",
+        "title": "Cosa sono i disturbi mentali",
+        "date": "2024-04-04T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/04/09/1712660132-altre-indagini-fausto-e-Iaio-pt1-v2.mp3",
         "title": "Milano, 18 marzo 1978 &#8211; Prima parte",
         "date": "2024-04-10T08:27:39+02:00",
@@ -402,10 +408,52 @@
         "podcast": "Altre Indagini"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/10/1712780734-sigmund_morelli_v7_16lufs.mp3",
+        "title": "Cos\u2019\u00e8 (e cosa non \u00e8) la depressione",
+        "date": "2024-04-11T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/04/14/1713111326-voices_tienimi_morning_240415-16lufs.mp3",
         "title": "Voices Torino, 13/04/24",
         "date": "2024-04-15T00:00:00Z",
         "podcast": "Tienimi Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/17/1713358802-sigmund_madeddu_v6_-16lufs.mp3",
+        "title": "Siamo tutti narcisisti?",
+        "date": "2024-04-18T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/04/24/1714003099-voices2024_sigmund_v2_-16lufs.mp3",
+        "title": "Cose da pazzi",
+        "date": "2024-04-25T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/05/01/1714600813-sigmund_anastasia_v6_-16lufs.mp3",
+        "title": "Il trauma: un giorno questo dolore ci sar\u00e0 utile?",
+        "date": "2024-05-02T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/05/08/1715209011-sigmund_lavenia_v2_-16lufs.mp3",
+        "title": "L&#8217;essere umano \u00e8 un animale social?",
+        "date": "2024-05-09T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/05/16/1715846451-sigmund_ladino_v3_-16lufs.mp3",
+        "title": "Tutto in famiglia",
+        "date": "2024-05-16T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2024/05/22/1716394350-sigmund_lancini_v2_-16lufs.mp3",
+        "title": "Essere giovani, oggi",
+        "date": "2024-05-23T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://www.ilpost.it/wp-content/uploads/2024/06/09/1717919976-altre-indagini-brescia-pt1-v2.mp3",
@@ -1152,6 +1200,12 @@
         "podcast": "Orazio"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/02/20/1740068835-sigmund_trailer_seconda_stagione_v1_-16lufs.mp3",
+        "title": "Chiedilo a Sigmund, per la seconda stagione",
+        "date": "2025-02-21T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/02/21/1740147727-m_w_250222_v1_-16lufs.mp3",
         "title": "Morning Weekend &#8211; Paesi nel 3.000, umide isole scozzesi e altre storie",
         "date": "2025-02-22T00:00:00+01:00",
@@ -1266,6 +1320,12 @@
         "podcast": "Globo"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/12/1741809867-sigmund_lingiardi_v2_-16lufs.mp3",
+        "title": "Il corpo, tenerlo a mente",
+        "date": "2025-03-13T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/13/1741886007-cvus_250314_v1_-16lufs.mp3",
         "title": "Il caro, carissimo caff\u00e8",
         "date": "2025-03-14T00:00:00Z",
@@ -1276,6 +1336,12 @@
         "title": "Nelle Filippine \u00e8 quasi una serie TV, con Raimondo Neironi",
         "date": "2025-03-19T00:00:00Z",
         "podcast": "Globo"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/19/1742426050-sigmund_bunday_v2_-16lufs.mp3",
+        "title": "Identit\u00e0, sostantivo plurale",
+        "date": "2025-03-20T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/21/1742545652-cvus_250321_v2_-16lufs.mp3",
@@ -1336,6 +1402,12 @@
         "title": "Ep 74 &#8211; Fuori dalla chat",
         "date": "2025-03-27T00:00:00Z",
         "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/26/1743031228-sigmund_morero_v2_-16lufs.mp3",
+        "title": "La malattia: esiste un approccio sano?",
+        "date": "2025-03-27T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/03/27/1743093796-cvus_250328_v3_-16lufs.mp3",
@@ -1414,6 +1486,12 @@
         "title": "Ep 79 &#8211; Spirito di squadra",
         "date": "2025-04-03T00:00:00Z",
         "podcast": "Orazio"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/02/1743600857-sigmund_ricciardi_v2_-16lufs.mp3",
+        "title": "La triade della coppia",
+        "date": "2025-04-03T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/03/1743668622-cvus_250404_v2_-16lufs.mp3",
@@ -1504,6 +1582,12 @@
         "title": "Butta la chiave JUNIOR (con Valeria Verdolini)",
         "date": "2025-04-10T00:00:00Z",
         "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/09/1744227025-sigmund_voices_v1_-16lufs.mp3",
+        "title": "Le cose umane, con Marco Missiroli",
+        "date": "2025-04-10T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/09/1744219190-Altre-Indagini-Mattei-PT2-V2.mp3",
@@ -1648,6 +1732,12 @@
         "title": "Un trailer, aspettando il 25 aprile",
         "date": "2025-04-17T00:00:00Z",
         "podcast": "Una mattina"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/16/1744838926-sigmund_piras_v2_-16lufs.mp3",
+        "title": "ADHD, dalla a alla z",
+        "date": "2025-04-17T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/17/1744899117-cvus_250418_v1_-16lufs.mp3",
@@ -1822,6 +1912,12 @@
         "title": "La voglia irresistibile di fare la ruota",
         "date": "2025-04-24T00:00:00Z",
         "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/23/1745424883-sigmund_darrigo_v2_-16lufs.mp3",
+        "title": "Autismo: siamo noi che non capiamo",
+        "date": "2025-04-24T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/04/24/1745483705-quindici-11-v3.mp3",
@@ -2028,6 +2124,12 @@
         "podcast": "Tienimi Bordone"
     },
     {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/30/1746056194-sigmund_damiani_v1_-16lufs.mp3",
+        "title": "Le terapie psichedeliche, viaggio oltre la coscienza",
+        "date": "2025-05-01T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/02/1746166384-2maggiomorning_mixdown.mp3",
         "title": "Ep. 956 &#8211; Il corpo di una giornalista e le altre storie di oggi",
         "date": "2025-05-02T00:00:00Z",
@@ -2146,6 +2248,12 @@
         "title": "Musica bellissima inascoltabile",
         "date": "2025-05-08T00:00:00Z",
         "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/17/1747475659-sigmund_berutti_v3_-16lufs.mp3",
+        "title": "Le vie della genitorialit\u00e0 sono infinite (per fortuna)",
+        "date": "2025-05-08T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/09/1746772065-9maggiomorning_mixdown.mp3",
@@ -2272,6 +2380,12 @@
         "title": "Sta arrivando Wilson",
         "date": "2025-05-15T00:00:00Z",
         "podcast": "Wilson"
+    },
+    {
+        "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/14/1747239642-sigmund_veronesi_v1_-16lufs.mp3",
+        "title": "Il senso della morte, il senso della vita",
+        "date": "2025-05-15T00:00:00Z",
+        "podcast": "Sigmund"
     },
     {
         "src": "https://static-prod.cdnilpost.com/wp-content/uploads/2025/05/16/1747376609-16maggiomorning_mixdown.mp3",
@@ -9450,6 +9564,12 @@
         "podcast": "Globo"
     },
     {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/03/30/1774856080-sigmund_tucci_v2_-14lufs.mp3",
+        "title": "Farcela a non farcela",
+        "date": "2026-03-30T00:00:00Z",
+        "podcast": "Sigmund"
+    },
+    {
         "src": "https://www.ilpost.it/wp-content/uploads/2026/03/30/1774900212-92939333-tienimi-bordone-puntata-1465-lappropriazione-culturale-e-il-nuovo-disco-dei-gorillaz.mp3",
         "title": "L&#8217;appropriazione culturale e il nuovo disco dei Gorillaz",
         "date": "2026-03-31T00:00:00Z",
@@ -9508,5 +9628,83 @@
         "title": "Speciale \u2013 Cosa sappiamo della giornalista americana rapita a Baghdad",
         "date": "2026-04-01T00:00:00Z",
         "podcast": "Globo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/01/1775061681-94000011-tienimi-bordone-puntata-1467-the-idiot-il-podcast-che-racconta-come-avere-uno-scemo-criminale-in-famiglia.mp3",
+        "title": "The Idiot, il podcast che racconta com&#8217;e\u0300 avere uno scemo criminale in famiglia",
+        "date": "2026-04-02T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775112302-Ok2aprilemorning_mixdown.mp3",
+        "title": "Ep. 1179 \u2013 La giornata dell&#8217;ipocrisia e le altre storie di oggi",
+        "date": "2026-04-02T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775114801-cvus_260403_v2_artemis_-14lufs.mp3",
+        "title": "SPECIALE \u2013 Intorno alla Luna",
+        "date": "2026-04-02T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775116924-wilson_260402_v2_-14lufs.mp3",
+        "title": "Marta Cartabia e i limiti del potere",
+        "date": "2026-04-02T00:00:00Z",
+        "podcast": "Wilson"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775128136-Pt-268-2.4.26.mp3",
+        "title": "Ep 268 &#8211; In quattro intorno alla Luna",
+        "date": "2026-04-02T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775157906-102020000-tienimi-bordone-puntata-1468-il-documentario-su-tolkien-voluto-dalla-destra-e-molto-di-destra-ma-pierce-brosnan-no.mp3",
+        "title": "Il documentario su Tolkien voluto dalla destra e\u0300 molto di destra, ma Pierce Brosnan no",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Tienimi Bordone"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/02/1775144788-timbuctu_260403_v1_-14lufs.mp3",
+        "title": "Ep. 438 \u2013 Cultural War dentro un palazzo a New York",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Timbuctu"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775196786-3aprilemorning_mixdown.mp3",
+        "title": "Ep. 1180 \u2013 La benzina razionata e le altre storie di oggi",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775201873-cvus_260403_v2_-14lufs.mp3",
+        "title": "Smettere di fumare diventa un po\u2019 meno difficile",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Ci vuole una scienza"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775213609-Pt-269-3.4.26.mp3",
+        "title": "Ep 269 &#8211; Un ponte spezzato, uno da costruire e uno da attraversare",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Orazio"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775232141-globo_daily_260403_v1_-14LUFS.mp3",
+        "title": "Speciale \u2013 Una nave francese mette Meloni nei guai",
+        "date": "2026-04-03T00:00:00Z",
+        "podcast": "Globo"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775243287-m_w_260404_v1_-14lufs.mp3",
+        "title": "Morning Weekend \u2013 Lingue artificiali, festival d\u2019esportazione, e altre storie",
+        "date": "2026-04-04T00:00:00Z",
+        "podcast": "Morning"
+    },
+    {
+        "src": "https://www.ilpost.it/wp-content/uploads/2026/04/03/1775231842-amare_parole_260405_v1_-14lufs.mp3",
+        "title": "Ep. 148 \u2013 Analisi di un recente discorso del titolare del Ministero dell\u2019Istruzione e del Merito",
+        "date": "2026-04-05T00:00:00Z",
+        "podcast": "Amare Parole"
     }
 ]
