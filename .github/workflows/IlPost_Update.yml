@@ -3,7 +3,8 @@ name: Check "Il Post" Podcasts
 on:
   workflow_dispatch:  # Allows manual triggering
   schedule:
-    - cron: "*/30 0-23 * * 0-6"    # Runs every 10 minutes between 6 AM and 8 AM UTC (Daylight saving time) - Monday to Saturday
+    - cron: "*/30 0-23 * * 0-6"
+    - cron: "*/10 4-10 * * 0-6"
 
 permissions:
   contents: write  # Allows pushing changes
