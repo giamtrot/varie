@@ -20,7 +20,7 @@ final TO_EXCLUDE = ["alicenelpaesedellemeraviglie", "alpinisticiabattoni", "amul
 "raccontidifranzkafka", "raccontidiitalocalvino", "raccontidiryunosukeakutagawa",]
 
 final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "amoreeginnastica", "andaidentrolanotteilluminata", "aranciameccanica", 
-"bartlebyloscrivano", "belami", "cameraconvista", "cannealvento", "casadaltri", "cattedrale", "cattivonatale", "cenere", "chissadoveroquel25aprile", "ciaulascoprelaluna",
+"bartlebyloscrivano", "belami", "cameraconvista", "cannealvento", "casadaltri", "cattedrale", "cattivonatale", "cenere", "ciaulascoprelaluna",
 "collettori-limonata", "congliocchichiusi", "conservazione", "cristosiefermatoaeboli", "cuoredicane", "daquartoalvolturno", "decamerone", "dialledonnecheusciamo",
 "diario1941-1943", "diariodiunpazzo", "dieciindianiecampoindiano", "distanza", "doppiosogno", "dracula", "emma", "fame", "fosca", "frankenstein", "girodivite",
 "gliindifferenti", "gliocchialidoro", "gliultimiannidicleliatrotti", "grandefiumedaiduecuori", "grandisperanze", "hoservitoilredinghilterra", 
