@@ -77,6 +77,14 @@ catch (SocketTimeoutException e) {
 
 def articles = document.select("article > a").eachAttr("href")
 articles = articles.collect { it.replace("/audiolibri/", "") }
+
+def missingIncludes = TO_INCLUDE.findAll { include ->
+    !articles.any { article -> article.toLowerCase().contains(include) }
+}
+if (missingIncludes) {
+    throw new RuntimeException("TO_INCLUDE entries not found anymore on the site: ${missingIncludes}")
+}
+
 articles = articles.findAll { article ->
     !TO_EXCLUDE.any { exclude -> article.toLowerCase().contains(exclude) }
 }
