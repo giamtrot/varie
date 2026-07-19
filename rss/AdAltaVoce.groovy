@@ -28,19 +28,20 @@ final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "
 "ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo",
 "ilgiocodeiregni", "ilgiornodelgiudizio", "ilgiuocodelleperledivetro", "ilgrandebob", "ilmaestroemargherita", 
 "iquarantagiornidelmussadagh", "ilmantello", "ilmonaco", "ilnaso", "ilpaesedicuccagna", "ilpiacere", 
-"ilritratto", "ilsentierodeinididiragno", "ilsergentenellaneve", "ilsoccombente", "jakobvongunten", "janeeyre", "julesejim", "liguana", 
+"ilritratto", "ilsentierodeinididiragno", "ilsoccombente", "jakobvongunten", "julesejim", "liguana", 
 "limperatorediportugallia", "lagentesegreto", "ledera", "leducazionesentimentale", "loraditutti", "labellaestate", "lagnesevaamorire", "lalineadombra", 
 "lalunaeifalo", "lamortediivanilich", "laparete",
-"lapaura", "lapelle", "lapeste", "laricorrenza", "laricreazioneefinita", "lascopertadelbambino", "lasignoradalloway", "latregua", "laverginenelgiardino",
-"lazarillodetormes", "lelineedombra", "lememoriedibarrylindon", "lemeravigliedelduemila", "leterredelsacramento", "letigridimompracem", "levocidellasera",
+"lapaura", "lapelle", "lapeste", "laricorrenza", "laricreazioneefinita", "lascopertadelbambino", "lasignoradalloway", "laverginenelgiardino",
+"lazarillodetormes", "lememoriedibarrylindon", "lemeravigliedelduemila", "leterredelsacramento", "letigridimompracem", "levocidellasera",
 "levocidimarrakech", "liberalakareninacheeinte", "lidamantovani", "madamebovary", "martineden", "memoriedelsottosuolo", "mephisto", "metello",
 "nemiciunastoriadamore", "nientedinuovosulfronteoccidentale", "oblomov", "ognunomuoresolo", "orgoglioepregiudizio", "ottoebrei", "padriefigli",
 "panchinecomeusciredalmondosenzauscirne", "panorama", "passaggioinindia", "pennywirtonesuamadre", "prospettivanevskij", "raccontiromani", "ragazzidivita", "resurrezione",
-"revolutionaryroad", "riflessiinunocchiodoro", "ritrattodisarahmalcolm", "sequestoeunuomo", "senilita", "sottoilvulcano", "spiaperscommessa", "tradonnesole", "ultimovieneilcorvo",
-"unannosullaltipiano", "unuomochedorme", "unacosadivertentechenonfaromaipiu", "unanottedel43", "unastoriadilettevoledellamusica", "unavitaviolenta", "unostudioinrosso",
+"riflessiinunocchiodoro", "ritrattodisarahmalcolm", "senilita", "sottoilvulcano", "spiaperscommessa", "tradonnesole", "ultimovieneilcorvo",
+"unannosullaltipiano", "unanottedel43", "unastoriadilettevoledellamusica", "unavitaviolenta", "unostudioinrosso",
 "unonessunoecentomila", "uovafatali", "utz", "ventannidopo", "vitadigalileo", "vitaprecariaeamoreeterno",
 "raccontidigracepaley", "raccontidijacklondon", "raccontidikatherinemansfield", "raccontidilevtolstoj", "raccontidiluigipirandello", "raccontidiraymondcarver", 
-"raccontidisilviodarzo", 
+"raccontidisilviodarzo", "cassandra", "glianniperduti", "ilbellantonio", "ilfuocochetiportidentro", "ilpianetairritabile", "lafinestradellasignoramansteyealtriracconti", 
+"laspiaggia", "mansfieldpark", "preghierapercernobyl", "unincantevoleaprile", "uominieno", 
 ]
 
 def lastDate = new GregorianCalendar()
@@ -75,7 +76,7 @@ catch (SocketTimeoutException e) {
     return
 }
 
-def articles = document.select("article > a").eachAttr("href")
+def articles = document.select("article a").eachAttr("href")
 articles = articles.collect { it.replace("/audiolibri/", "") }
 
 def missingIncludes = TO_INCLUDE.findAll { include ->
@@ -112,7 +113,7 @@ TO_INCLUDE.forEach{ href -> {
     if (!done) {
         def article = baseUrl.resolve("/audiolibri/" + href).toString() + ".json"
         // println article
-        def book = new JsonSlurper().parse(new URL(article))
+        def book = new JsonSlurper().parseText(new URL(article).getText("UTF-8"))
         def bookTitle = book.title.trim()
         def fileName = nameToFile(bookTitle) + '.xml'
         println "Book: $bookTitle - $fileName"
@@ -226,7 +227,7 @@ def makeRSSFromItems(file, titleValue, items, global) {
     }
 
     // // println  xmlWriter.toString()
-    file.write(xmlWriter.toString())
+    file.write(xmlWriter.toString(), "UTF-8")
 }
 
 def makeRSS(fileName, book, lastDate) {
@@ -255,6 +256,6 @@ def makeRSS(fileName, book, lastDate) {
     }
 
     // println  xmlWriter.toString()
-    new File(fileName).write( xmlWriter.toString() )
+    new File(fileName).write( xmlWriter.toString(), "UTF-8" )
 }
 
