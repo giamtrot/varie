@@ -22,7 +22,7 @@ final TO_EXCLUDE = ["alicenelpaesedellemeraviglie", "alpinisticiabattoni", "amul
 final TO_INCLUDE = ["16ottobre1943", "acidolattico", "agostino", "amatissima", "amoreeginnastica", "andaidentrolanotteilluminata", "aranciameccanica", 
 "bartlebyloscrivano", "belami", "cameraconvista", "cannealvento", "casadaltri", "cattedrale", "cattivonatale", "cenere", "ciaulascoprelaluna",
 "collettori-limonata", "congliocchichiusi", "conservazione", "cristosiefermatoaeboli", "cuoredicane", "daquartoalvolturno", "decamerone", "dialledonnecheusciamo",
-"diario1941-1943", "diariodiunpazzo", "dieciindianiecampoindiano", "distanza", "doppiosogno", "dracula", "emma", "fame", "fosca", "frankenstein", "girodivite",
+"diario1941-1943", "diariodiunpazzo", "dieciindianiecampoindiano", "distanza", "dracula", "emma", "fame", "fosca", "frankenstein", "girodivite",
 "gliindifferenti", "gliocchialidoro", "gliultimiannidicleliatrotti", "grandefiumedaiduecuori", "grandisperanze", "hoservitoilredinghilterra", 
 "idiecigiornichesconvolseroilmondo", "imieipremi", "itremoschettieri", "ivecchieigiovani",
 "ilcontedimontecristo", "ilcommesso", "ilcompagno", "ilcomunista", "ilconformista", "ildesertodellalibia", "ildiavoloincorpo",
