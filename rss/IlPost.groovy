@@ -44,6 +44,7 @@ def urls = [
     "https://www.ilpost.it/podcasts/allegramente-pessimista/",
     "https://www.ilpost.it/podcasts/sigmund/",
     "https://www.ilpost.it/podcasts/odissea/",
+    "https://www.ilpost.it/podcasts/maschi",
 ]
 
 def apis = [
