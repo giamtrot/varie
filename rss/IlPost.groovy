@@ -76,6 +76,7 @@ urls.each{ inUrl->
     def jsonNextData = jsonSlurper.parseText(nextData)
 
     def podcast_title = jsonNextData.props.pageProps.data.data.podcast.data.title
+    def podcast_slug = jsonNextData.props.pageProps.data.data.podcast.data.slug
     println "podcast_title: $podcast_title"
 
     jsonNextData.props.pageProps.data.data.episodes.data.each{ episode ->
@@ -83,11 +84,23 @@ urls.each{ inUrl->
         def episode_title = episode.title
         def episode_date = episode.date
 
+        // La pagina di elenco del podcast nasconde episode_raw_url per gli episodi riservati agli abbonati.
+        // L'endpoint di dettaglio per singolo episodio lo espone comunque, senza bisogno di autenticazione.
+        if (episode_raw_url == "") {
+            try {
+                def detailUrl = "https://api-prod.ilpost.it/podcast/v1/bff/podcast/${podcast_slug}/${episode.slug}"
+                def detailJson = jsonSlurper.parseText(new URL(detailUrl).text)
+                episode_raw_url = detailJson.data.episode.data[0].episode_raw_url
+            } catch (Exception e) {
+                println "Errore nel recupero dell'url di dettaglio per $episode_title: ${e.message}"
+            }
+        }
+
         println "episode: $episode_raw_url"
         println "title: $episode_title"
         println "date: $episode_date"
 
-        if (episode_raw_url == "") {
+        if (!episode_raw_url) {
             println "Private Episode"
             return
         }
