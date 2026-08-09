@@ -3,7 +3,6 @@ Tomcat/work
 chromeExt.code-workspace
 /uSuperDrag-master
 /rss/tools
-rss/IlPostGit.cmd
 *.bak
 tb/dist/*
 **/coverage/*
