@@ -4,10 +4,8 @@ chromeExt.code-workspace
 /uSuperDrag-master
 /rss/tools
 rss/IlPostGit.cmd
-/rss/AdAltaVoceGit.cmd
 *.bak
 tb/dist/*
-rss/AdAltaVoce.CommitStatus.txt
 **/coverage/*
 macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
