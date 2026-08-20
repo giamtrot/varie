@@ -19,7 +19,6 @@ import io
 import os
 import re
 import tarfile
-import tempfile
 import urllib.request
 from collections import defaultdict
 
@@ -70,10 +69,15 @@ def latest_available_quarter() -> tuple[int, int]:
 
 # ── Download ────────────────────────────────────────────────────────────────
 def download_tar(anno: int, trim: int, dest_dir: str) -> str:
-    """Scarica il .tar.gz nel dest_dir e restituisce il percorso locale."""
+    """Scarica il .tar.gz nel dest_dir e restituisce il percorso locale.
+    Se il file esiste già, salta il download."""
     url = BASE_URL.format(anno=anno, trim=trim)
     filename = f"{anno}_{trim}_tr.tar.gz"
     dest_path = os.path.join(dest_dir, filename)
+
+    if os.path.exists(dest_path):
+        print(f"File già presente, download saltato: {dest_path}")
+        return dest_path
 
     print(f"Download: {url}")
     with urllib.request.urlopen(url, timeout=60) as resp:
@@ -96,11 +100,11 @@ def parse_price_lines(tar_path: str, impianto: str, carburante: str) -> list[dic
     Apre il tar.gz in memoria, scorre ogni CSV e raccoglie le righe
     che corrispondono all'impianto e al carburante richiesti.
 
-    Formato CSV (semicolon-separato):
-      idImpianto;descCarburante;prezzo;isSelf;dtComu
+    Formato CSV (pipe-separato):
+      idImpianto|descCarburante|prezzo|isSelf|dtComu
     """
     pattern = re.compile(
-        rf"^{re.escape(impianto)};{re.escape(carburante)};",
+        rf"^{re.escape(impianto)}\|{re.escape(carburante)}\|",
         re.IGNORECASE,
     )
     records = []
@@ -117,7 +121,7 @@ def parse_price_lines(tar_path: str, impianto: str, carburante: str) -> list[dic
                 for line in text:
                     line = line.strip()
                     if pattern.match(line):
-                        parts = line.split(";")
+                        parts = line.split("|")
                         if len(parts) < 5:
                             continue
                         try:
@@ -198,12 +202,15 @@ def main():
         anno, trim = latest_available_quarter()
         print(f"Trimestre rilevato: {trim}-{anno}")
 
-    # Download in cartella temporanea
-    with tempfile.TemporaryDirectory(prefix="carburante_") as tmp:
-        tar_path = download_tar(anno, trim, tmp)
+    # Download in cartella temporanea nella directory del programma
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    tmp = os.path.join(script_dir, "tmp")
+    os.makedirs(tmp, exist_ok=True)
 
-        print(f"Analisi per impianto={args.impianto}, carburante={args.carburante} ...")
-        records = parse_price_lines(tar_path, args.impianto, args.carburante)
+    tar_path = download_tar(anno, trim, tmp)
+
+    print(f"Analisi per impianto={args.impianto}, carburante={args.carburante} ...")
+    records = parse_price_lines(tar_path, args.impianto, args.carburante)
 
     analyse(records, args.impianto, args.carburante, anno, trim)
 

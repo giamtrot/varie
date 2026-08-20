@@ -15,3 +15,4 @@ bbc/build/*
 bbc/dist/BBCNews.exe
 bbc/dist/BBCNews/*
 bbc/__pycache__/*
+python/tmp/*
