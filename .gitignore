@@ -4,7 +4,6 @@ chromeExt.code-workspace
 /uSuperDrag-master
 /rss/tools
 *.bak
-tb/dist/*
 **/coverage/*
 macchia/dist/*
 macchia/src/test/WorkingDesk-performance.log
