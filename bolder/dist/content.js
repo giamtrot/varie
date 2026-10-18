@@ -10,7 +10,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 function getSmartSegments(selection) {
-    const range = selection.getRangeAt(0);
+    const segments = [];
+    for (let i = 0; i < selection.rangeCount; i++) {
+        if (i > 0)
+            segments.push({ text: '\n', style: 'plain' });
+        segments.push(...getRangeSegments(selection, selection.getRangeAt(i)));
+    }
+    return segments;
+}
+function getRangeSegments(selection, range) {
     const container = range.commonAncestorContainer;
     const segments = [];
     function getStyle(node) {
@@ -77,9 +85,9 @@ function getSmartSegments(selection) {
     };
     // Optimisation: if container is text node
     if (container.nodeType === Node.TEXT_NODE) {
-        let text = (container.textContent || '').substring(range.startOffset, range.endOffset);
-        const style = getStyle(container);
-        segments.push({ text, style });
+        const text = (container.textContent || '').substring(range.startOffset, range.endOffset);
+        if (text)
+            segments.push({ text, style: getStyle(container) });
         return segments;
     }
     processNode(container);
